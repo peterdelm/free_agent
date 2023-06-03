@@ -3,21 +3,21 @@ import { StyleSheet, Text, View } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import WelcomeScreen from "./components/screens/WelcomeScreen";
+import HomeScreen from "./components/screens/Home";
+import CreateGame from "./components/screens/CreateGame";
+import CreatePlayer from "./components/screens/CreatePlayer";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="CreateGame" component={CreateGame} />
       </Stack.Navigator>
     </NavigationContainer>
   );
