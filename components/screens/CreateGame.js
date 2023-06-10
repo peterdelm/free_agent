@@ -26,7 +26,7 @@ const CreateGame = ({ navigation }) => {
   const [additional_info, setAdditionalInfo] = useState("");
 
   // const url = "http://localhost:3001/games";
-  const url = "http://104.158.151.66:3001/games";
+  const url = "http://192.168.0.7:3001/api/games";
 
   // if (
   //   gender.length == 0 ||
