@@ -26,7 +26,7 @@ const CreateGame = ({ navigation }) => {
   const [additional_info, setAdditionalInfo] = useState("");
 
   // const url = "http://localhost:3001/games";
-  const url = "http://192.168.0.7:3001/api/games";
+  const url = "http://192.168.0.11:3001/api/games";
 
   // if (
   //   gender.length == 0 ||
@@ -72,7 +72,7 @@ const CreateGame = ({ navigation }) => {
 
   return (
     <View style={Styles.container}>
-      <Text>This is the Create Game screen</Text>
+      <Text>Who are you looking for?</Text>
 
       <View style={Styles.inputView}>
         <TextInput
