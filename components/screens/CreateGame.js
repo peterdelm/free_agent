@@ -24,23 +24,25 @@ const CreateGame = ({ navigation }) => {
   const [game_length, setGameLength] = useState("");
   const [team_name, setTeamName] = useState("");
   const [additional_info, setAdditionalInfo] = useState("");
+  const [errors, setErrors] = useState("");
 
   // const url = "http://localhost:3001/games";
-  const url = "http://192.168.0.11:3001/api/games";
+  const url = "http://192.168.2.42:3001/api/games";
+  // const url = process.env.REACT_APP_BASE_URL;
 
-  // if (
-  //   gender.length == 0 ||
-  //   calibre.length == 0 ||
-  //   gameType.length == 0 ||
-  //   gameDate.length == 0 ||
-  //   gameAddress.length == 0 ||
-  //   gameTime.length == 0 ||
-  //   gameLength.length == 0 ||
-  //   teamName.length == 0 ||
-  //   additionalInfo.length == 0
-  // )
-  //   return;
+  const handleError = (error, input) => {
+    setErrors((prevState) => ({ ...prevState, [input]: error }));
+  };
+
+  const validateInputs = () => {
+    if (!calibre) {
+      console.log("No Calibre");
+      handleError("Please input calibre", "calibre");
+    }
+  };
+
   const onSubmit = (event) => {
+    validateInputs();
     const body = {
       gender,
       calibre,
@@ -51,6 +53,7 @@ const CreateGame = ({ navigation }) => {
       game_length,
       team_name,
       additional_info,
+      is_active: true,
     };
     console.log(body);
 
@@ -78,6 +81,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Calibre"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(calibre) => setCalibre(calibre)}
         />
@@ -86,6 +90,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Game Type"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(game_type) => setGameType(game_type)}
         />
@@ -94,7 +99,9 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Gender"
-          placeholderTextColor="#005F66"
+          defaultValue=""
+          placeholderText
+          Color="#005F66"
           onChangeText={(gender) => setGender(gender)}
         />
       </View>
@@ -102,6 +109,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Location"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(location) => setGameAddress(location)}
         />
@@ -110,6 +118,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Date"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(date) => setGameDate(date)}
         />
@@ -118,6 +127,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Time"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(time) => setGameTime(time)}
         />
@@ -126,6 +136,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Game Length (minutes)"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(game_length) => setGameLength(game_length)}
         />
@@ -134,6 +145,7 @@ const CreateGame = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Additional Info"
+          defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(additional_info) => setAdditionalInfo(additional_info)}
         />
