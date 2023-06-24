@@ -102,6 +102,7 @@ const Styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center",
   },
+  dropdown: { width: 250 },
 });
 
 export default Styles;
