@@ -29,6 +29,9 @@ const CreateGame = ({ navigation }) => {
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([""]);
+  const [gameTypeList, setGameTypeList] = useState([""]);
+  const [genderList, setGenderList] = useState([""]);
+  const [gameLengthList, setGameLengthList] = useState([""]);
 
   // const url = "http://localhost:3001/games";
   // const url = "http://192.168.2.42:3001/api/games";
@@ -36,8 +39,6 @@ const CreateGame = ({ navigation }) => {
 
   // const url = process.env.REACT_APP_BASE_URL;
 
-  calibre_options = [];
-  var packel = [];
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
     const url = "http://192.168.0.11:3001/api/sports";
@@ -53,7 +54,13 @@ const CreateGame = ({ navigation }) => {
         console.log(sportSpecificValues[0]);
 
         setCalibreList(res[0].calibre);
-        console.log(calibreList);
+        console.log(res[0]);
+
+        setGameTypeList(res[0].game_type);
+        setGenderList(res[0].gender);
+        setGameLengthList(res[0].game_length);
+
+        // console.log(res[0]);
       });
     // .then((res) => setSportSpecificValues(res));
   }, []);
@@ -101,79 +108,91 @@ const CreateGame = ({ navigation }) => {
       .catch((error) => console.log(error));
   };
 
-  const feri = typeof sportSpecificValues[0];
-
-  var calvar = calibreList;
+  var calibres = calibreList;
+  var gameTypes = gameTypeList;
+  var genders = genderList;
+  var gameLengths = gameLengthList;
+  console.log(gameLengths);
 
   return (
     <View style={Styles.container}>
-      <Text>{feri}</Text>
-      <Text>{calvar}</Text>
-
       <View style={Styles.inputView}>
         <Picker
           style={Styles.TextInput}
-          placeholder="Calibre"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(calibre) => setCalibre(calibre)}
-          language={calvar}
+          language={calibres}
+          label="Calibre"
         />
       </View>
       <View></View>
       <View style={Styles.inputView}>
-        <TextInput
+        <Picker
           style={Styles.TextInput}
           placeholder="Game Type"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(game_type) => setGameType(game_type)}
+          language={gameTypes}
+          label="Game Type"
         />
       </View>
       <View style={Styles.inputView}>
-        <TextInput
+        <Picker
           style={Styles.TextInput}
-          placeholder="Gender"
           defaultValue=""
           placeholderText
           Color="#005F66"
           onChangeText={(gender) => setGender(gender)}
+          language={genders}
+          label="Gender"
         />
       </View>
       <View style={Styles.inputView}>
+        {/* This will be a LOCATION SELECTOR */}
         <TextInput
           style={Styles.TextInput}
           placeholder="Location"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(location) => setGameAddress(location)}
+          language={gameTypes}
+          label="Location"
         />
       </View>
       <View style={Styles.inputView}>
+        {/* This will be a DATE SELECTOR */}
         <TextInput
           style={Styles.TextInput}
           placeholder="Date"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(date) => setGameDate(date)}
+          language={gameTypes}
+          label="Date"
         />
       </View>
       <View style={Styles.inputView}>
+        {/* This will be a TIME SELECTOR */}
         <TextInput
           style={Styles.TextInput}
           placeholder="Time"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(time) => setGameTime(time)}
+          label="Time"
         />
       </View>
       <View style={Styles.inputView}>
-        <TextInput
+        <Picker
           style={Styles.TextInput}
           placeholder="Game Length (minutes)"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(game_length) => setGameLength(game_length)}
+          language={gameLengths}
+          label="Game Length"
         />
       </View>
       <View style={Styles.inputView}>

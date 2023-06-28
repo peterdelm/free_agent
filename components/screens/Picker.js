@@ -6,7 +6,10 @@ import Styles from "./Styles";
 class Pickering extends Component {
   constructor(props) {
     super(props);
-    this.state = { language: props.language };
+    this.state = {
+      language: props.language,
+      label: props.label,
+    };
   }
 
   render() {
@@ -19,11 +22,10 @@ class Pickering extends Component {
             this.setState({ language: itemValue })
           }
         >
-          <Picker.Item color="grey" label="Calibre" value="" />
+          <Picker.Item color="grey" label={this.props.label} value="" />
 
           {
             (allCalibres = this.props.language.map((course, index) => (
-              // <option value={course.id}>{course.position}</option>
               <Picker.Item
                 label={this.props.language[index]}
                 value={this.props.language[index]}
