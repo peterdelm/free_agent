@@ -26,14 +26,18 @@ const CreateGame = ({ navigation }) => {
   const [team_name, setTeamName] = useState("");
   const [additional_info, setAdditionalInfo] = useState("");
   const [errors, setErrors] = useState("");
-  const [sportSpecificValues, setSportSpecificValues] = useState([]);
+  const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
+  const [calibreList, setCalibreList] = useState([""]);
 
   // const url = "http://localhost:3001/games";
   // const url = "http://192.168.2.42:3001/api/games";
   const url = "http://192.168.0.11:3001/api/games";
 
   // const url = process.env.REACT_APP_BASE_URL;
+
+  calibre_options = [];
+  var calvar = calibreList;
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
@@ -45,17 +49,24 @@ const CreateGame = ({ navigation }) => {
         }
         throw new Error("Network response was not ok.");
       })
-      .then((res) => setSportSpecificValues(res));
+      .then((res) => {
+        setSportSpecificValues(res);
+        console.log(sportSpecificValues[0]);
+
+        setCalibreList(res[0].calibre);
+        console.log(calibreList);
+      });
+    // .then((res) => setSportSpecificValues(res));
   }, []);
 
-  const handleError = (error, input) => {
-    setErrors((prevState) => ({ ...prevState, [input]: error }));
-  };
+  // const handleError = (errror, input) => {
+  //   setErrors((prevState) => ({ ...prevState, [input]: error }));
+  // };
 
   const validateInputs = () => {
     if (!calibre) {
       console.log("No Calibre");
-      handleError("Please input calibre", "calibre");
+      // handleError("Please input calibre", "calibre");
     }
   };
 
@@ -91,16 +102,29 @@ const CreateGame = ({ navigation }) => {
       .catch((error) => console.log(error));
   };
 
-  const allPositions = sportSpecificValues.map((course, index) => (
-    <option value={course.id}>{course.position}</option>
-  ));
+  // const allPositions = sportSpecificValues.map((course, index) => (
+  //   <option value={course.id}>{course.position}</option>
+  // ));
 
+  // const allCalibres = sportSpecificValues;
+
+  // const calibres = sportSpecificValues[0].calibre.map((course, index) => (
+  //   <option value={course.id}>{course.position}</option>
+  // ));
+  const feri = typeof sportSpecificValues[0];
+  // Object.values(sportSpecificValues[0].calibre);
+  // const tras = typeof calvar;
+  // const mippon = Array.from(calvar);
+
+  const lang = ["ferre", "mangl"];
   return (
     <View style={Styles.container}>
-      <Text>Who are you looking for?</Text>
-      <View>
-        <Picker />
-      </View>
+      <Text>{feri}</Text>
+      <Text>{calvar}</Text>
+      {/* <Text>{tras}</Text>
+      <Text>{mippon[0]}</Text> */}
+
+      <View>{/* <Picker language={calvar} /> */}</View>
       <View style={Styles.inputView}>
         <Picker
           style={Styles.TextInput}
@@ -108,6 +132,7 @@ const CreateGame = ({ navigation }) => {
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(calibre) => setCalibre(calibre)}
+          language={calvar}
         />
       </View>
       <View></View>

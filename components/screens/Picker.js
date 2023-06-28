@@ -3,14 +3,15 @@ import { StyleSheet, Text, View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Styles from "./Styles";
 
-const isPlaceholder = (value) => {
-  return value == "";
-};
-
 class Pickering extends Component {
-  state = {
-    language: "",
-  };
+  constructor(props) {
+    super(props);
+    this.state = { language: props.language };
+  }
+
+  // allCalibres = this.props.language.map((course, index) => (
+  //   <option value={course.id}>{course.position}</option>
+  // ));
 
   render() {
     return (
@@ -23,7 +24,18 @@ class Pickering extends Component {
           }
         >
           <Picker.Item color="grey" label="Calibre" value="" />
-          <Picker.Item label="English" value="english" />
+          <Picker.Item
+            label={this.props.language[0]}
+            value={this.props.language[0]}
+          />
+          <Picker.Item
+            label={this.props.language[1]}
+            value={this.props.language[1]}
+          />
+          <Picker.Item
+            label={this.props.language[1]}
+            value={this.props.language[1]}
+          />
         </Picker>
       </View>
     );
