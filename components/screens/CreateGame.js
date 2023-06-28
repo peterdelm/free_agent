@@ -37,8 +37,7 @@ const CreateGame = ({ navigation }) => {
   // const url = process.env.REACT_APP_BASE_URL;
 
   calibre_options = [];
-  var calvar = calibreList;
-
+  var packel = [];
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
     const url = "http://192.168.0.11:3001/api/sports";
@@ -102,29 +101,15 @@ const CreateGame = ({ navigation }) => {
       .catch((error) => console.log(error));
   };
 
-  // const allPositions = sportSpecificValues.map((course, index) => (
-  //   <option value={course.id}>{course.position}</option>
-  // ));
-
-  // const allCalibres = sportSpecificValues;
-
-  // const calibres = sportSpecificValues[0].calibre.map((course, index) => (
-  //   <option value={course.id}>{course.position}</option>
-  // ));
   const feri = typeof sportSpecificValues[0];
-  // Object.values(sportSpecificValues[0].calibre);
-  // const tras = typeof calvar;
-  // const mippon = Array.from(calvar);
 
-  const lang = ["ferre", "mangl"];
+  var calvar = calibreList;
+
   return (
     <View style={Styles.container}>
       <Text>{feri}</Text>
       <Text>{calvar}</Text>
-      {/* <Text>{tras}</Text>
-      <Text>{mippon[0]}</Text> */}
 
-      <View>{/* <Picker language={calvar} /> */}</View>
       <View style={Styles.inputView}>
         <Picker
           style={Styles.TextInput}

@@ -9,10 +9,6 @@ class Pickering extends Component {
     this.state = { language: props.language };
   }
 
-  // allCalibres = this.props.language.map((course, index) => (
-  //   <option value={course.id}>{course.position}</option>
-  // ));
-
   render() {
     return (
       <View>
@@ -24,18 +20,16 @@ class Pickering extends Component {
           }
         >
           <Picker.Item color="grey" label="Calibre" value="" />
-          <Picker.Item
-            label={this.props.language[0]}
-            value={this.props.language[0]}
-          />
-          <Picker.Item
-            label={this.props.language[1]}
-            value={this.props.language[1]}
-          />
-          <Picker.Item
-            label={this.props.language[1]}
-            value={this.props.language[1]}
-          />
+
+          {
+            (allCalibres = this.props.language.map((course, index) => (
+              // <option value={course.id}>{course.position}</option>
+              <Picker.Item
+                label={this.props.language[index]}
+                value={this.props.language[index]}
+              />
+            )))
+          }
         </Picker>
       </View>
     );
