@@ -59,8 +59,6 @@ const CreateGame = ({ navigation }) => {
         setGameTypeList(res[0].game_type);
         setGenderList(res[0].gender);
         setGameLengthList(res[0].game_length);
-
-        // console.log(res[0]);
       });
     // .then((res) => setSportSpecificValues(res));
   }, []);
@@ -71,12 +69,16 @@ const CreateGame = ({ navigation }) => {
 
   const validateInputs = () => {
     if (!calibre) {
+      console.log(calibre);
+
       console.log("No Calibre");
       // handleError("Please input calibre", "calibre");
     }
   };
 
   const onSubmit = (event) => {
+    console.log(calibre);
+
     validateInputs();
     const body = {
       gender,
@@ -112,7 +114,6 @@ const CreateGame = ({ navigation }) => {
   var gameTypes = gameTypeList;
   var genders = genderList;
   var gameLengths = gameLengthList;
-  console.log(gameLengths);
 
   return (
     <View style={Styles.container}>
@@ -121,7 +122,11 @@ const CreateGame = ({ navigation }) => {
           style={Styles.TextInput}
           defaultValue=""
           placeholderTextColor="#005F66"
-          onChangeText={(calibre) => setCalibre(calibre)}
+          // onValueChange={(itemValue, itemIndex) => {
+          //   setCalibre(itemValue);
+          //   console.log(this.language);
+          // }}
+          // onChangeText={(calibre) => setCalibre(calibre)}
           language={calibres}
           label="Calibre"
         />
