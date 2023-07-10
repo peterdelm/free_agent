@@ -29,7 +29,7 @@ function HomeScreen({ navigation, message }) {
   console.log(route.params);
 
   console.log("Success message is...");
-  console.log(successMessage);
+  console.log(successMessage["successMessage"]);
 
   useEffect(() => {
     const url = "http://192.168.0.11:3001/api/games/active";
@@ -50,15 +50,25 @@ function HomeScreen({ navigation, message }) {
   ));
   const noActiveGames = <Text>No Games yet. Why not</Text>;
 
+  function Banner({ message }) {
+    const result = message["successMessage"] || "";
+    const isMessageEmpty = result === "";
+
+    if (isMessageEmpty) {
+      return null; // Don't render anything if the message is empty
+    }
+    return (
+      <View>
+        <Text style={Styles.primaryButton}>{result}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={Styles.container}>
+      {<Banner message={successMessage} />}
       <View style={Styles.homeContainer}>
-        {/* <Text> {successMessage}</Text> */}
-
         <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
-          {/* {successMessage && <Text message={successMessage} />}{" "} */}
-          {/* Display the banner if success message exists */}
-          {/* Render the success message banner if a success message exists */}
           <Text style={Styles.primaryButton}>Find a Goalie</Text>
         </TouchableOpacity>
         {allActiveGames.length > 0 ? allActiveGames : noActiveGames}

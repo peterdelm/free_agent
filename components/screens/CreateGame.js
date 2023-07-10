@@ -97,8 +97,6 @@ const CreateGame = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    // const navigation = useNavigation();
-
     console.log(calibre);
 
     validateInputs();
