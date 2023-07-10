@@ -17,6 +17,14 @@ import Styles from "./Styles";
 function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [token, setToken] = useState();
+
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
+
+  const handleLoginPress = () => {};
+
   return (
     <ImageBackground
       style={Styles.background}
@@ -46,7 +54,6 @@ function WelcomeScreen({ navigation }) {
           <Text style={Styles.forgotButton}>Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          {/*  <Text style={Styles.loginButton}>LOGIN</Text>*/}
           <Button title="LOGIN" onPress={() => navigation.navigate("Home")} />
         </TouchableOpacity>
         <TouchableOpacity>

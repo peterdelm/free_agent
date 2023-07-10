@@ -57,6 +57,10 @@ function HomeScreen({ navigation, message }) {
     if (isMessageEmpty) {
       return null; // Don't render anything if the message is empty
     }
+
+    //set a timer
+    //do a slide animationr
+    //highlight the new game for a few seconds
     return (
       <View>
         <Text style={Styles.primaryButton}>{result}</Text>
