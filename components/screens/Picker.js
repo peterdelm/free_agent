@@ -18,25 +18,16 @@ class Pickering extends Component {
         <Picker
           style={Styles.dropdown}
           selectedValue={this.state.language}
-          onValueChange={(itemValue, itemIndex) => {
+          onValueChange={(itemValue) => {
             this.setState({ language: itemValue });
-            console.log(this.state.language);
+            this.props.onValueChange(itemValue);
           }}
         >
           <Picker.Item color="grey" label={this.props.label} value="" />
 
-          {
-            (allCalibres = this.props.language.map((course, index) => (
-              <Picker.Item
-                onValueChange={(itemValue, itemIndex) => {
-                  this.setState({ language: itemValue });
-                  console.log(this.state.language);
-                }}
-                label={this.props.language[index]}
-                value={this.props.language[index]}
-              />
-            )))
-          }
+          {this.props.language.map((course, index) => (
+            <Picker.Item key={index} label={course} value={course} />
+          ))}
         </Picker>
       </View>
     );

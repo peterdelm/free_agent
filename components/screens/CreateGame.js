@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 
@@ -28,16 +28,36 @@ const CreateGame = ({ navigation }) => {
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
-  const [calibreList, setCalibreList] = useState([""]);
-  const [gameTypeList, setGameTypeList] = useState([""]);
-  const [genderList, setGenderList] = useState([""]);
-  const [gameLengthList, setGameLengthList] = useState([""]);
+  const [calibreList, setCalibreList] = useState([]);
+  const [gameTypeList, setGameTypeList] = useState([]);
+  const [genderList, setGenderList] = useState([]);
+  const [gameLengthList, setGameLengthList] = useState([]);
 
   // const url = "http://localhost:3001/games";
   // const url = "http://192.168.2.42:3001/api/games";
   const url = "http://192.168.0.11:3001/api/games";
 
   // const url = process.env.REACT_APP_BASE_URL;
+
+  const handleCalibreChange = (input) => {
+    setCalibre(input);
+  };
+  const handleGenderChange = (input) => {
+    setGender(input);
+  };
+  const handleGameLengthChange = (input) => {
+    setGameLength(input);
+  };
+  const handleGameTypeChange = (input) => {
+    setGameType(input);
+  };
+
+  const handleFormSubmit = () => {
+    onSubmit();
+    //if onSubmit returns successfully:
+    //return to HomeScreen
+    //Display 'Game Created' notification
+  };
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
@@ -51,10 +71,10 @@ const CreateGame = ({ navigation }) => {
       })
       .then((res) => {
         setSportSpecificValues(res);
-        console.log(sportSpecificValues[0]);
 
         setCalibreList(res[0].calibre);
-        console.log(res[0]);
+        console.log("Results are...");
+        console.log(res[0].calibre);
 
         setGameTypeList(res[0].game_type);
         setGenderList(res[0].gender);
@@ -76,7 +96,9 @@ const CreateGame = ({ navigation }) => {
     }
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = () => {
+    // const navigation = useNavigation();
+
     console.log(calibre);
 
     validateInputs();
@@ -92,6 +114,7 @@ const CreateGame = ({ navigation }) => {
       additional_info,
       is_active: true,
     };
+
     console.log(body);
 
     fetch(url, {
@@ -106,6 +129,16 @@ const CreateGame = ({ navigation }) => {
           return res.json();
         }
         throw new Error("Network response was not ok.");
+      })
+      .then((data) => {
+        if (data.success === true) {
+          console.log("Submit successful");
+          navigation.navigate("Home", {
+            successMessage: "Game created successfully. Free Agent pending.",
+          });
+        } else {
+          console.log("Submit Failed");
+        }
       })
       .catch((error) => console.log(error));
   };
@@ -122,12 +155,8 @@ const CreateGame = ({ navigation }) => {
           style={Styles.TextInput}
           defaultValue=""
           placeholderTextColor="#005F66"
-          // onValueChange={(itemValue, itemIndex) => {
-          //   setCalibre(itemValue);
-          //   console.log(this.language);
-          // }}
-          // onChangeText={(calibre) => setCalibre(calibre)}
           language={calibres}
+          onValueChange={handleCalibreChange}
           label="Calibre"
         />
       </View>
@@ -138,7 +167,7 @@ const CreateGame = ({ navigation }) => {
           placeholder="Game Type"
           defaultValue=""
           placeholderTextColor="#005F66"
-          onChangeText={(game_type) => setGameType(game_type)}
+          onValueChange={handleGameTypeChange}
           language={gameTypes}
           label="Game Type"
         />
@@ -149,7 +178,7 @@ const CreateGame = ({ navigation }) => {
           defaultValue=""
           placeholderText
           Color="#005F66"
-          onChangeText={(gender) => setGender(gender)}
+          onValueChange={handleGenderChange}
           language={genders}
           label="Gender"
         />
@@ -195,7 +224,7 @@ const CreateGame = ({ navigation }) => {
           placeholder="Game Length (minutes)"
           defaultValue=""
           placeholderTextColor="#005F66"
-          onChangeText={(game_length) => setGameLength(game_length)}
+          onValueChange={handleGameLengthChange}
           language={gameLengths}
           label="Game Length"
         />
@@ -211,7 +240,7 @@ const CreateGame = ({ navigation }) => {
       </View>
       <View>
         <TouchableOpacity>
-          <Button title="CREATE GAME" onPress={() => onSubmit()} />
+          <Button title="CREATE GAME" onPress={() => handleFormSubmit()} />
         </TouchableOpacity>
       </View>
     </View>
