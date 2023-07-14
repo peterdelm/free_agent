@@ -13,17 +13,46 @@ import {
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
+import PropTypes from "prop-types";
 
-function WelcomeScreen({ navigation }) {
+function WelcomeScreen({ navigation, setToken }) {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [token, setToken] = useState();
 
+  //Remove this into a config file vvv
+  const url = "http://192.168.0.11:3001/api/users";
+
   if (!token) {
     return <Login setToken={setToken} />;
   }
+  Login.propTypes = {
+    setToken: PropTypes.func.isRequired,
+  };
 
-  const handleLoginPress = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = await sendLoginRequest({
+      email,
+      password,
+    });
+    setToken(token);
+  };
+
+  const sendLoginRequest = (credentials) => {
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error("Network response was not ok.");
+    });
+  };
 
   return (
     <ImageBackground
