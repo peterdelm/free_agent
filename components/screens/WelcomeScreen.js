@@ -19,6 +19,7 @@ function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
+  const [result, setResult] = useState([]);
 
   //Remove this into a config file vvv
   // const url = "http://192.168.0.11:3001/api/users";
@@ -45,14 +46,14 @@ function WelcomeScreen({ navigation }) {
 
     // const url = "http://192.168.0.11:3001/api/users";
     const url = "http://192.168.2.42:3001/api/users";
-    fetch(url).then((res) => {
-      if (res.ok) {
-        data = res.json();
-        console.log(data.token);
-        return data.token;
-      }
-      throw new Error("Network response was not ok.");
-    });
+    fetch(url)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((res) => setResult(res));
     // fetch(url, {
     //   method: "POST",
     //   headers: {
@@ -74,7 +75,12 @@ function WelcomeScreen({ navigation }) {
   const handleLoginAttempt = (credentials) => {
     console.log("handleLoginAttempt called");
     loginRequestResult = sendLoginRequest(credentials);
-    setToken([loginRequestResult[0]]);
+    setToken(result.token);
+    if (token) {
+      handleSuccessfulLogin();
+    } else {
+      console.log("No Token!");
+    }
   };
 
   return (
@@ -104,7 +110,6 @@ function WelcomeScreen({ navigation }) {
 
         <TouchableOpacity>
           <Text style={Styles.forgotButton}>Forgot Password?</Text>
-          <Text style={Styles.forgotButton}>{token}</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Button
