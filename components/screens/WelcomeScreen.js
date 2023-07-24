@@ -45,8 +45,14 @@ function WelcomeScreen({ navigation }) {
     console.log("handleLoginRequest called");
 
     // const url = "http://192.168.0.11:3001/api/users";
-    const url = "http://192.168.2.42:3001/api/users";
-    fetch(url)
+    const url = "http://192.168.2.42:3001/api/users/id";
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -54,26 +60,16 @@ function WelcomeScreen({ navigation }) {
         throw new Error("Network response was not ok.");
       })
       .then((res) => setResult(res));
-    // fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(credentials),
-    // }).then((res) => {
-    //   if (res.ok) {
-    //     return res.json();
-    //   }
-    //   throw new Error("Network response was not ok.");
-    // });
   };
 
   const handleSuccessfulLogin = () => {
     navigation.navigate("Home");
   };
 
-  const handleLoginAttempt = (credentials) => {
+  const handleLoginAttempt = (email, password) => {
+    credentials = { email, password };
     console.log("handleLoginAttempt called");
+    console.log(credentials);
     loginRequestResult = sendLoginRequest(credentials);
     setToken(result.token);
     if (token) {
