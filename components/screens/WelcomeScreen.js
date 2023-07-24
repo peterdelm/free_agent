@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import PropTypes from "prop-types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
@@ -25,12 +26,24 @@ function WelcomeScreen({ navigation }) {
   // const url = "http://192.168.0.11:3001/api/users";
   const url = "http://192.168.2.42:3001/api/users";
 
-  // if (!token) {
-  //   return <Login setToken={setToken} />;
-  // }
-  // Login.propTypes = {
-  //   setToken: PropTypes.func.isRequired,
-  // };
+  const storeSessionToken = async (token) => {
+    try {
+      await AsyncStorage.setItem("@session_token", token);
+      console.log("Session token stored successfully.");
+    } catch (error) {
+      console.log("Error storing session token:", error);
+    }
+  };
+
+  const getSessionToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem("@session_token");
+      return token;
+    } catch (error) {
+      console.log("Error retrieving session token:", error);
+      return null;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,6 +86,7 @@ function WelcomeScreen({ navigation }) {
     loginRequestResult = sendLoginRequest(credentials);
     setToken(result.token);
     if (token) {
+      storeSessionToken(token);
       handleSuccessfulLogin();
     } else {
       console.log("No Token!");
