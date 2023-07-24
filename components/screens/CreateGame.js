@@ -34,8 +34,8 @@ const CreateGame = ({ navigation }) => {
   const [gameLengthList, setGameLengthList] = useState([]);
 
   // const url = "http://localhost:3001/games";
-  // const url = "http://192.168.2.42:3001/api/games";
-  const url = "http://192.168.0.11:3001/api/games";
+  const url = "http://192.168.2.42:3001/api/games";
+  // const url = "http://192.168.0.11:3001/api/games";
 
   // const url = process.env.REACT_APP_BASE_URL;
 
@@ -61,7 +61,9 @@ const CreateGame = ({ navigation }) => {
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    const url = "http://192.168.0.11:3001/api/sports";
+    // const url = "http://192.168.0.11:3001/api/sports";
+    const url = "http://192.168.2.42:3001/api/sports";
+
     fetch(url)
       .then((res) => {
         if (res.ok) {

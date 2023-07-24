@@ -21,7 +21,8 @@ function WelcomeScreen({ navigation }) {
   const [token, setToken] = useState("");
 
   //Remove this into a config file vvv
-  const url = "http://192.168.0.11:3001/api/users";
+  // const url = "http://192.168.0.11:3001/api/users";
+  const url = "http://192.168.2.42:3001/api/users";
 
   // if (!token) {
   //   return <Login setToken={setToken} />;
@@ -42,7 +43,8 @@ function WelcomeScreen({ navigation }) {
   const sendLoginRequest = (credentials) => {
     console.log("handleLoginRequest called");
 
-    const url = "http://192.168.0.11:3001/api/users";
+    // const url = "http://192.168.0.11:3001/api/users";
+    const url = "http://192.168.2.42:3001/api/users";
     fetch(url).then((res) => {
       if (res.ok) {
         data = res.json();
@@ -72,7 +74,7 @@ function WelcomeScreen({ navigation }) {
   const handleLoginAttempt = (credentials) => {
     console.log("handleLoginAttempt called");
     loginRequestResult = sendLoginRequest(credentials);
-    setToken(loginRequestResult);
+    setToken([loginRequestResult[0]]);
   };
 
   return (

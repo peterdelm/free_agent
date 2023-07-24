@@ -32,7 +32,8 @@ function HomeScreen({ navigation, message }) {
   console.log(successMessage["successMessage"]);
 
   useEffect(() => {
-    const url = "http://192.168.0.11:3001/api/games/active";
+    // const url = "http://192.168.0.11:3001/api/games/active";
+    const url = "http://192.168.2.42:3001/api/games/active";
     fetch(url)
       .then((res) => {
         if (res.ok) {
