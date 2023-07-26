@@ -23,8 +23,8 @@ function WelcomeScreen({ navigation }) {
   const [result, setResult] = useState([]);
 
   //Remove this into a config file vvv
-  // const url = "http://192.168.0.11:3001/api/users";
-  const url = "http://192.168.2.42:3001/api/users";
+  const url = "http://192.168.0.7:3001/api/users";
+  // const url = "http://192.168.2.42:3001/api/users";
 
   const storeSessionToken = async (token) => {
     try {
@@ -57,8 +57,8 @@ function WelcomeScreen({ navigation }) {
   const sendLoginRequest = (credentials) => {
     console.log("handleLoginRequest called");
 
-    // const url = "http://192.168.0.11:3001/api/users";
-    const url = "http://192.168.2.42:3001/api/users/id";
+    const url = "http://192.168.0.7:3001/api/users/id";
+    // const url = "http://192.168.2.42:3001/api/users/id";
     fetch(url, {
       method: "POST",
       headers: {
@@ -91,6 +91,11 @@ function WelcomeScreen({ navigation }) {
     } else {
       console.log("No Token!");
     }
+  };
+
+  const handleRegisterButtonPress = () => {
+    console.log("HandleRegisterButtonPress Called!");
+    navigation.navigate("RegisterUser");
   };
 
   return (
@@ -128,7 +133,12 @@ function WelcomeScreen({ navigation }) {
           />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={Styles.registerButton}>REGISTER</Text>
+          <Text
+            style={Styles.registerButton}
+            onPress={handleRegisterButtonPress}
+          >
+            REGISTER
+          </Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>

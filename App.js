@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import WelcomeScreen from "./components/screens/WelcomeScreen";
 import HomeScreen from "./components/screens/Home";
 import CreateGame from "./components/screens/CreateGame";
+import CreateUser from "./components/screens/CreateUser";
 import CreatePlayer from "./components/screens/CreatePlayer";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -18,6 +19,7 @@ export default function App() {
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="CreateGame" component={CreateGame} />
+        <Stack.Screen name="RegisterUser" component={CreateUser} />
       </Stack.Navigator>
     </NavigationContainer>
   );
