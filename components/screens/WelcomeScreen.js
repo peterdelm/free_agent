@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
   const [token, setToken] = useState("");
   const [result, setResult] = useState([]);
 
@@ -35,12 +35,13 @@ function WelcomeScreen({ navigation }) {
     }
   };
 
-  const getSessionToken = async () => {
+  // Get the token from AsyncStorage
+  const getTokenFromStorage = async () => {
     try {
-      const token = await AsyncStorage.getItem("@session_token");
+      const token = await AsyncStorage.getItem("session_token");
       return token;
     } catch (error) {
-      console.log("Error retrieving session token:", error);
+      console.log("Error retrieving token from AsyncStorage:", error);
       return null;
     }
   };
@@ -48,48 +49,60 @@ function WelcomeScreen({ navigation }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await sendLoginRequest({
-      email,
+      emailAddress,
       password,
     });
     setToken(token);
   };
 
-  const sendLoginRequest = (credentials) => {
+  const sendLoginRequest = async (credentials) => {
     console.log("handleLoginRequest called");
 
     const url = "http://192.168.0.7:3001/api/users/id";
     // const url = "http://192.168.2.42:3001/api/users/id";
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        return data;
+      } else {
+        console.log(res.status);
+
         throw new Error("Network response was not ok.");
-      })
-      .then((res) => setResult(res));
+      }
+    } catch (error) {
+      console.log("Error in sendLoginRequest:", error);
+      throw error; // Rethrow the error to be caught by the caller
+    }
   };
 
   const handleSuccessfulLogin = () => {
     navigation.navigate("Home");
   };
 
-  const handleLoginAttempt = (email, password) => {
-    credentials = { email, password };
+  const handleLoginAttempt = async (emailAddress, password) => {
+    credentials = { emailAddress, password };
     console.log("handleLoginAttempt called");
     console.log(credentials);
-    loginRequestResult = sendLoginRequest(credentials);
-    setToken(result.token);
-    if (token) {
-      storeSessionToken(token);
-      handleSuccessfulLogin();
-    } else {
-      console.log("No Token!");
+    try {
+      const result = await sendLoginRequest(credentials);
+      setToken(result.token);
+      if (result.token) {
+        await storeSessionToken(result.token);
+        handleSuccessfulLogin();
+      } else {
+        console.log("No Token!");
+      }
+    } catch (error) {
+      console.log("Error during login attempt:", error);
+      // Handle the error here, e.g., show an error message to the user
     }
   };
 
@@ -109,7 +122,7 @@ function WelcomeScreen({ navigation }) {
             style={Styles.TextInput}
             placeholder="Email"
             placeholderTextColor="#005F66"
-            onChangeText={(email) => setEmail(email)}
+            onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
           />
         </View>
 
@@ -129,7 +142,7 @@ function WelcomeScreen({ navigation }) {
         <TouchableOpacity>
           <Button
             title="LOGIN"
-            onPress={() => handleLoginAttempt(email, password)}
+            onPress={() => handleLoginAttempt(emailAddress, password)}
           />
         </TouchableOpacity>
         <TouchableOpacity>
