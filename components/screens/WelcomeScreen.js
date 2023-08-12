@@ -93,6 +93,7 @@ function WelcomeScreen({ navigation }) {
     console.log(credentials);
     try {
       const result = await sendLoginRequest(credentials);
+      console.log(result.token);
       setToken(result.token);
       if (result.token) {
         await storeSessionToken(result.token);
