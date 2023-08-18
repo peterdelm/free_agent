@@ -16,6 +16,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "@env";
 
 function HomeScreen({ navigation, message }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -95,12 +96,13 @@ function HomeScreen({ navigation, message }) {
   };
 
   useEffect(() => {
-    const url = "http://192.168.0.7:3001/api/games/active";
+    const url = process.env.EXPO_APP_BASE_URL + "api/games/active";
 
     const fetchData = async () => {
       try {
         const token = await getTokenFromStorage();
         console.log("Token is " + token);
+        console.log("URL is " + url);
 
         const headers = {
           "Content-Type": "application/json",
