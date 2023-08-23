@@ -16,7 +16,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BASE_URL } from "@env";
 
 function HomeScreen({ navigation, message }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -33,57 +32,6 @@ function HomeScreen({ navigation, message }) {
   console.log("Success message is...");
   console.log(successMessage["successMessage"]);
 
-  // // Get the token from AsyncStorage
-  // const getTokenFromStorage = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("session_token").then(
-  //       console.log("AsyncStorage.getItem Called")
-  //     );
-
-  //     return token;
-  //   } catch (error) {
-  //     console.log("Error retrieving token from AsyncStorage:", error);
-  //     return null;
-  //   }
-  // };
-
-  // const makeAuthenticatedRequest = async (url, method = "GET", body = null) => {
-  //   console.log("makeAuthenticatedRequest");
-
-  //   try {
-  //     const token = await getTokenFromStorage();
-
-  //     if (!token) {
-  //       // Handle token not found (e.g., redirect to login page)
-  //       return;
-  //     }
-
-  //     const headers = {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     };
-
-  //     const requestOptions = {
-  //       method,
-  //       headers,
-  //       body: body ? JSON.stringify(body) : null,
-  //     };
-
-  //     const response = await fetch(url, requestOptions);
-  //     const data = await response.json();
-
-  //     // Handle the API response as needed
-  //     // ...
-  //     console.log(data);
-
-  //     return data;
-  //   } catch (error) {
-  //     console.log("Error making authenticated request:", error);
-  //     // Handle error
-  //   }
-  // };
-
-  // Get the token from AsyncStorage
   const getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem("@session_token");
@@ -96,7 +44,7 @@ function HomeScreen({ navigation, message }) {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_APP_BASE_URL + "api/games/active";
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
 
     const fetchData = async () => {
       try {

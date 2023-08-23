@@ -14,6 +14,7 @@ import React, { useEffect, useState, useRef, Component } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -101,6 +102,17 @@ const CreateGame = ({ navigation }) => {
   const onSubmit = () => {
     console.log(calibre);
 
+    const getTokenFromStorage = async () => {
+      try {
+        const token = await AsyncStorage.getItem("@session_token");
+        console.log("Token is " + token);
+        return token;
+      } catch (error) {
+        console.log("Error retrieving token from AsyncStorage:", error);
+        return null;
+      }
+    };
+
     validateInputs();
     const body = {
       gender,
@@ -116,31 +128,75 @@ const CreateGame = ({ navigation }) => {
     };
 
     console.log(body);
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((data) => {
-        if (data.success === true) {
-          console.log("Submit successful");
-          navigation.navigate("Home", {
-            successMessage: "Game created successfully. Free Agent pending.",
+    const postGame = async () => {
+      try {
+        const token = await getTokenFromStorage();
+        console.log("Token is " + token);
+        console.log("URL is " + url);
+        console.log("postgGame async request called at line 138");
+
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+
+        const requestOptions = {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+        };
+
+        fetch(url, requestOptions)
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+            throw new Error("Network response was not ok.");
+          })
+          .then((data) => {
+            if (data.success === true) {
+              console.log("Submit successful");
+              navigation.navigate("Home", {
+                successMessage:
+                  "Game created successfully. Free Agent pending.",
+              });
+            } else {
+              console.log("Submit Failed");
+            }
           });
-        } else {
-          console.log("Submit Failed");
-        }
-      })
-      .catch((error) => console.log(error));
+      } catch (error) {
+        console.log("Error making authenticated request:", error);
+        // Handle error
+      }
+    };
+    postGame();
+
+    // fetch(url, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(body),
+    // })
+    //   .then((res) => {
+    //     if (res.ok) {
+    //       return res.json();
+    //     }
+    //     throw new Error("Network response was not ok.");
+    //   })
+    //   .then((data) => {
+    //     if (data.success === true) {
+    //       console.log("Submit successful");
+    //       navigation.navigate("Home", {
+    //         successMessage: "Game created successfully. Free Agent pending.",
+    //       });
+    //     } else {
+    //       console.log("Submit Failed");
+    //     }
+    //   })
+    //   .catch((error) => console.log(error));
   };
 
   var calibres = calibreList;
