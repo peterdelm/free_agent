@@ -172,31 +172,6 @@ const CreateGame = ({ navigation }) => {
       }
     };
     postGame();
-
-    // fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(body),
-    // })
-    //   .then((res) => {
-    //     if (res.ok) {
-    //       return res.json();
-    //     }
-    //     throw new Error("Network response was not ok.");
-    //   })
-    //   .then((data) => {
-    //     if (data.success === true) {
-    //       console.log("Submit successful");
-    //       navigation.navigate("Home", {
-    //         successMessage: "Game created successfully. Free Agent pending.",
-    //       });
-    //     } else {
-    //       console.log("Submit Failed");
-    //     }
-    //   })
-    //   .catch((error) => console.log(error));
   };
 
   var calibres = calibreList;

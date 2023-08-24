@@ -7,6 +7,7 @@ import WelcomeScreen from "./components/screens/WelcomeScreen";
 import HomeScreen from "./components/screens/Home";
 import CreateGame from "./components/screens/CreateGame";
 import CreateUser from "./components/screens/CreateUser";
+import ViewGame from "./components/screens/ViewGame";
 import CreatePlayer from "./components/screens/CreatePlayer";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -20,6 +21,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="CreateGame" component={CreateGame} />
         <Stack.Screen name="RegisterUser" component={CreateUser} />
+        <Stack.Screen name="ViewGame" component={ViewGame} />
       </Stack.Navigator>
     </NavigationContainer>
   );

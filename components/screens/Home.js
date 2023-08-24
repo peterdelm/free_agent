@@ -10,6 +10,7 @@ import {
   Touchable,
   TouchableOpacity,
   Pressable,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -79,9 +80,11 @@ function HomeScreen({ navigation, message }) {
   }, []);
 
   const allActiveGames = activeGames.map((game, index) => (
-    <Text key={index} style={Styles.activeGames}>
-      {game.location} @ {game.time}
-    </Text>
+    <TouchableOpacity onPress={() => navigation.navigate("ViewGame")}>
+      <Text key={index} style={Styles.activeGames}>
+        {game.location} @ {game.time}
+      </Text>
+    </TouchableOpacity>
   ));
   const noActiveGames = <Text>No Games yet. Why not</Text>;
 
@@ -94,7 +97,7 @@ function HomeScreen({ navigation, message }) {
     }
 
     //set a timer
-    //do a slide animationr
+    //do a slide animation
     //highlight the new game for a few seconds
     return (
       <View>
@@ -110,7 +113,9 @@ function HomeScreen({ navigation, message }) {
         <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
           <Text style={Styles.primaryButton}>Find a Goalie</Text>
         </TouchableOpacity>
-        {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+        <ScrollView>
+          {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+        </ScrollView>
       </View>
     </View>
   );
