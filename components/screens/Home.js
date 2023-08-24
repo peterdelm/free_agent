@@ -80,7 +80,10 @@ function HomeScreen({ navigation, message }) {
   }, []);
 
   const allActiveGames = activeGames.map((game, index) => (
-    <TouchableOpacity onPress={() => navigation.navigate("ViewGame")}>
+    <TouchableOpacity
+      key={game.id}
+      onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+    >
       <Text key={index} style={Styles.activeGames}>
         {game.location} @ {game.time}
       </Text>
