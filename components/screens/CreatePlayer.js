@@ -12,18 +12,13 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Styles from "./Styles";
 
 const CreatePlayer = ({ navigation }) => {
   return (
     <View style={Styles.container}>
-      {<Banner message={successMessage} />}
       <View style={Styles.homeContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
-          <Text style={Styles.primaryButton}>Find a Goalie</Text>
-        </TouchableOpacity>
-        <ScrollView>
-          {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-        </ScrollView>
+        <Text style={Styles.primaryButton}>Create a Player Profile Here</Text>
       </View>
     </View>
   );

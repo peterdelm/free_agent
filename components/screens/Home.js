@@ -116,8 +116,8 @@ function HomeScreen({ navigation, message }) {
         <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
           <Text style={Styles.primaryButton}>Find a Goalie</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("CreatePlayer")}>
-          <Text style={Styles.primaryButton}>Create a Player Profile</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
+          <Text style={Styles.primaryButton}>Manage Player Profiles</Text>
         </TouchableOpacity>
         <ScrollView>
           {allActiveGames.length > 0 ? allActiveGames : noActiveGames}

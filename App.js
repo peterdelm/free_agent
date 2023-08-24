@@ -9,6 +9,8 @@ import CreateGame from "./components/screens/CreateGame";
 import CreateUser from "./components/screens/CreateUser";
 import ViewGame from "./components/screens/ViewGame";
 import CreatePlayer from "./components/screens/CreatePlayer";
+import ManagePlayers from "./components/screens/ManagePlayers";
+
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +25,7 @@ export default function App() {
         <Stack.Screen name="CreatePlayer" component={CreatePlayer} />
         <Stack.Screen name="RegisterUser" component={CreateUser} />
         <Stack.Screen name="ViewGame" component={ViewGame} />
+        <Stack.Screen name="ManagePlayers" component={ManagePlayers} />
       </Stack.Navigator>
     </NavigationContainer>
   );

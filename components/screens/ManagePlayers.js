@@ -12,11 +12,11 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Styles from "./Styles";
 
-const ManagePlayer = ({ navigation }) => {
+const ManagePlayers = ({ navigation }) => {
   return (
     <View style={Styles.container}>
-      {<Banner message={successMessage} />}
       <View style={Styles.homeContainer}>
         <Text style={Styles.primaryButton}>Manage Player Screen</Text>
       </View>
@@ -24,4 +24,4 @@ const ManagePlayer = ({ navigation }) => {
   );
 };
 
-export default CreatePlayer;
+export default ManagePlayers;
