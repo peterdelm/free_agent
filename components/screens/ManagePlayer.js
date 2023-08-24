@@ -13,17 +13,12 @@ import {
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const CreatePlayer = ({ navigation }) => {
+const ManagePlayer = ({ navigation }) => {
   return (
     <View style={Styles.container}>
       {<Banner message={successMessage} />}
       <View style={Styles.homeContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
-          <Text style={Styles.primaryButton}>Find a Goalie</Text>
-        </TouchableOpacity>
-        <ScrollView>
-          {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-        </ScrollView>
+        <Text style={Styles.primaryButton}>Manage Player Screen</Text>
       </View>
     </View>
   );
