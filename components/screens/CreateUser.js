@@ -20,11 +20,7 @@ const CreateUser = ({ navigation }) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
 
-  // const url = "http://localhost:3001/games";
-  // const url = "http://192.168.2.42:3001/api/games";
-  const url = "http://192.168.0.7:3001/api/users";
-
-  // const url = process.env.REACT_APP_BASE_URL;
+  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users";
 
   const handleFormSubmit = () => {
     onSubmit();
@@ -46,43 +42,54 @@ const CreateUser = ({ navigation }) => {
     }
   };
 
-  const onSubmit = () => {
-    console.log(emailAddress);
+  const onSubmit = async () => {
+    try {
+      console.log("onSubmit in CreateUser was called");
 
-    validateInputs();
-    const body = {
-      firstName,
-      lastName,
-      emailAddress,
-      password,
-    };
+      validateInputs();
+      const body = {
+        firstName,
+        lastName,
+        emailAddress,
+        password,
+      };
+      console.log(body);
+      console.log("URL in onSubmit in CreateUser was " + url);
 
-    console.log(body);
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
       })
-      .then((data) => {
-        if (data.success === true) {
-          console.log("Submit successful");
-          navigation.navigate("Home", {
-            successMessage: "User created successfully.",
-          });
-        } else {
-          console.log("Submit Failed");
-        }
-      })
-      .catch((error) => console.log(error));
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+          throw new Error("Network response was not ok.");
+        })
+        .then((data) => {
+          if (data.success === true) {
+            //Get the token
+            //Assign it to storage
+            //navigate
+            console.log("Submit successful");
+            navigation.navigate("Home", {
+              successMessage: "User created successfully.",
+            });
+          } else {
+            console.log("Submit Failed");
+          }
+        })
+        .catch((error) => {
+          console.log("Error during fetch:", error);
+          // Handle error
+        });
+    } catch (error) {
+      console.log("Error making authenticated request:", error);
+      // Handle error
+    }
   };
   return (
     <View style={Styles.container}>

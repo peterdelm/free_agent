@@ -65,32 +65,38 @@ function HomeScreen({ navigation, message }) {
         fetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
+              console.log("res was ok");
               return res.json();
-            }
-            throw new Error("Network response was not ok.");
+            } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res));
+          .then((res) => setActiveGames(res))
+          .catch((error) => {
+            console.log("Error during fetch:", error);
+            // Handle specific error scenarios
+          });
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error
       }
     };
     fetchData();
-    // const url = "http://192.168.2.42:3001/api/games/active";
   }, []);
 
-  const allActiveGames = activeGames.map((game, index) => (
-    <TouchableOpacity
-      key={game.id}
-      onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
-    >
-      <Text key={index} style={Styles.activeGames}>
-        {game.location} @ {game.time}
-      </Text>
-    </TouchableOpacity>
-  ));
+  const allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Games yet. Why not</Text>;
 
+  if (activeGames.length > 0) {
+    allActiveGames = activeGames.map((game, index) => (
+      <TouchableOpacity
+        key={game.id}
+        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+      >
+        <Text key={index} style={Styles.activeGames}>
+          {game.location} @ {game.time}
+        </Text>
+      </TouchableOpacity>
+    ));
+  }
   function Banner({ message }) {
     const result = message["successMessage"] || "";
     const isMessageEmpty = result === "";

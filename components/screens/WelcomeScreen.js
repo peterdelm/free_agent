@@ -23,8 +23,7 @@ function WelcomeScreen({ navigation }) {
   const [result, setResult] = useState([]);
 
   //Remove this into a config file vvv
-  const url = "http://192.168.0.7:3001/api/users";
-  // const url = "http://192.168.2.42:3001/api/users";
+  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users";
 
   const storeSessionToken = async (token) => {
     try {
@@ -58,8 +57,9 @@ function WelcomeScreen({ navigation }) {
   const sendLoginRequest = async (credentials) => {
     console.log("handleLoginRequest called");
 
-    const url = "http://192.168.0.7:3001/api/users/id";
-    // const url = "http://192.168.2.42:3001/api/users/id";
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/id";
+    console.log(url);
+
     try {
       const res = await fetch(url, {
         method: "POST",

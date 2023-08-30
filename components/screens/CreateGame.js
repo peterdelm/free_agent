@@ -34,11 +34,7 @@ const CreateGame = ({ navigation }) => {
   const [genderList, setGenderList] = useState([]);
   const [gameLengthList, setGameLengthList] = useState([]);
 
-  // const url = "http://localhost:3001/games";
-  // const url = "http://192.168.2.42:3001/api/games";
-  const url = "http://192.168.0.7:3001/api/games";
-
-  // const url = process.env.REACT_APP_BASE_URL;
+  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
 
   const handleCalibreChange = (input) => {
     setCalibre(input);
@@ -62,8 +58,9 @@ const CreateGame = ({ navigation }) => {
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    const url = "http://192.168.0.7:3001/api/sports";
-    // const url = "http://192.168.2.42:3001/api/sports";
+    console.log("CreateGame useEffect called");
+
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
 
     fetch(url)
       .then((res) => {
@@ -83,7 +80,6 @@ const CreateGame = ({ navigation }) => {
         setGenderList(res[0].gender);
         setGameLengthList(res[0].game_length);
       });
-    // .then((res) => setSportSpecificValues(res));
   }, []);
 
   // const handleError = (errror, input) => {
