@@ -9,6 +9,7 @@ import {
   TextInput,
   Touchable,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -31,8 +32,21 @@ const CreateGame = ({ navigation }) => {
   const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
-  const [genderList, setGenderList] = useState([]);
+  const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [gameLengthList, setGameLengthList] = useState([]);
+  const [isSportSelected, setIsSportSelected] = useState(false);
+  const [selectedSport, setSelectedSport] = useState();
+
+  const getTokenFromStorage = async () => {
+    try {
+      const token = await AsyncStorage.getItem("@session_token");
+      console.log("Token is " + token);
+      return token;
+    } catch (error) {
+      console.log("Error retrieving token from AsyncStorage:", error);
+      return null;
+    }
+  };
 
   const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
 
@@ -62,24 +76,40 @@ const CreateGame = ({ navigation }) => {
 
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
 
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((res) => {
-        setSportSpecificValues(res);
+    const fetchData = async () => {
+      try {
+        const token = await getTokenFromStorage();
+        console.log("Token is " + token);
+        console.log("URL is " + url);
 
-        setCalibreList(res[0].calibre);
-        console.log("Results are...");
-        console.log(res[0].calibre);
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
 
-        setGameTypeList(res[0].game_type);
-        setGenderList(res[0].gender);
-        setGameLengthList(res[0].game_length);
-      });
+        const requestOptions = {
+          headers,
+        };
+
+        fetch(url, requestOptions)
+          .then((res) => {
+            if (res.ok) {
+              console.log("res was ok");
+              return res.json();
+            } else throw new Error("Network response was not ok.");
+          })
+          .then((res) => {
+            setSportSpecificValues(res.sports);
+
+            console.log("Results are...");
+            console.log(res.sports);
+          });
+      } catch (error) {
+        console.log("Error making authenticated request:", error);
+        // Handle error
+      }
+    };
+    fetchData();
   }, []);
 
   // const handleError = (errror, input) => {
@@ -170,108 +200,149 @@ const CreateGame = ({ navigation }) => {
     postGame();
   };
 
-  var calibres = calibreList;
-  var gameTypes = gameTypeList;
-  var genders = genderList;
-  var gameLengths = gameLengthList;
+  if (isSportSelected === true) {
+    console.log("sportSelected is " + isSportSelected);
+    console.log("selectedSport is " + selectedSport);
+    var calibres = calibreList;
+    var gameTypes = gameTypeList;
+    var genders = genderList;
+    var gameLengths = gameLengthList;
 
-  return (
-    <View style={Styles.container}>
-      <View style={Styles.inputView}>
-        <Picker
-          style={Styles.TextInput}
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          language={calibres}
-          onValueChange={handleCalibreChange}
-          label="Calibre"
-        />
+    return (
+      <View style={Styles.container}>
+        <View style={Styles.inputView}>
+          <Picker
+            style={Styles.TextInput}
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            language={calibres}
+            onValueChange={handleCalibreChange}
+            label="Calibre"
+          />
+        </View>
+
+        <View style={Styles.inputView}>
+          <Picker
+            style={Styles.TextInput}
+            placeholder="Game Type"
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            onValueChange={handleGameTypeChange}
+            language={gameTypes}
+            label="Game Type"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          <Picker
+            style={Styles.TextInput}
+            defaultValue=""
+            placeholderText
+            Color="#005F66"
+            onValueChange={handleGenderChange}
+            language={genders}
+            label="Gender"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          {/* This will be a LOCATION SELECTOR */}
+          <TextInput
+            style={Styles.TextInput}
+            placeholder="Location"
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            onChangeText={(location) => setGameAddress(location)}
+            language={gameTypes}
+            label="Location"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          {/* This will be a DATE SELECTOR */}
+          <TextInput
+            style={Styles.TextInput}
+            placeholder="Date"
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            onChangeText={(date) => setGameDate(date)}
+            language={gameTypes}
+            label="Date"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          {/* This will be a TIME SELECTOR */}
+          <TextInput
+            style={Styles.TextInput}
+            placeholder="Time"
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            onChangeText={(time) => setGameTime(time)}
+            label="Time"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          <Picker
+            style={Styles.TextInput}
+            placeholder="Game Length (minutes)"
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            onValueChange={handleGameLengthChange}
+            language={gameLengths}
+            label="Game Length"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          <TextInput
+            style={Styles.TextInput}
+            placeholder="Additional Info"
+            defaultValue=""
+            placeholderTextColor="#005F66"
+            onChangeText={(additional_info) =>
+              setAdditionalInfo(additional_info)
+            }
+          />
+        </View>
+        <View>
+          <TouchableOpacity>
+            <Button title="CREATE GAME" onPress={() => handleFormSubmit()} />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View></View>
-      <View style={Styles.inputView}>
-        <Picker
-          style={Styles.TextInput}
-          placeholder="Game Type"
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          onValueChange={handleGameTypeChange}
-          language={gameTypes}
-          label="Game Type"
-        />
-      </View>
-      <View style={Styles.inputView}>
-        <Picker
-          style={Styles.TextInput}
-          defaultValue=""
-          placeholderText
-          Color="#005F66"
-          onValueChange={handleGenderChange}
-          language={genders}
-          label="Gender"
-        />
-      </View>
-      <View style={Styles.inputView}>
-        {/* This will be a LOCATION SELECTOR */}
-        <TextInput
-          style={Styles.TextInput}
-          placeholder="Location"
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          onChangeText={(location) => setGameAddress(location)}
-          language={gameTypes}
-          label="Location"
-        />
-      </View>
-      <View style={Styles.inputView}>
-        {/* This will be a DATE SELECTOR */}
-        <TextInput
-          style={Styles.TextInput}
-          placeholder="Date"
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          onChangeText={(date) => setGameDate(date)}
-          language={gameTypes}
-          label="Date"
-        />
-      </View>
-      <View style={Styles.inputView}>
-        {/* This will be a TIME SELECTOR */}
-        <TextInput
-          style={Styles.TextInput}
-          placeholder="Time"
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          onChangeText={(time) => setGameTime(time)}
-          label="Time"
-        />
-      </View>
-      <View style={Styles.inputView}>
-        <Picker
-          style={Styles.TextInput}
-          placeholder="Game Length (minutes)"
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          onValueChange={handleGameLengthChange}
-          language={gameLengths}
-          label="Game Length"
-        />
-      </View>
-      <View style={Styles.inputView}>
-        <TextInput
-          style={Styles.TextInput}
-          placeholder="Additional Info"
-          defaultValue=""
-          placeholderTextColor="#005F66"
-          onChangeText={(additional_info) => setAdditionalInfo(additional_info)}
-        />
-      </View>
-      <View>
-        <TouchableOpacity>
-          <Button title="CREATE GAME" onPress={() => handleFormSubmit()} />
+    );
+  } else {
+    let allActiveGames = []; // Initialize as null initially
+    const noActiveGames = <Text>...</Text>;
+
+    if (sportSpecificValues.length > 0) {
+      allActiveGames = sportSpecificValues.map((sport, index) => (
+        <TouchableOpacity
+          key={sport.id}
+          onPress={() => {
+            setIsSportSelected(true);
+            setSelectedSport(sport.sport);
+            setCalibreList(sport.calibre);
+            setGameTypeList(sport.game_type);
+            setGameLengthList(sport.game_length);
+            if (sport.gender !== null) {
+              setGenderList(sport.gender);
+            }
+          }}
+        >
+          <Text key={index} style={Styles.primaryButton}>
+            {sport.sport}
+          </Text>
         </TouchableOpacity>
+      ));
+      console.log("sportSpecificValues are " + sportSpecificValues[0].sport);
+    }
+    return (
+      <View style={Styles.container}>
+        <View style={Styles.homeContainer}>
+          <ScrollView>
+            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+          </ScrollView>
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
 };
 
 export default CreateGame;

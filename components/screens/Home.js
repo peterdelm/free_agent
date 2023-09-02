@@ -120,10 +120,10 @@ function HomeScreen({ navigation, message }) {
       {<Banner message={successMessage} />}
       <View style={Styles.homeContainer}>
         <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>
-          <Text style={Styles.primaryButton}>Find a Goalie</Text>
+          <Text style={Styles.primaryButton}>Find a Player</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
-          <Text style={Styles.primaryButton}>Manage Player Profiles</Text>
+          <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
         </TouchableOpacity>
         <ScrollView>
           {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
