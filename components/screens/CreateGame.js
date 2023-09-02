@@ -174,7 +174,7 @@ const CreateGame = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        fetch(url, requestOptions)
+        await fetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               return res.json();

@@ -15,8 +15,9 @@ import {
 import React, { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import react from "react";
 
 function HomeScreen({ navigation, message }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -69,7 +70,7 @@ function HomeScreen({ navigation, message }) {
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res))
+          .then((res) => setActiveGames(res.activeGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -82,7 +83,7 @@ function HomeScreen({ navigation, message }) {
     fetchData();
   }, []);
 
-  const allActiveGames = []; // Initialize as null initially
+  let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Games yet. Why not</Text>;
 
   if (activeGames.length > 0) {
