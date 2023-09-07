@@ -45,43 +45,45 @@ function HomeScreen({ navigation, message }) {
     }
   };
 
-  useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+  useFocusEffect(
+    React.useCallback(() => {
+      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
 
-    const fetchData = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
+      const fetchData = async () => {
+        try {
+          const token = await getTokenFromStorage();
+          console.log("Token is " + token);
+          console.log("URL is " + url);
 
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          };
 
-        const requestOptions = {
-          headers,
-        };
+          const requestOptions = {
+            headers,
+          };
 
-        fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              console.log("res was ok");
-              return res.json();
-            } else throw new Error("Network response was not ok.");
-          })
-          .then((res) => setActiveGames(res.activeGames))
-          .catch((error) => {
-            console.log("Error during fetch:", error);
-            // Handle specific error scenarios
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    fetchData();
-  }, []);
+          fetch(url, requestOptions)
+            .then((res) => {
+              if (res.ok) {
+                console.log("res was ok");
+                return res.json();
+              } else throw new Error("Network response was not ok.");
+            })
+            .then((res) => setActiveGames(res.activeGames))
+            .catch((error) => {
+              console.log("Error during fetch:", error);
+              // Handle specific error scenarios
+            });
+        } catch (error) {
+          console.log("Error making authenticated request:", error);
+          // Handle error
+        }
+      };
+      fetchData();
+    }, [])
+  );
 
   let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Games yet. Why not</Text>;

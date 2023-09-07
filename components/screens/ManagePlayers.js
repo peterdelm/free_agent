@@ -34,7 +34,7 @@ const ManagePlayers = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/player_roster";
 
     const fetchData = async () => {
       try {
@@ -58,7 +58,7 @@ const ManagePlayers = ({ navigation }) => {
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.activeGames))
+          .then((res) => setActiveGames(res.players))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -72,7 +72,7 @@ const ManagePlayers = ({ navigation }) => {
   }, []);
 
   let allActiveGames = []; // Initialize as null initially
-  const noActiveGames = <Text>No Games yet. Why not</Text>;
+  const noActiveGames = <Text>No Players yet. Why not</Text>;
 
   if (activeGames.length > 0) {
     allActiveGames = activeGames.map((game, index) => (
@@ -81,7 +81,7 @@ const ManagePlayers = ({ navigation }) => {
         onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
       >
         <Text key={index} style={Styles.activeGames}>
-          {game.location} @ {game.time}
+          {game.sport} @ {game.time}
         </Text>
       </TouchableOpacity>
     ));
@@ -94,7 +94,7 @@ const ManagePlayers = ({ navigation }) => {
           {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
         </ScrollView>
         <TouchableOpacity onPress={() => navigation.navigate("CreatePlayer")}>
-        <Text style={Styles.primaryButton}>Create a new player profile</Text>
+          <Text style={Styles.primaryButton}>Create a new player profile</Text>
         </TouchableOpacity>
       </View>
     </View>

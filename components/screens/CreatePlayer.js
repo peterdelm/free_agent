@@ -19,6 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
+  const [position, setPosition] = useState("");
+
   const [calibre, setCalibre] = useState("");
   const [game_type, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
@@ -30,13 +32,14 @@ const CreatePlayer = ({ navigation }) => {
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
-  const [calibreList, setCalibreList] = useState([]);bio
+  const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
-  const [travelRange, setTravelRange] = useState("")
+  const [travelRange, setTravelRange] = useState("");
+  const [positionList, setPositionList] = useState([]);
 
   const getTokenFromStorage = async () => {
     try {
@@ -57,11 +60,8 @@ const CreatePlayer = ({ navigation }) => {
   const handleGenderChange = (input) => {
     setGender(input);
   };
-  const handleGameLengthChange = (input) => {
-    setGameLength(input);
-  };
-  const handleGameTypeChange = (input) => {
-    setGameType(input);
+  const handlePositionChange = (input) => {
+    setPosition(input);
   };
 
   const handleFormSubmit = () => {
@@ -147,13 +147,13 @@ const CreatePlayer = ({ navigation }) => {
       location,
       additional_info,
       travelRange,
-      is_active: true,
+      sport: sport,
     };
 
     console.log(body);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
 
-    const postGame = async () => {
+    const postPlayer = async () => {
       try {
         const token = await getTokenFromStorage();
         console.log("Token is " + token);
@@ -194,7 +194,7 @@ const CreatePlayer = ({ navigation }) => {
         // Handle error
       }
     };
-    postGame();
+    postPlayer();
   };
 
   if (isSportSelected === true) {
@@ -203,7 +203,8 @@ const CreatePlayer = ({ navigation }) => {
     var calibres = calibreList;
     var gameTypes = gameTypeList;
     var genders = genderList;
-    var gameLengths = gameLengthList;
+    var sport = selectedSport;
+    var positions = positionList;
 
     return (
       <View style={Styles.container}>
@@ -229,6 +230,17 @@ const CreatePlayer = ({ navigation }) => {
           />
         </View>
         <View style={Styles.inputView}>
+          <Picker
+            style={Styles.TextInput}
+            defaultValue=""
+            placeholderText
+            Color="#005F66"
+            onValueChange={handlePositionChange}
+            language={positions}
+            label="Position"
+          />
+        </View>
+        <View style={Styles.inputView}>
           {/* This will be a LOCATION SELECTOR */}
           <TextInput
             style={Styles.TextInput}
@@ -247,9 +259,7 @@ const CreatePlayer = ({ navigation }) => {
             placeholder="Travel Range (km)"
             defaultValue=""
             placeholderTextColor="#005F66"
-            onChangeText={(travelRange) =>
-              setTravelRange(travelRange)
-            }
+            onChangeText={(travelRange) => setTravelRange(travelRange)}
           />
         </View>
         <View style={Styles.inputView}>
@@ -282,6 +292,7 @@ const CreatePlayer = ({ navigation }) => {
             setIsSportSelected(true);
             setSelectedSport(sport.sport);
             setCalibreList(sport.calibre);
+            setPositionList(sport.position);
             setGameTypeList(sport.game_type);
             setGameLengthList(sport.game_length);
             if (sport.gender !== null) {
