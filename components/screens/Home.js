@@ -128,6 +128,8 @@ function HomeScreen({ navigation, message }) {
         <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
           <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
         </TouchableOpacity>
+        <Text>Upcoming Games:</Text>
+
         <ScrollView>
           {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
         </ScrollView>

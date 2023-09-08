@@ -78,7 +78,7 @@ const ManagePlayers = ({ navigation }) => {
     allActiveGames = activeGames.map((game, index) => (
       <TouchableOpacity
         key={game.id}
-        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+        onPress={() => navigation.navigate("ViewPlayer", { playerId: game.id })}
       >
         <Text key={index} style={Styles.activeGames}>
           {game.sport} @ {game.time}
