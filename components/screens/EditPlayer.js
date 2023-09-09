@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -40,6 +40,11 @@ const EditPlayer = ({ navigation }) => {
   const [selectedSport, setSelectedSport] = useState();
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+
+  const route = useRoute();
+  const { playerId } = route.params;
+  const [game, setGame] = useState([]);
+  console.log("GameId is " + playerId);
 
   const getTokenFromStorage = async () => {
     try {

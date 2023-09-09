@@ -60,7 +60,9 @@ function ViewPlayer({ navigation, message }) {
       <Text style={Styles.primaryButton}>{player.calibre}</Text>
       <Text style={Styles.primaryButton}>{player.gender}</Text>
       <TouchableOpacity
-        onPress={() => navigation.navigate("EditPlayer", { playerId: game.id })}
+        onPress={() =>
+          navigation.navigate("EditPlayer", { playerId: player.id })
+        }
       >
         <Text style={Styles.primaryButton}>Edit Player</Text>
       </TouchableOpacity>
