@@ -48,6 +48,7 @@ function HomeScreen({ navigation, message }) {
   useFocusEffect(
     React.useCallback(() => {
       const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+      console.log('UsefocusEffect Fetch games called')
 
       const fetchData = async () => {
         try {

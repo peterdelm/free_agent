@@ -61,7 +61,7 @@ function ViewPlayer({ navigation, message }) {
       <Text style={Styles.primaryButton}>{player.gender}</Text>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("EditPlayer", { playerId: player.id })
+          navigation.navigate("EditPlayer", { playerId: player.id, sportId: player.sportId })
         }
       >
         <Text style={Styles.primaryButton}>Edit Player</Text>

@@ -40,11 +40,14 @@ const EditPlayer = ({ navigation }) => {
   const [selectedSport, setSelectedSport] = useState();
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+  const [player, setPlayer] = useState({})
 
   const route = useRoute();
   const { playerId } = route.params;
+  const { sportId } = route.params;
+
   const [game, setGame] = useState([]);
-  console.log("GameId is " + playerId);
+  console.log("PlayerId is " + playerId);
 
   const getTokenFromStorage = async () => {
     try {
@@ -71,22 +74,61 @@ const EditPlayer = ({ navigation }) => {
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'Game Created' notification
   };
 
-  //Retrieve the relevant values for the selected sport
+///////////////////////////////////////////////////////
+//retrieve the player values
+const fetchPlayerData = async () => {
+  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+  console.log("FetchplayerData called with url " + url);
+
+  try {
+    const token = await getTokenFromStorage();
+    console.log("Token is " + token);
+    console.log("URL is " + url);
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const requestOptions = {
+      headers,
+    };
+
+    fetch(url, requestOptions)
+      .then((res) => {
+        if (res.ok) {
+          console.log("res was ok");
+          return res.json();
+        } else throw new Error("Network response was not ok.");
+      })
+      .then((res) => {
+        console.log(res)
+        setPlayer(res)
+        console.log("Player calibre is  is " + player.personal_calibre)
+      });
+  } catch (error) {
+    console.log("Error making authenticated request:", error);
+    // Handle error
+  }
+  
+
+};
+///////////////////////////////////////////////////////
+
+//Retrieve the relevant values for the selected sport
   useEffect(() => {
-    console.log("CreatePlayer useEffect called");
+    console.log("EditPlayer useEffect called");
 
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
 
-    const fetchData = async () => {
+    const fetchSportData = async () => {
+      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports/" + sportId;
+
       try {
         const token = await getTokenFromStorage();
         console.log("Token is " + token);
-        console.log("URL is " + url);
+        console.log("Fetch Sport Data called with URL " + url);
 
         const headers = {
           "Content-Type": "application/json",
@@ -105,29 +147,27 @@ const EditPlayer = ({ navigation }) => {
             } else throw new Error("Network response was not ok.");
           })
           .then((res) => {
-            setSportSpecificValues(res.sports);
+            console.log("Sports Results are...");
+            console.log(res);
+            setSportSpecificValues(res);
+            setCalibreList(res.calibre)
+            setPositionList(res.position)
 
-            console.log("Results are...");
-            console.log(res.sports);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error
       }
     };
-    fetchData();
+    fetchSportData();
+    fetchPlayerData();
   }, []);
-
-  // const handleError = (errror, input) => {
-  //   setErrors((prevState) => ({ ...prevState, [input]: error }));
-  // };
 
   const validateInputs = () => {
     if (!calibre) {
       console.log(calibre);
 
       console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
     }
   };
 
@@ -207,6 +247,7 @@ const EditPlayer = ({ navigation }) => {
   var genders = genderList;
   var sport = selectedSport;
   var positions = positionList;
+  console.log("Player is " + player)
 
   return (
     <View style={Styles.container}>
@@ -217,7 +258,7 @@ const EditPlayer = ({ navigation }) => {
           placeholderTextColor="#005F66"
           language={calibres}
           onValueChange={handleCalibreChange}
-          label="Calibre"
+          label={player.personal_calibre}
         />
       </View>
       <View style={Styles.inputView}>
@@ -228,7 +269,7 @@ const EditPlayer = ({ navigation }) => {
           Color="#005F66"
           onValueChange={handleGenderChange}
           language={genders}
-          label="Gender"
+          label={player.gender}
         />
       </View>
       <View style={Styles.inputView}>
@@ -239,7 +280,7 @@ const EditPlayer = ({ navigation }) => {
           Color="#005F66"
           onValueChange={handlePositionChange}
           language={positions}
-          label="Position"
+          label={player.position}
         />
       </View>
       <View style={Styles.inputView}>
@@ -251,7 +292,7 @@ const EditPlayer = ({ navigation }) => {
           placeholderTextColor="#005F66"
           onChangeText={(location) => setPlayerAddress(location)}
           language={gameTypes}
-          label="Location"
+          label={player.location}
         />
       </View>
       {/* Make this a sliding scale and move it to a subsequent window */}
@@ -262,6 +303,7 @@ const EditPlayer = ({ navigation }) => {
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(travelRange) => setTravelRange(travelRange)}
+          placeholderText = {player.travel_range}
         />
       </View>
       <View style={Styles.inputView}>

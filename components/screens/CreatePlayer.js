@@ -38,6 +38,7 @@ const CreatePlayer = ({ navigation }) => {
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
+  const [selectedSportId, setSelectedSportId] = useState("");
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
 
@@ -148,6 +149,7 @@ const CreatePlayer = ({ navigation }) => {
       additional_info,
       travelRange,
       sport: sport,
+      sportId: sportId
     };
 
     console.log(body);
@@ -204,6 +206,7 @@ const CreatePlayer = ({ navigation }) => {
     var gameTypes = gameTypeList;
     var genders = genderList;
     var sport = selectedSport;
+    var sportId = selectedSportId;
     var positions = positionList;
 
     return (
@@ -290,6 +293,7 @@ const CreatePlayer = ({ navigation }) => {
           key={sport.id}
           onPress={() => {
             setIsSportSelected(true);
+            setSelectedSportId(sport.id)
             setSelectedSport(sport.sport);
             setCalibreList(sport.calibre);
             setPositionList(sport.position);
