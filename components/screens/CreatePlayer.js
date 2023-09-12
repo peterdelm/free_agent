@@ -149,7 +149,7 @@ const CreatePlayer = ({ navigation }) => {
       additional_info,
       travelRange,
       sport: sport,
-      sportId: sportId
+      sportId: sportId,
     };
 
     console.log(body);
@@ -293,7 +293,7 @@ const CreatePlayer = ({ navigation }) => {
           key={sport.id}
           onPress={() => {
             setIsSportSelected(true);
-            setSelectedSportId(sport.id)
+            setSelectedSportId(sport.id);
             setSelectedSport(sport.sport);
             setCalibreList(sport.calibre);
             setPositionList(sport.position);

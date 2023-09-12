@@ -40,7 +40,7 @@ const EditPlayer = ({ navigation }) => {
   const [selectedSport, setSelectedSport] = useState();
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
-  const [player, setPlayer] = useState({})
+  const [player, setPlayer] = useState({});
 
   const route = useRoute();
   const { playerId } = route.params;
@@ -76,51 +76,48 @@ const EditPlayer = ({ navigation }) => {
     onSubmit();
   };
 
-///////////////////////////////////////////////////////
-//retrieve the player values
-const fetchPlayerData = async () => {
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
-  console.log("FetchplayerData called with url " + url);
+  ///////////////////////////////////////////////////////
+  //retrieve the player values
+  const fetchPlayerData = async () => {
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+    console.log("FetchplayerData called with url " + url);
 
-  try {
-    const token = await getTokenFromStorage();
-    console.log("Token is " + token);
-    console.log("URL is " + url);
+    try {
+      const token = await getTokenFromStorage();
+      console.log("Token is " + token);
+      console.log("URL is " + url);
 
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-    const requestOptions = {
-      headers,
-    };
+      const requestOptions = {
+        headers,
+      };
 
-    fetch(url, requestOptions)
-      .then((res) => {
-        if (res.ok) {
-          console.log("res was ok");
-          return res.json();
-        } else throw new Error("Network response was not ok.");
-      })
-      .then((res) => {
-        console.log(res)
-        setPlayer(res)
-        console.log("Player calibre is  is " + player.personal_calibre)
-      });
-  } catch (error) {
-    console.log("Error making authenticated request:", error);
-    // Handle error
-  }
-  
+      fetch(url, requestOptions)
+        .then((res) => {
+          if (res.ok) {
+            console.log("res was ok");
+            return res.json();
+          } else throw new Error("Network response was not ok.");
+        })
+        .then((res) => {
+          console.log(res);
+          setPlayer(res);
+          console.log("Player calibre is  is " + player.personal_calibre);
+        });
+    } catch (error) {
+      console.log("Error making authenticated request:", error);
+      // Handle error
+    }
+  };
+  ///////////////////////////////////////////////////////
 
-};
-///////////////////////////////////////////////////////
-
-//Retrieve the relevant values for the selected sport
+  //Retrieve the sport values
   useEffect(() => {
     console.log("EditPlayer useEffect called");
-
 
     const fetchSportData = async () => {
       const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports/" + sportId;
@@ -150,9 +147,8 @@ const fetchPlayerData = async () => {
             console.log("Sports Results are...");
             console.log(res);
             setSportSpecificValues(res);
-            setCalibreList(res.calibre)
-            setPositionList(res.position)
-
+            setCalibreList(res.calibre);
+            setPositionList(res.position);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
@@ -247,7 +243,7 @@ const fetchPlayerData = async () => {
   var genders = genderList;
   var sport = selectedSport;
   var positions = positionList;
-  console.log("Player is " + player)
+  console.log("Player is " + player);
 
   return (
     <View style={Styles.container}>
@@ -303,7 +299,7 @@ const fetchPlayerData = async () => {
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(travelRange) => setTravelRange(travelRange)}
-          placeholderText = {player.travel_range}
+          placeholderText={player.travel_range}
         />
       </View>
       <View style={Styles.inputView}>
