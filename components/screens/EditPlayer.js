@@ -12,12 +12,12 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const CreatePlayer = ({ navigation }) => {
+const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
 
@@ -38,9 +38,16 @@ const CreatePlayer = ({ navigation }) => {
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
-  const [selectedSportId, setSelectedSportId] = useState("");
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+  const [player, setPlayer] = useState({});
+
+  const route = useRoute();
+  const { playerId } = route.params;
+  const { sportId } = route.params;
+
+  const [game, setGame] = useState([]);
+  console.log("PlayerId is " + playerId);
 
   const getTokenFromStorage = async () => {
     try {
@@ -67,22 +74,58 @@ const CreatePlayer = ({ navigation }) => {
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'Game Created' notification
   };
 
-  //Retrieve the relevant values for the selected sport
+  ///////////////////////////////////////////////////////
+  //retrieve the player values
+  const fetchPlayerData = async () => {
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+    console.log("FetchplayerData called with url " + url);
+
+    try {
+      const token = await getTokenFromStorage();
+      console.log("Token is " + token);
+      console.log("URL is " + url);
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const requestOptions = {
+        headers,
+      };
+
+      fetch(url, requestOptions)
+        .then((res) => {
+          if (res.ok) {
+            console.log("res was ok");
+            return res.json();
+          } else throw new Error("Network response was not ok.");
+        })
+        .then((res) => {
+          console.log(res);
+          setPlayer(res);
+          console.log("Player calibre is  is " + player.personal_calibre);
+        });
+    } catch (error) {
+      console.log("Error making authenticated request:", error);
+      // Handle error
+    }
+  };
+
+  //////////////////////////////////////////////////////
+  //Retrieve the sport values
   useEffect(() => {
-    console.log("CreatePlayer useEffect called");
+    console.log("EditPlayer useEffect called");
 
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
+    const fetchSportData = async () => {
+      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports/" + sportId;
 
-    const fetchData = async () => {
       try {
         const token = await getTokenFromStorage();
         console.log("Token is " + token);
-        console.log("URL is " + url);
+        console.log("Fetch Sport Data called with URL " + url);
 
         const headers = {
           "Content-Type": "application/json",
@@ -101,29 +144,26 @@ const CreatePlayer = ({ navigation }) => {
             } else throw new Error("Network response was not ok.");
           })
           .then((res) => {
-            setSportSpecificValues(res.sports);
-
-            console.log("Results are...");
-            console.log(res.sports);
+            console.log("Sports Results are...");
+            console.log(res);
+            setSportSpecificValues(res);
+            setCalibreList(res.calibre);
+            setPositionList(res.position);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error
       }
     };
-    fetchData();
+    fetchSportData();
+    fetchPlayerData();
   }, []);
-
-  // const handleError = (errror, input) => {
-  //   setErrors((prevState) => ({ ...prevState, [input]: error }));
-  // };
 
   const validateInputs = () => {
     if (!calibre) {
       console.log(calibre);
 
       console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
     }
   };
 
@@ -149,7 +189,6 @@ const CreatePlayer = ({ navigation }) => {
       additional_info,
       travelRange,
       sport: sport,
-      sportId: sportId,
     };
 
     console.log(body);
@@ -185,7 +224,7 @@ const CreatePlayer = ({ navigation }) => {
               console.log("Submit successful");
               navigation.navigate("Home", {
                 successMessage:
-                  "Player created successfully. Free Agent pending.",
+                  "Game created successfully. Free Agent pending.",
               });
             } else {
               console.log("Submit Failed");
@@ -199,128 +238,86 @@ const CreatePlayer = ({ navigation }) => {
     postPlayer();
   };
 
-  if (isSportSelected === true) {
-    console.log("sportSelected is " + isSportSelected);
-    console.log("selectedSport is " + selectedSport);
-    var calibres = calibreList;
-    var gameTypes = gameTypeList;
-    var genders = genderList;
-    var sport = selectedSport;
-    var sportId = selectedSportId;
-    var positions = positionList;
+  var calibres = calibreList;
+  var gameTypes = gameTypeList;
+  var genders = genderList;
+  var sport = selectedSport;
+  var positions = positionList;
+  console.log("Player is " + player);
 
-    return (
-      <View style={Styles.container}>
-        <View style={Styles.inputView}>
-          <Picker
-            style={Styles.TextInput}
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            language={calibres}
-            onValueChange={handleCalibreChange}
-            label="Calibre"
-          />
-        </View>
-        <View style={Styles.inputView}>
-          <Picker
-            style={Styles.TextInput}
-            defaultValue=""
-            placeholderText
-            Color="#005F66"
-            onValueChange={handleGenderChange}
-            language={genders}
-            label="Gender"
-          />
-        </View>
-        <View style={Styles.inputView}>
-          <Picker
-            style={Styles.TextInput}
-            defaultValue=""
-            placeholderText
-            Color="#005F66"
-            onValueChange={handlePositionChange}
-            language={positions}
-            label="Position"
-          />
-        </View>
-        <View style={Styles.inputView}>
-          {/* This will be a LOCATION SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Location"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(location) => setPlayerAddress(location)}
-            language={gameTypes}
-            label="Location"
-          />
-        </View>
-        {/* Make this a sliding scale and move it to a subsequent window */}
-        <View style={Styles.inputView}>
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Travel Range (km)"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(travelRange) => setTravelRange(travelRange)}
-          />
-        </View>
-        <View style={Styles.inputView}>
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Optional Bio"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(additional_info) =>
-              setAdditionalInfo(additional_info)
-            }
-          />
-        </View>
-        <View>
-          <TouchableOpacity>
-            <Button title="CREATE PLAYER" onPress={() => handleFormSubmit()} />
-          </TouchableOpacity>
-        </View>
+  return (
+    <View style={Styles.container}>
+      <View style={Styles.inputView}>
+        <Picker
+          style={Styles.TextInput}
+          defaultValue=""
+          placeholderTextColor="#005F66"
+          language={calibres}
+          onValueChange={handleCalibreChange}
+          label={player.personal_calibre}
+        />
       </View>
-    );
-  } else {
-    let allActiveGames = []; // Initialize as null initially
-    const noActiveGames = <Text>...</Text>;
-
-    if (sportSpecificValues.length > 0) {
-      allActiveGames = sportSpecificValues.map((sport, index) => (
-        <TouchableOpacity
-          key={sport.id}
-          onPress={() => {
-            setIsSportSelected(true);
-            setSelectedSportId(sport.id);
-            setSelectedSport(sport.sport);
-            setCalibreList(sport.calibre);
-            setPositionList(sport.position);
-            setGameTypeList(sport.game_type);
-            setGameLengthList(sport.game_length);
-            if (sport.gender !== null) {
-              setGenderList(sport.gender);
-            }
-          }}
-        >
-          <Text key={index} style={Styles.primaryButton}>
-            {sport.sport}
-          </Text>
+      <View style={Styles.inputView}>
+        <Picker
+          style={Styles.TextInput}
+          defaultValue=""
+          placeholderText
+          Color="#005F66"
+          onValueChange={handleGenderChange}
+          language={genders}
+          label={player.gender}
+        />
+      </View>
+      <View style={Styles.inputView}>
+        <Picker
+          style={Styles.TextInput}
+          defaultValue=""
+          placeholderText
+          Color="#005F66"
+          onValueChange={handlePositionChange}
+          language={positions}
+          label={player.position}
+        />
+      </View>
+      <View style={Styles.inputView}>
+        {/* This will be a LOCATION SELECTOR */}
+        <TextInput
+          style={Styles.TextInput}
+          placeholder="Location"
+          defaultValue=""
+          placeholderTextColor="#005F66"
+          onChangeText={(location) => setPlayerAddress(location)}
+          language={gameTypes}
+          label={player.location}
+        />
+      </View>
+      {/* Make this a sliding scale and move it to a subsequent window */}
+      <View style={Styles.inputView}>
+        <TextInput
+          style={Styles.TextInput}
+          placeholder="Travel Range (km)"
+          defaultValue=""
+          placeholderTextColor="#005F66"
+          onChangeText={(travelRange) => setTravelRange(travelRange)}
+          placeholderText={player.travel_range}
+        />
+      </View>
+      <View style={Styles.inputView}>
+        <TextInput
+          style={Styles.TextInput}
+          placeholder="Optional Bio"
+          defaultValue=""
+          placeholderTextColor="#005F66"
+          onChangeText={(additional_info) => setAdditionalInfo(additional_info)}
+        />
+      </View>
+      <View>
+        <TouchableOpacity>
+          <Button title="SAVE PLAYER" onPress={() => handleFormSubmit()} />
         </TouchableOpacity>
-      ));
-      console.log("sportSpecificValues are " + sportSpecificValues[0].sport);
-    }
-    return (
-      <View style={Styles.container}>
-        <View style={Styles.homeContainer}>
-          <ScrollView>
-            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-          </ScrollView>
-        </View>
       </View>
-    );
-  }
+    </View>
+  );
 };
 
-export default CreatePlayer;
+export default EditPlayer;

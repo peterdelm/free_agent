@@ -6,7 +6,10 @@ import Styles from "./Styles";
 class Pickering extends Component {
   constructor(props) {
     super(props);
-    this.state = { language: props.language };
+    this.state = {
+      language: props.language,
+      label: props.label,
+    };
   }
 
   render() {
@@ -15,21 +18,16 @@ class Pickering extends Component {
         <Picker
           style={Styles.dropdown}
           selectedValue={this.state.language}
-          onValueChange={(itemValue, itemIndex) =>
-            this.setState({ language: itemValue })
-          }
+          onValueChange={(itemValue) => {
+            this.setState({ language: itemValue });
+            this.props.onValueChange(itemValue);
+          }}
         >
-          <Picker.Item color="grey" label="Calibre" value="" />
+          <Picker.Item color="grey" label={this.props.label} value="" />
 
-          {
-            (allCalibres = this.props.language.map((course, index) => (
-              // <option value={course.id}>{course.position}</option>
-              <Picker.Item
-                label={this.props.language[index]}
-                value={this.props.language[index]}
-              />
-            )))
-          }
+          {this.props.language.map((course, index) => (
+            <Picker.Item key={index} label={course} value={course} />
+          ))}
         </Picker>
       </View>
     );
