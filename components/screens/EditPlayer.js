@@ -113,8 +113,8 @@ const EditPlayer = ({ navigation }) => {
       // Handle error
     }
   };
-  ///////////////////////////////////////////////////////
 
+  //////////////////////////////////////////////////////
   //Retrieve the sport values
   useEffect(() => {
     console.log("EditPlayer useEffect called");

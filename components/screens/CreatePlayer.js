@@ -185,7 +185,7 @@ const CreatePlayer = ({ navigation }) => {
               console.log("Submit successful");
               navigation.navigate("Home", {
                 successMessage:
-                  "Game created successfully. Free Agent pending.",
+                  "Player created successfully. Free Agent pending.",
               });
             } else {
               console.log("Submit Failed");
