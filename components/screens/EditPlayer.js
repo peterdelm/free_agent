@@ -106,7 +106,7 @@ const EditPlayer = ({ navigation }) => {
         .then((res) => {
           console.log(res);
           setPlayer(res);
-          console.log("Player calibre is  is " + player.personal_calibre);
+          console.log("Player location is " + player.location);
         });
     } catch (error) {
       console.log("Error making authenticated request:", error);
@@ -191,7 +191,7 @@ const EditPlayer = ({ navigation }) => {
       sport: sport,
     };
 
-    console.log(body);
+    console.log("SavePlayer submit body is: " + body);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
 
     const postPlayer = async () => {
@@ -254,7 +254,7 @@ const EditPlayer = ({ navigation }) => {
           placeholderTextColor="#005F66"
           language={calibres}
           onValueChange={handleCalibreChange}
-          label={player.personal_calibre}
+          label={player.calibre}
         />
       </View>
       <View style={Styles.inputView}>
@@ -283,19 +283,19 @@ const EditPlayer = ({ navigation }) => {
         {/* This will be a LOCATION SELECTOR */}
         <TextInput
           style={Styles.TextInput}
-          placeholder="Location"
+          placeholder={`${player.location}`}
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(location) => setPlayerAddress(location)}
           language={gameTypes}
-          label={player.location}
+          label={`${player.location}`}
         />
       </View>
       {/* Make this a sliding scale and move it to a subsequent window */}
       <View style={Styles.inputView}>
         <TextInput
           style={Styles.TextInput}
-          placeholder="Travel Range (km)"
+          placeholder={`Travel Range: ${player.travel_range} km`}
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(travelRange) => setTravelRange(travelRange)}
@@ -305,8 +305,8 @@ const EditPlayer = ({ navigation }) => {
       <View style={Styles.inputView}>
         <TextInput
           style={Styles.TextInput}
-          placeholder="Optional Bio"
           defaultValue=""
+          placeholder={`${player.bio}`}
           placeholderTextColor="#005F66"
           onChangeText={(additional_info) => setAdditionalInfo(additional_info)}
         />

@@ -147,12 +147,13 @@ const CreatePlayer = ({ navigation }) => {
       calibre,
       location,
       additional_info,
+      position,
       travelRange,
       sport: sport,
       sportId: sportId,
     };
 
-    console.log(body);
+    console.log("CreatePlayer OnSubmit body is " + body);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
 
     const postPlayer = async () => {

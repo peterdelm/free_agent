@@ -9,6 +9,8 @@ function ViewPlayer({ navigation, message }) {
   const { playerId } = route.params;
   const [player, setPlayer] = useState([]);
   console.log("PlayerId is " + playerId);
+  console.log("Player is " + player);
+
   const getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem("@session_token");
@@ -57,6 +59,11 @@ function ViewPlayer({ navigation, message }) {
   return (
     <View style={Styles.container}>
       <Text style={Styles.primaryButton}>THIS IS THE PLAYER SCREEN</Text>
+      <Text>Calibre: {player.calibre}</Text>
+      <Text>Location: {player.location}</Text>
+      <Text>Travel Range: {player.travel_range}</Text>
+      <Text>Bio: {player.bio}</Text>
+      <Text>Position: {player.position}</Text>
       <Text style={Styles.primaryButton}>{player.calibre}</Text>
       <Text style={Styles.primaryButton}>{player.gender}</Text>
       <TouchableOpacity
