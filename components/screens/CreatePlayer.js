@@ -64,6 +64,9 @@ const CreatePlayer = ({ navigation }) => {
   const handlePositionChange = (input) => {
     setPosition(input);
   };
+  const handleTravelRangeChange = (input) => {
+    setTravelRange(input);
+  };
 
   const handleFormSubmit = () => {
     onSubmit();
@@ -153,7 +156,7 @@ const CreatePlayer = ({ navigation }) => {
       sportId: sportId,
     };
 
-    console.log("CreatePlayer OnSubmit body is " + body);
+    console.log("CreatePlayer OnSubmit body is " + body.travelRange);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
 
     const postPlayer = async () => {
@@ -161,7 +164,7 @@ const CreatePlayer = ({ navigation }) => {
         const token = await getTokenFromStorage();
         console.log("Token is " + token);
         console.log("URL is " + url);
-        console.log("postPlayer async request called at line 138");
+        console.log("postPlayer async request called");
 
         const headers = {
           "Content-Type": "application/json",
@@ -263,7 +266,7 @@ const CreatePlayer = ({ navigation }) => {
             placeholder="Travel Range (km)"
             defaultValue=""
             placeholderTextColor="#005F66"
-            onChangeText={(travelRange) => setTravelRange(travelRange)}
+            onChangeText={handleTravelRangeChange}
           />
         </View>
         <View style={Styles.inputView}>
