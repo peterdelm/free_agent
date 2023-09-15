@@ -28,7 +28,7 @@ const EditPlayer = ({ navigation }) => {
   const [time, setGameTime] = useState("");
   const [game_length, setGameLength] = useState("");
   const [team_name, setTeamName] = useState("");
-  const [additional_info, setAdditionalInfo] = useState("");
+  const [bio, setBio] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
@@ -106,7 +106,7 @@ const EditPlayer = ({ navigation }) => {
         .then((res) => {
           console.log(res);
           setPlayer(res);
-          console.log("Player calibre is  is " + player.personal_calibre);
+          console.log("Player location is " + player.location);
         });
     } catch (error) {
       console.log("Error making authenticated request:", error);
@@ -186,13 +186,14 @@ const EditPlayer = ({ navigation }) => {
       gender,
       calibre,
       location,
-      additional_info,
+      bio,
       travelRange,
       sport: sport,
+      position,
     };
 
-    console.log(body);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
+    console.log("SavePlayer submit body.calibre is: " + body.position);
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
 
     const postPlayer = async () => {
       try {
@@ -207,7 +208,7 @@ const EditPlayer = ({ navigation }) => {
         };
 
         const requestOptions = {
-          method: "POST",
+          method: "PUT",
           headers,
           body: JSON.stringify(body),
         };
@@ -222,10 +223,7 @@ const EditPlayer = ({ navigation }) => {
           .then((data) => {
             if (data.success === true) {
               console.log("Submit successful");
-              navigation.navigate("Home", {
-                successMessage:
-                  "Game created successfully. Free Agent pending.",
-              });
+              navigation.navigate("ViewPlayer", { playerId: game.id });
             } else {
               console.log("Submit Failed");
             }
@@ -250,17 +248,17 @@ const EditPlayer = ({ navigation }) => {
       <View style={Styles.inputView}>
         <Picker
           style={Styles.TextInput}
-          defaultValue=""
+          defaultValue={player.calibre}
           placeholderTextColor="#005F66"
           language={calibres}
           onValueChange={handleCalibreChange}
-          label={player.personal_calibre}
+          label={player.calibre}
         />
       </View>
       <View style={Styles.inputView}>
         <Picker
           style={Styles.TextInput}
-          defaultValue=""
+          defaultValue={player.gender}
           placeholderText
           Color="#005F66"
           onValueChange={handleGenderChange}
@@ -271,7 +269,7 @@ const EditPlayer = ({ navigation }) => {
       <View style={Styles.inputView}>
         <Picker
           style={Styles.TextInput}
-          defaultValue=""
+          defaultValue={player.position}
           placeholderText
           Color="#005F66"
           onValueChange={handlePositionChange}
@@ -283,32 +281,32 @@ const EditPlayer = ({ navigation }) => {
         {/* This will be a LOCATION SELECTOR */}
         <TextInput
           style={Styles.TextInput}
-          placeholder="Location"
-          defaultValue=""
+          placeholder={`${player.location}`}
+          defaultValue={`${player.location}`}
           placeholderTextColor="#005F66"
           onChangeText={(location) => setPlayerAddress(location)}
           language={gameTypes}
-          label={player.location}
+          label={`${player.location}`}
         />
       </View>
       {/* Make this a sliding scale and move it to a subsequent window */}
       <View style={Styles.inputView}>
         <TextInput
           style={Styles.TextInput}
-          placeholder="Travel Range (km)"
-          defaultValue=""
+          placeholder={`Travel Range: ${player.travelRange} km`}
+          defaultValue={player.travelRange}
           placeholderTextColor="#005F66"
           onChangeText={(travelRange) => setTravelRange(travelRange)}
-          placeholderText={player.travel_range}
+          placeholderText={player.travelRange}
         />
       </View>
       <View style={Styles.inputView}>
         <TextInput
           style={Styles.TextInput}
-          placeholder="Optional Bio"
-          defaultValue=""
+          defaultValue={`${player.bio}`}
+          placeholder={`${player.bio}`}
           placeholderTextColor="#005F66"
-          onChangeText={(additional_info) => setAdditionalInfo(additional_info)}
+          onChangeText={(bio) => setBio(bio)}
         />
       </View>
       <View>
