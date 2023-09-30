@@ -36,6 +36,8 @@ const CreateGame = ({ navigation }) => {
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
   const getTokenFromStorage = async () => {
     try {
@@ -68,6 +70,20 @@ const CreateGame = ({ navigation }) => {
     //if onSubmit returns successfully:
     //return to HomeScreen
     //Display 'Game Created' notification
+  };
+
+  const handleAddressChange = (input) => {
+    setQuery(input);
+  };
+
+  const fetchAutocompleteSuggestons = async (addressFragment) => {
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
+
+    try {
+      const response = await fetch(
+        `YOUR_BACKEND_API_URL?addressFragment=${text}`
+      );
+    } catch {}
   };
 
   //Retrieve the relevant values for the selected sport
