@@ -74,16 +74,53 @@ const CreateGame = ({ navigation }) => {
 
   const handleAddressChange = (input) => {
     setQuery(input);
+    if (query.length > 2) {
+    console.log(query)
+    //fetch the suggestions
+fetchAutocompleteSuggestons(query);
+    }
+
   };
 
   const fetchAutocompleteSuggestons = async (addressFragment) => {
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
+    console.log("AddressFragment is " + addressFragment)
+console.log("Fetch Autocomplete Suggestions called");
 
+const headers = {
+  "Content-Type": "application/json",
+};
+
+const body = {
+addressFragment: addressFragment
+}
+
+const requestOptions = {
+  method: "POST",
+  headers,
+  body: JSON.stringify(body),
+};
     try {
-      const response = await fetch(
-        `YOUR_BACKEND_API_URL?addressFragment=${text}`
-      );
-    } catch {}
+    const response = await fetch(url, requestOptions);
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok.");
+    }
+
+    const data = await response.json();
+
+    if (data.success === true) {
+      console.log("Address Suggestions successful");
+      console.log(data.addressList);
+    } else {
+      console.log("Address Suggestions Failed");
+    }
+
+    return data; // Return the data if needed.
+  } catch (err) {
+    console.error(err);
+    throw err; // Rethrow the error for further handling, if necessary.
+  }
   };
 
   //Retrieve the relevant values for the selected sport
@@ -266,7 +303,7 @@ const CreateGame = ({ navigation }) => {
             placeholder="Location"
             defaultValue=""
             placeholderTextColor="#005F66"
-            onChangeText={(location) => setGameAddress(location)}
+            onChangeText={handleAddressChange}
             language={gameTypes}
             label="Location"
           />
