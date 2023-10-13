@@ -15,7 +15,6 @@ class AutoCompletePicker extends Component {
     this.state = {
       options: props.options || "",
       showDropdown: props.showDropdown,
-      textInputPosition: { top: 0, left: 0 },
     };
   }
 
