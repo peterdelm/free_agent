@@ -10,11 +10,13 @@ import {
   Touchable,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
+import AutoCompletePicker from "./AutocompletePicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateGame = ({ navigation }) => {
@@ -36,8 +38,10 @@ const CreateGame = ({ navigation }) => {
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
+  const [addressFragment, setAddressFragment] = useState("");
+  const [suggestionList, setSuggestionList] = useState([]);
+  const [addressInputSelected, setAddressInputSelected] = useState(false);
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
 
   const getTokenFromStorage = async () => {
     try {
@@ -67,60 +71,62 @@ const CreateGame = ({ navigation }) => {
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'Game Created' notification
   };
 
   const handleAddressChange = (input) => {
+    let data = {};
     setQuery(input);
     if (query.length > 2) {
-    console.log(query)
-    //fetch the suggestions
-fetchAutocompleteSuggestons(query);
+      fetchAutocompleteSuggestions(query);
     }
-
+    setSuggestionList(data.addressList);
+    setAddressInputSelected(true);
   };
 
-  const fetchAutocompleteSuggestons = async (addressFragment) => {
+  const displayDropdown = (options, addressInputSelected) => {
+    console.log("addressInputSelected has been called");
+    if (addressInputSelected) return <AutoCompletePicker options={options} />;
+  };
+
+  const fetchAutocompleteSuggestions = async (addressFragment) => {
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
-    console.log("AddressFragment is " + addressFragment)
-console.log("Fetch Autocomplete Suggestions called");
+    console.log("AddressFragment is " + addressFragment);
+    console.log("Fetch Autocomplete Suggestions called");
 
-const headers = {
-  "Content-Type": "application/json",
-};
+    const headers = {
+      "Content-Type": "application/json",
+    };
 
-const body = {
-addressFragment: addressFragment
-}
+    const body = {
+      addressFragment: addressFragment,
+    };
 
-const requestOptions = {
-  method: "POST",
-  headers,
-  body: JSON.stringify(body),
-};
+    const requestOptions = {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    };
     try {
-    const response = await fetch(url, requestOptions);
+      const response = await fetch(url, requestOptions);
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok.");
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const data = await response.json();
+
+      if (data.success === true) {
+        console.log("Address Suggestions successful");
+        console.log(data.addressList);
+      } else {
+        console.log("Address Suggestions Failed");
+      }
+
+      return data; // Return the data if needed.
+    } catch (err) {
+      console.error(err);
+      throw err; // Rethrow the error for further handling, if necessary.
     }
-
-    const data = await response.json();
-
-    if (data.success === true) {
-      console.log("Address Suggestions successful");
-      console.log(data.addressList);
-    } else {
-      console.log("Address Suggestions Failed");
-    }
-
-    return data; // Return the data if needed.
-  } catch (err) {
-    console.error(err);
-    throw err; // Rethrow the error for further handling, if necessary.
-  }
   };
 
   //Retrieve the relevant values for the selected sport
@@ -253,6 +259,8 @@ const requestOptions = {
     postGame();
   };
 
+  const options = ["One", "Two", "Three"];
+
   if (isSportSelected === true) {
     console.log("sportSelected is " + isSportSelected);
     console.log("selectedSport is " + selectedSport);
@@ -298,15 +306,25 @@ const requestOptions = {
         </View>
         <View style={Styles.inputView}>
           {/* This will be a LOCATION SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Location"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={handleAddressChange}
-            language={gameTypes}
-            label="Location"
-          />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TextInput
+              style={Styles.TextInput}
+              placeholder="Location"
+              defaultValue=""
+              placeholderTextColor="#005F66"
+              onChangeText={(addressFragment) =>
+                handleAddressChange(addressFragment)
+              }
+              label="Location"
+            />
+            {displayDropdown(options, addressInputSelected)}
+          </View>
         </View>
         <View style={Styles.inputView}>
           {/* This will be a DATE SELECTOR */}
@@ -332,7 +350,7 @@ const requestOptions = {
           />
         </View>
         <View style={Styles.inputView}>
-          <Picker
+          <TextInput
             style={Styles.TextInput}
             placeholder="Game Length (minutes)"
             defaultValue=""

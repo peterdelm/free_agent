@@ -102,6 +102,12 @@ const Styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center",
   },
+  autoCompleteInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingLeft: 10, // Adjust padding to center the placeholder text
+  },
   dropdown: { width: 250 },
 });
 
