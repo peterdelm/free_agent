@@ -73,62 +73,6 @@ const CreateGame = ({ navigation }) => {
     onSubmit();
   };
 
-  const handleAddressChange = (input) => {
-    let data = {};
-    setQuery(input);
-    if (query.length > 2) {
-      fetchAutocompleteSuggestions(query);
-    }
-    setSuggestionList(data.addressList);
-    setAddressInputSelected(true);
-  };
-
-  const displayDropdown = (options, addressInputSelected) => {
-    console.log("addressInputSelected has been called");
-    if (addressInputSelected) return <AutoCompletePicker options={options} />;
-  };
-
-  const fetchAutocompleteSuggestions = async (addressFragment) => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
-    console.log("AddressFragment is " + addressFragment);
-    console.log("Fetch Autocomplete Suggestions called");
-
-    const headers = {
-      "Content-Type": "application/json",
-    };
-
-    const body = {
-      addressFragment: addressFragment,
-    };
-
-    const requestOptions = {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    };
-    try {
-      const response = await fetch(url, requestOptions);
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok.");
-      }
-
-      const data = await response.json();
-
-      if (data.success === true) {
-        console.log("Address Suggestions successful");
-        console.log(data.addressList);
-      } else {
-        console.log("Address Suggestions Failed");
-      }
-
-      return data; // Return the data if needed.
-    } catch (err) {
-      console.error(err);
-      throw err; // Rethrow the error for further handling, if necessary.
-    }
-  };
-
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
     console.log("CreateGame useEffect called");
@@ -313,17 +257,7 @@ const CreateGame = ({ navigation }) => {
               alignItems: "center",
             }}
           >
-            <TextInput
-              style={Styles.TextInput}
-              placeholder="Location"
-              defaultValue=""
-              placeholderTextColor="#005F66"
-              onChangeText={(addressFragment) =>
-                handleAddressChange(addressFragment)
-              }
-              label="Location"
-            />
-            {displayDropdown(options, addressInputSelected)}
+            <AutoCompletePicker options={options} />
           </View>
         </View>
         <View style={Styles.inputView}>
