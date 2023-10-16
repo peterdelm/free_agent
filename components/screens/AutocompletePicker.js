@@ -15,11 +15,25 @@ class AutoCompletePicker extends Component {
     super(props);
     this.state = {
       options: props.options || "",
-      showDropdown: props.showDropdown,
+      showDropdown: false,
+      inputPosition: null,
+      query: "",
+      addressFragment: "",
     };
   }
 
-  fetchAutocompleteSuggestions = async (addressFragment) => {
+  handleAddressChange = (input) => {
+    let data = {};
+    this.setState({ query: input });
+    console.log(this.state.query);
+    // if (this.query.length > 2) {
+    //   fetchAutocompleteSuggestions(this.query);
+    // }
+    // setSuggestionList(data.addressList);
+    // setAddressInputSelected(true);
+  };
+
+  async fetchAutocompleteSuggestions(addressFragment) {
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
     console.log("AddressFragment is " + addressFragment);
     console.log("Fetch Autocomplete Suggestions called");
@@ -58,35 +72,42 @@ class AutoCompletePicker extends Component {
       console.error(err);
       throw err; // Rethrow the error for further handling, if necessary.
     }
-  };
-
-  handleAddressChange = (input) => {
-    let data = {};
-    setQuery(input);
-    if (query.length > 2) {
-      fetchAutocompleteSuggestions(query);
-    }
-    setSuggestionList(data.addressList);
-    setAddressInputSelected(true);
-  };
+  }
 
   toggleDropdown = () => {
     this.setState({ showDropdown: !this.state.showDropdown });
+  };
+
+  handleTextInputFocus = () => {
+    this.textInputRef.measureInWindow((x, y, width, height) => {
+      this.setState({
+        inputPosition: { x, y, width, height },
+      });
+      console.log("Input position is" + this.state.inputPosition.y);
+    });
+    this.addressFragment;
+    this.toggleDropdown();
+  };
+
+  handleTextInputBlur = () => {
+    this.toggleDropdown();
   };
 
   render() {
     return (
       <View>
         <TextInput
+          ref={(ref) => (this.textInputRef = ref)}
           style={Styles.TextInput}
           placeholder="Location"
           defaultValue=""
           placeholderTextColor="#005F66"
           onChangeText={(addressFragment) =>
-            handleAddressChange(addressFragment)
+            this.handleAddressChange(addressFragment)
           }
           label="Location"
-          onFocus={this.toggleDropdown}
+          onFocus={this.handleTextInputFocus}
+          onBlur={this.handleTextInputBlur}
         />
 
         <Modal
@@ -94,16 +115,35 @@ class AutoCompletePicker extends Component {
           animationType="slide"
           visible={this.state.showDropdown}
           onRequestClose={this.toggleDropdown}
+          const
         >
-          <FlatList
-            data={this.props.options}
-            keyExtractor={(item) => item.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => this.toggleDropdown()}>
-                <Text>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
+          <View
+            style={{
+              position: "absolute",
+              top:
+                this.state.inputPosition &&
+                this.state.inputPosition.y !== undefined &&
+                this.state.inputPosition.height !== undefined
+                  ? this.state.inputPosition.y + this.state.inputPosition.height
+                  : 0, // Default value or another appropriate value
+              left: this.state.inputPosition?.x || 0, // Default value or another appropriate value
+              width: this.state.inputPosition?.width || 0, // Default value or another appropriate value
+              backgroundColor: "white",
+              borderWidth: 1,
+              borderColor: "gray",
+              borderRadius: 5,
+            }}
+          >
+            <FlatList
+              data={this.props.options}
+              keyExtractor={(item) => item.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => this.toggleDropdown()}>
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
         </Modal>
       </View>
     );

@@ -41,7 +41,6 @@ const CreateGame = ({ navigation }) => {
   const [addressFragment, setAddressFragment] = useState("");
   const [suggestionList, setSuggestionList] = useState([]);
   const [addressInputSelected, setAddressInputSelected] = useState(false);
-  const [query, setQuery] = useState("");
 
   const getTokenFromStorage = async () => {
     try {
