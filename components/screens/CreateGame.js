@@ -307,7 +307,7 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View>
           <TouchableOpacity>
-            <Button title="CREATE GAME" onPress={() => handleFormSubmit()} />
+            <Button title="CREATE REQUEST" onPress={() => handleFormSubmit()} />
           </TouchableOpacity>
         </View>
       </View>
