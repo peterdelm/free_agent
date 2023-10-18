@@ -19,18 +19,31 @@ class AutoCompletePicker extends Component {
       inputPosition: null,
       query: "",
       addressFragment: "",
+      suggestionList: [""],
+      addressInputSelected: false,
     };
   }
 
   handleAddressChange = (input) => {
-    let data = {};
-    this.setState({ query: input });
-    console.log(this.state.query);
-    // if (this.query.length > 2) {
-    //   fetchAutocompleteSuggestions(this.query);
-    // }
-    // setSuggestionList(data.addressList);
-    // setAddressInputSelected(true);
+    this.setState({ query: input }, () => {
+      console.log("Updated query state:", this.state.query);
+
+      if (this.state.query.length > 2) {
+        this.fetchAutocompleteSuggestions(this.state.query)
+          .then((data) => {
+            this.setState({
+              suggestionList: data.addressList,
+              addressInputSelected: true,
+              showDropdown: true,
+            });
+
+            console.log("The returned suggestion list is:", data.addressList);
+          })
+          .catch((error) => {
+            console.error("Error fetching suggestions:", error);
+          });
+      }
+    });
   };
 
   async fetchAutocompleteSuggestions(addressFragment) {
@@ -62,15 +75,14 @@ class AutoCompletePicker extends Component {
 
       if (data.success === true) {
         console.log("Address Suggestions successful");
-        console.log(data.addressList);
       } else {
         console.log("Address Suggestions Failed");
       }
 
-      return data; // Return the data if needed.
+      return data;
     } catch (err) {
       console.error(err);
-      throw err; // Rethrow the error for further handling, if necessary.
+      throw err;
     }
   }
 
@@ -86,12 +98,9 @@ class AutoCompletePicker extends Component {
       console.log("Input position is" + this.state.inputPosition.y);
     });
     this.addressFragment;
-    this.toggleDropdown();
   };
 
-  handleTextInputBlur = () => {
-    this.toggleDropdown();
-  };
+  handleTextInputBlur = () => {};
 
   render() {
     return (
@@ -115,7 +124,6 @@ class AutoCompletePicker extends Component {
           animationType="slide"
           visible={this.state.showDropdown}
           onRequestClose={this.toggleDropdown}
-          const
         >
           <View
             style={{
@@ -125,9 +133,9 @@ class AutoCompletePicker extends Component {
                 this.state.inputPosition.y !== undefined &&
                 this.state.inputPosition.height !== undefined
                   ? this.state.inputPosition.y + this.state.inputPosition.height
-                  : 0, // Default value or another appropriate value
-              left: this.state.inputPosition?.x || 0, // Default value or another appropriate value
-              width: this.state.inputPosition?.width || 0, // Default value or another appropriate value
+                  : 0,
+              left: this.state.inputPosition?.x || 0,
+              width: this.state.inputPosition?.width || 0,
               backgroundColor: "white",
               borderWidth: 1,
               borderColor: "gray",
@@ -135,13 +143,14 @@ class AutoCompletePicker extends Component {
             }}
           >
             <FlatList
-              data={this.props.options}
+              data={this.state.suggestionList}
               keyExtractor={(item) => item.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => this.toggleDropdown()}>
                   <Text>{item}</Text>
                 </TouchableOpacity>
               )}
+              keyboardShouldPersistTaps="always"
             />
           </View>
         </Modal>
