@@ -21,6 +21,7 @@ class AutoCompletePicker extends Component {
       addressFragment: "",
       suggestionList: [""],
       addressInputSelected: false,
+      selectedAddress: "",
     };
   }
 
@@ -104,7 +105,13 @@ class AutoCompletePicker extends Component {
 
   render() {
     return (
-      <View>
+      <View
+        style={{
+          width: "80%",
+          height: "95%",
+          placeholderTextColor: "grey",
+        }}
+      >
         <TextInput
           ref={(ref) => (this.textInputRef = ref)}
           style={Styles.TextInput}
@@ -137,16 +144,24 @@ class AutoCompletePicker extends Component {
               left: this.state.inputPosition?.x || 0,
               width: this.state.inputPosition?.width || 0,
               backgroundColor: "white",
-              borderWidth: 1,
-              borderColor: "gray",
               borderRadius: 5,
             }}
           >
             <FlatList
+              style={{
+                borderWidth: 1,
+                borderColor: "gray",
+                borderRadius: 5,
+              }}
               data={this.state.suggestionList}
               keyExtractor={(item) => item.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => this.toggleDropdown()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.toggleDropdown();
+                    this.props.onInputSelected(item);
+                  }}
+                >
                   <Text>{item}</Text>
                 </TouchableOpacity>
               )}

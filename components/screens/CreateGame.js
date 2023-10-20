@@ -204,6 +204,10 @@ const CreateGame = ({ navigation }) => {
 
   const options = ["One", "Two", "Three"];
 
+  captureSelectedInput = (selectedInput) => {
+    console.log("Selected input: " + selectedInput);
+  };
+
   if (isSportSelected === true) {
     console.log("sportSelected is " + isSportSelected);
     console.log("selectedSport is " + selectedSport);
@@ -254,9 +258,13 @@ const CreateGame = ({ navigation }) => {
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
+              width: "100%",
             }}
           >
-            <AutoCompletePicker options={options} />
+            <AutoCompletePicker
+              options={options}
+              onInputSelected={captureSelectedInput}
+            />
           </View>
         </View>
         <View style={Styles.inputView}>
