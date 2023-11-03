@@ -22,6 +22,7 @@ class AutoCompletePicker extends Component {
       suggestionList: [""],
       addressInputSelected: false,
       selectedAddress: "",
+      inputValue: "",
     };
   }
 
@@ -117,10 +118,12 @@ class AutoCompletePicker extends Component {
           style={Styles.TextInput}
           placeholder="Location"
           defaultValue=""
+          value={this.state.inputValue}
           placeholderTextColor="#005F66"
-          onChangeText={(addressFragment) =>
-            this.handleAddressChange(addressFragment)
-          }
+          onChangeText={(addressFragment) => {
+            this.handleAddressChange(addressFragment);
+            this.setState({ inputValue: addressFragment });
+          }}
           label="Location"
           onFocus={this.handleTextInputFocus}
           onBlur={this.handleTextInputBlur}
@@ -160,6 +163,7 @@ class AutoCompletePicker extends Component {
                   onPress={() => {
                     this.toggleDropdown();
                     this.props.onInputSelected(item);
+                    this.setState({ inputValue: item });
                   }}
                 >
                   <Text>{item}</Text>

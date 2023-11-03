@@ -109,6 +109,23 @@ const Styles = StyleSheet.create({
     paddingLeft: 10, // Adjust padding to center the placeholder text
   },
   dropdown: { width: 250 },
+
+  clockContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+
+  clockSeparator: { fontSize: 18, paddingHorizontal: 10 },
+
+  clockInput: {
+    width: 50,
+    borderWidth: 1,
+    borderColor: "gray",
+    fontSize: 18,
+    textAlign: "center",
+  },
 });
 
 export default Styles;

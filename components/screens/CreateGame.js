@@ -17,7 +17,9 @@ import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker";
+import DatePicker from "./DatePicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TimePicker from "./TimePicker";
 
 const CreateGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -269,26 +271,19 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View style={Styles.inputView}>
           {/* This will be a DATE SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Date"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(date) => setGameDate(date)}
-            language={gameTypes}
-            label="Date"
-          />
+          <DatePicker />
         </View>
         <View style={Styles.inputView}>
           {/* This will be a TIME SELECTOR */}
-          <TextInput
+          {/* <TextInput
             style={Styles.TextInput}
             placeholder="Time"
             defaultValue=""
             placeholderTextColor="#005F66"
             onChangeText={(time) => setGameTime(time)}
             label="Time"
-          />
+          /> */}
+          <TimePicker />
         </View>
         <View style={Styles.inputView}>
           <TextInput
