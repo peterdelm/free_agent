@@ -33,6 +33,7 @@ class TimePicker extends Component {
     this.setState({ inputValue: selectedTime });
     console.log("Selected Time is: " + selectedTime);
     console.log("Hour is: " + `${this.state.selectedMinute}`);
+    this.props.onInputSelected(selectedTime);
   };
 
   handleHourChange = (hour) => {

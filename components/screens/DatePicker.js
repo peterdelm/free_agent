@@ -32,6 +32,7 @@ class DatePicker extends Component {
   onDateSelect = (date) => {
     this.setState({ selectedDate: date });
     this.setState({ modalVisible: false });
+    this.props.onInputSelected(date);
   };
 
   render() {
@@ -50,6 +51,7 @@ class DatePicker extends Component {
                   selected: day.dateString,
                   inputValue: day.dateString,
                 });
+                this.onDateSelect(day);
                 this.toggleDropdown();
               }}
               markedDates={{

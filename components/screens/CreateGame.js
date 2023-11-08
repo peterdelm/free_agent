@@ -31,18 +31,13 @@ const CreateGame = ({ navigation }) => {
   const [game_length, setGameLength] = useState("");
   const [team_name, setTeamName] = useState("");
   const [additional_info, setAdditionalInfo] = useState("");
-  const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
-  const [addressFragment, setAddressFragment] = useState("");
-  const [suggestionList, setSuggestionList] = useState([]);
-  const [addressInputSelected, setAddressInputSelected] = useState(false);
 
   const getTokenFromStorage = async () => {
     try {
@@ -68,6 +63,21 @@ const CreateGame = ({ navigation }) => {
   };
   const handleGameTypeChange = (input) => {
     setGameType(input);
+  };
+
+  captureSelectedLocation = (selectedInput) => {
+    console.log("Selected Location input: " + selectedInput);
+    setGameAddress(selectedInput);
+  };
+
+  captureSelectedDate = (selectedInput) => {
+    console.log("Selected Date input: " + selectedInput);
+    setGameDate(selectedInput);
+  };
+
+  captureSelectedTime = (selectedInput) => {
+    console.log("Selected Time input: " + selectedInput);
+    setGameTime(selectedInput);
   };
 
   const handleFormSubmit = () => {
@@ -204,12 +214,6 @@ const CreateGame = ({ navigation }) => {
     postGame();
   };
 
-  const options = ["One", "Two", "Three"];
-
-  captureSelectedInput = (selectedInput) => {
-    console.log("Selected input: " + selectedInput);
-  };
-
   if (isSportSelected === true) {
     console.log("sportSelected is " + isSportSelected);
     console.log("selectedSport is " + selectedSport);
@@ -254,7 +258,7 @@ const CreateGame = ({ navigation }) => {
           />
         </View>
         <View style={Styles.inputView}>
-          {/* This will be a LOCATION SELECTOR */}
+          {/* LOCATION SELECTOR */}
           <View
             style={{
               flex: 1,
@@ -263,30 +267,19 @@ const CreateGame = ({ navigation }) => {
               width: "100%",
             }}
           >
-            <AutoCompletePicker
-              options={options}
-              onInputSelected={captureSelectedInput}
-            />
+            <AutoCompletePicker onInputSelected={captureSelectedLocation} />
           </View>
         </View>
         <View style={Styles.inputView}>
-          {/* This will be a DATE SELECTOR */}
-          <DatePicker />
+          {/* DATE SELECTOR */}
+          <DatePicker onInputSelected={captureSelectedDate} />
         </View>
         <View style={Styles.inputView}>
-          {/* This will be a TIME SELECTOR */}
-          {/* <TextInput
-            style={Styles.TextInput}
-            placeholder="Time"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(time) => setGameTime(time)}
-            label="Time"
-          /> */}
-          <TimePicker />
+          {/* TIME SELECTOR */}
+          <TimePicker onInputSelected={captureSelectedTime} />
         </View>
         <View style={Styles.inputView}>
-          <TextInput
+          <Picker
             style={Styles.TextInput}
             placeholder="Game Length (minutes)"
             defaultValue=""
