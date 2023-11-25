@@ -38,6 +38,7 @@ const CreateGame = ({ navigation }) => {
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
+  const [selectedSportId, setSelectedSportId] = useState();
 
   const getTokenFromStorage = async () => {
     try {
@@ -165,6 +166,7 @@ const CreateGame = ({ navigation }) => {
       team_name,
       additional_info,
       is_active: true,
+      sportId: selectedSportId,
     };
 
     console.log(body);
@@ -318,6 +320,7 @@ const CreateGame = ({ navigation }) => {
           onPress={() => {
             setIsSportSelected(true);
             setSelectedSport(sport.sport);
+            setSelectedSportId(sport.id);
             setCalibreList(sport.calibre);
             setGameTypeList(sport.game_type);
             setGameLengthList(sport.game_length);
