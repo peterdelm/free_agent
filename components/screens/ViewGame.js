@@ -8,7 +8,6 @@ function ViewGame({ navigation, message }) {
   const route = useRoute();
   const { gameId } = route.params;
   const [game, setGame] = useState([]);
-  console.log("GameId is " + gameId);
   const getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem("@session_token");
@@ -56,15 +55,15 @@ function ViewGame({ navigation, message }) {
 
   return (
     <View style={Styles.container}>
-      <Text style={Styles.primaryButton}>THIS IS THE GAME SCREEN</Text>
       <Text style={Styles.primaryButton}>{game.location}</Text>
       <Text style={Styles.primaryButton}>
         {game.date} @ {game.time}
       </Text>
+      <Text style={Styles.primaryButton}>{game.position}</Text>
       <Text style={Styles.primaryButton}>{game.calibre}</Text>
-      <Text style={Styles.primaryButton}>{game.gender}</Text>
+      <Text style={Styles.primaryButton}>Gender: {game.gender}</Text>
       <Text style={Styles.primaryButton}>{game.game_type}</Text>
-      <Text style={Styles.primaryButton}>{game.game_length}</Text>
+      <Text style={Styles.primaryButton}>{game.game_length} Minutes</Text>
     </View>
   );
 }

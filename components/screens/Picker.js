@@ -9,6 +9,7 @@ class Pickering extends Component {
     this.state = {
       language: props.language,
       label: props.label,
+      colour: props.colour,
     };
   }
 
@@ -23,7 +24,11 @@ class Pickering extends Component {
             this.props.onValueChange(itemValue);
           }}
         >
-          <Picker.Item color="grey" label={this.props.label} value="" />
+          <Picker.Item
+            color={this.props.colour}
+            label={this.props.label}
+            value=""
+          />
 
           {this.props.language.map((course, index) => (
             <Picker.Item key={index} label={course} value={course} />

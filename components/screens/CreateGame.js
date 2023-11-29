@@ -39,6 +39,8 @@ const CreateGame = ({ navigation }) => {
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
   const [selectedSportId, setSelectedSportId] = useState();
+  const [position, setPosition] = useState();
+  const [positionList, setPositionList] = useState();
 
   const getTokenFromStorage = async () => {
     try {
@@ -64,6 +66,9 @@ const CreateGame = ({ navigation }) => {
   };
   const handleGameTypeChange = (input) => {
     setGameType(input);
+  };
+  const handlePositionChange = (input) => {
+    setPosition(input);
   };
 
   captureSelectedLocation = (selectedInput) => {
@@ -158,6 +163,7 @@ const CreateGame = ({ navigation }) => {
     const body = {
       gender,
       calibre,
+      position,
       game_type,
       date,
       location,
@@ -223,6 +229,7 @@ const CreateGame = ({ navigation }) => {
     var gameTypes = gameTypeList;
     var genders = genderList;
     var gameLengths = gameLengthList;
+    var positions = positionList;
 
     return (
       <View style={Styles.container}>
@@ -257,6 +264,17 @@ const CreateGame = ({ navigation }) => {
             onValueChange={handleGenderChange}
             language={genders}
             label="Gender"
+          />
+        </View>
+        <View style={Styles.inputView}>
+          <Picker
+            style={Styles.TextInput}
+            defaultValue=""
+            placeholderText
+            Color="#005F66"
+            onValueChange={handlePositionChange}
+            language={positions}
+            label="Position"
           />
         </View>
         <View style={Styles.inputView}>
@@ -324,6 +342,8 @@ const CreateGame = ({ navigation }) => {
             setCalibreList(sport.calibre);
             setGameTypeList(sport.game_type);
             setGameLengthList(sport.game_length);
+            setPositionList(sport.position);
+
             if (sport.gender !== null) {
               setGenderList(sport.gender);
             }
