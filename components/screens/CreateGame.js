@@ -172,10 +172,11 @@ const CreateGame = ({ navigation }) => {
       team_name,
       additional_info,
       is_active: true,
+      sport: selectedSport,
       sportId: selectedSportId,
     };
 
-    console.log(body);
+    console.log("CreateGame Request body is: " + body);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
 
     const postGame = async () => {

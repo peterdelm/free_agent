@@ -1,36 +1,14 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  Button,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Touchable,
-  TouchableOpacity,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import react from "react";
 
 function HomeScreen({ navigation, message }) {
   const [activeGames, setActiveGames] = useState([]);
 
   const route = useRoute();
   const successMessage = route.params || {};
-
-  console.log("message is...");
-  console.log(message);
-
-  console.log("route.params is...");
-  console.log(route.params);
-
   console.log("Success message is...");
   console.log(successMessage["successMessage"]);
 
@@ -128,6 +106,9 @@ function HomeScreen({ navigation, message }) {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
           <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("PlayerInbox")}>
+          <Text style={Styles.primaryButton}>Player Inbox</Text>
         </TouchableOpacity>
         <Text>Upcoming Games:</Text>
 
