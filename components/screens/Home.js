@@ -107,8 +107,8 @@ function HomeScreen({ navigation, message }) {
         <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
           <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("PlayerInbox")}>
-          <Text style={Styles.primaryButton}>Player Inbox</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("BrowseGames")}>
+          <Text style={Styles.primaryButton}>Browse Games</Text>
         </TouchableOpacity>
         <Text>Upcoming Games:</Text>
 

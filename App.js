@@ -12,7 +12,7 @@ import ViewPlayer from "./components/screens/ViewPlayer";
 import EditPlayer from "./components/screens/EditPlayer";
 import CreatePlayer from "./components/screens/CreatePlayer";
 import ManagePlayers from "./components/screens/ManagePlayers";
-import PlayerInbox from "./components/screens/PlayerInbox";
+import BrowseGames from "./components/screens/BrowseGames";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -31,7 +31,7 @@ export default function App() {
         <Stack.Screen name="ViewPlayer" component={ViewPlayer} />
         <Stack.Screen name="EditPlayer" component={EditPlayer} />
         <Stack.Screen name="ManagePlayers" component={ManagePlayers} />
-        <Stack.Screen name="PlayerInbox" component={PlayerInbox} />
+        <Stack.Screen name="BrowseGames" component={BrowseGames} />
       </Stack.Navigator>
     </NavigationContainer>
   );

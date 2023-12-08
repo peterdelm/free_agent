@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const PlayerInbox = ({ navigation }) => {
+const BrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
 
   const getTokenFromStorage = async () => {
@@ -18,7 +18,7 @@ const PlayerInbox = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/player_roster";
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/invites";
 
     const fetchData = async () => {
       try {
@@ -73,7 +73,7 @@ const PlayerInbox = ({ navigation }) => {
   return (
     <View style={Styles.container}>
       <View style={Styles.homeContainer}>
-        <Text style={{ fontSize: 20, padding: 20 }}>Player Inbox</Text>
+        <Text style={{ fontSize: 20, padding: 20 }}>Browse Games</Text>
         <Text>Potential Matches</Text>
 
         <ScrollView>
@@ -87,4 +87,4 @@ const PlayerInbox = ({ navigation }) => {
   );
 };
 
-export default PlayerInbox;
+export default BrowseGames;
