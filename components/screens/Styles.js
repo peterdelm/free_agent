@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Button,
   ImageBackground,
@@ -125,6 +126,15 @@ const Styles = StyleSheet.create({
     borderColor: "gray",
     fontSize: 18,
     textAlign: "center",
+  },
+
+  screenHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1, // Border width
+    borderColor: "green", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
   },
 });
 

@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
@@ -99,6 +99,14 @@ function HomeScreen({ navigation, message }) {
 
   return (
     <View style={Styles.container}>
+      <View style={Styles.screenHeader}>
+        <Image
+          source={require("../../assets/prayingHands.png")}
+          style={{ width: 50, height: 50, resizeMode: "contain" }}
+        />
+        <Text style={{ fontSize: 35, padding: 20 }}>Requests</Text>
+      </View>
+
       {<Banner message={successMessage} />}
       <View style={Styles.homeContainer}>
         <TouchableOpacity onPress={() => navigation.navigate("CreateGame")}>

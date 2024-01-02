@@ -13,7 +13,6 @@ import {
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
-import PropTypes from "prop-types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function WelcomeScreen({ navigation }) {
