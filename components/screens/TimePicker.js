@@ -19,6 +19,7 @@ class TimePicker extends Component {
       inputValue: "Time",
       selectedHour: "00",
       selectedMinute: "00",
+      style: props.style,
     };
 
     this.panResponder = PanResponder.create({
@@ -58,9 +59,9 @@ class TimePicker extends Component {
   render() {
     const { selectedHour, selectedMinute } = this.state;
     return (
-      <View>
+      <View style={this.props.style}>
         <TouchableOpacity onPress={this.openTimePicker}>
-          <Text>{this.state.inputValue}</Text>
+          <Text style={{ textAlign: "center" }}>{this.state.inputValue}</Text>
         </TouchableOpacity>
 
         {/* Time Picker Modal */}

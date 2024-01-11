@@ -92,8 +92,6 @@ const CreateGame = ({ navigation }) => {
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    console.log("CreateGame useEffect called");
-
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
 
     const fetchData = async () => {
@@ -236,7 +234,7 @@ const CreateGame = ({ navigation }) => {
       <View style={Styles.container}>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             defaultValue=""
             placeholderTextColor="#005F66"
             language={calibres}
@@ -247,7 +245,7 @@ const CreateGame = ({ navigation }) => {
 
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             placeholder="Game Type"
             defaultValue=""
             placeholderTextColor="#005F66"
@@ -258,7 +256,7 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             defaultValue=""
             placeholderText
             Color="#005F66"
@@ -269,7 +267,7 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             defaultValue=""
             placeholderText
             Color="#005F66"
@@ -301,7 +299,7 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             placeholder="Game Length (minutes)"
             defaultValue=""
             placeholderTextColor="#005F66"

@@ -23,6 +23,7 @@ class AutoCompletePicker extends Component {
       addressInputSelected: false,
       selectedAddress: "",
       inputValue: "",
+      style: props.style,
     };
   }
 
@@ -106,16 +107,9 @@ class AutoCompletePicker extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          width: "80%",
-          height: "95%",
-          placeholderTextColor: "grey",
-        }}
-      >
+      <View style={this.state.style}>
         <TextInput
           ref={(ref) => (this.textInputRef = ref)}
-          style={Styles.TextInput}
           placeholder="Location"
           defaultValue=""
           value={this.state.inputValue}

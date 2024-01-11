@@ -47,6 +47,10 @@ const Styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#A4D65E",
+    borderWidth: 1, // Border width
+    borderColor: "orange", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
   },
   primaryButton: {
     width: 325,
@@ -60,6 +64,7 @@ const Styles = StyleSheet.create({
     textAlignVertical: "center",
     marginBottom: 40,
   },
+
   activeGames: {
     width: 325,
     borderRadius: 25,
@@ -128,13 +133,118 @@ const Styles = StyleSheet.create({
     textAlign: "center",
   },
 
+  screenContainer: {
+    alignItems: "flex-start",
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "blue", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  pendingContainer: {
+    justifyContent: "flex-start", // Left-align children
+    alignItems: "center",
+    width: "100%",
+  },
+
+  pendingGamesContainer: {
+    justifyContent: "flex-start", // Left-align children
+    width: "100%",
+    // borderColor: "orange", // Border color
+    // borderWidth: 1, // Border width
+    // borderRadius: 5, // Border radius (optional)
+    // padding: 5, // Optional padding
+  },
+
+  requestPlayerContainer: {
+    alignItems: "flex-start",
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "blue", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  requestPlayerButtonContainer: {
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "red", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  requestPlayerButton: {
+    width: 385,
+    borderRadius: 10,
+    height: 100,
+    backgroundColor: "#EB6FBD",
+    textAlign: "center",
+    textAlignVertical: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 20,
+  },
+
+  requestPlayerButtonText: {
+    fontSize: 20,
+  },
+  requestPlayerButtonSymbol: {},
+
   screenHeader: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start", // Left-align children
+    paddingLeft: "5%", // Optional padding
+  },
+
+  pendingGames: {
+    width: 385,
+    borderRadius: 25,
+    height: 50,
+    marginBottom: 10,
+    borderColor: "red", // Border color
     borderWidth: 1, // Border width
-    borderColor: "green", // Border color
     borderRadius: 5, // Border radius (optional)
     padding: 5, // Optional padding
+  },
+
+  sportsPickerDropdownContainer: {
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "red", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  sportsPickerDropdown: {
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "dark green", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+    backgroundColor: "#FFFFFF",
+  },
+
+  datePickerButton: {
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "dark green", // Border color
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+    backgroundColor: "#FFFFFF",
+  },
+
+  additionalInfo: {
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+    backgroundColor: "#FFFFFF",
+    paddingLeft: 20,
   },
 });
 

@@ -10,14 +10,15 @@ class Pickering extends Component {
       language: props.language,
       label: props.label,
       colour: props.colour,
+      style: props.style,
     };
   }
 
   render() {
     return (
-      <View>
+      <View style={this.state.style}>
         <Picker
-          style={Styles.dropdown}
+          style={this.state.style}
           selectedValue={this.state.language}
           onValueChange={(itemValue) => {
             this.setState({ language: itemValue });

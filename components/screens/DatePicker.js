@@ -19,6 +19,7 @@ class DatePicker extends Component {
       selected: "",
       availableDates: generateAvailableDates(),
       inputValue: "Date",
+      style: props.style,
     };
   }
 
@@ -37,9 +38,9 @@ class DatePicker extends Component {
 
   render() {
     return (
-      <View>
+      <View style={this.state.style}>
         <TouchableOpacity onPress={this.openDatePicker}>
-          <Text>{this.state.inputValue}</Text>
+          <Text style={{ textAlign: "center" }}>{this.state.inputValue}</Text>
         </TouchableOpacity>
 
         {/* Date Picker Modal */}
