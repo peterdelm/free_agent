@@ -15,6 +15,7 @@ import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker";
 import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
+import NavigationFooter from "./NavigationFooter";
 
 function HomeScreen({ navigation, message }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -450,10 +451,13 @@ function HomeScreen({ navigation, message }) {
         <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
           <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("BrowseGames")}>
+        <TouchableOpacity onPress={() => navigation.navigate("BrowseAvailableGames")}>
           <Text style={Styles.primaryButton}>Browse Games</Text>
         </TouchableOpacity>
       </View> */}
+      <NavigationFooter navigation={navigation}>
+        <Text>FOOTER</Text>
+      </NavigationFooter>
     </View>
   );
 }

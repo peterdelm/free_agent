@@ -112,49 +112,61 @@ function WelcomeScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground
-      style={Styles.background}
-      source={require("../../assets/background.jpg")}
-    >
-      <View style={Styles.container}>
-        <View style={Styles.inputView}>
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Email"
-            placeholderTextColor="#005F66"
-            onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
-          />
-        </View>
+    // <ImageBackground
+    //   style={Styles.background}
+    //   source={require("../../assets/background.jpg")}
+    // >
+    <View style={Styles.welcomeScreenContainer}>
+      <View style={Styles.welcomeScreenLogoContainer}>
+        <Image
+          source={require("../../assets/free_agent_logo_trasparent_fulltext.png")}
+          style={{
+            width: "90%",
+            resizeMode: "contain",
+          }}
+        />
+      </View>
+      <View style={Styles.welcomeScreenInputView}>
+        <TextInput
+          style={Styles.TextInput}
+          placeholder="Email"
+          placeholderTextColor="#005F66"
+          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+        />
+      </View>
 
-        <View style={Styles.inputView}>
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Password"
-            placeholderTextColor="#005F66"
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
+      <View style={Styles.welcomeScreenInputView}>
+        <TextInput
+          style={Styles.TextInput}
+          placeholder="Password"
+          placeholderTextColor="#005F66"
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+        />
+      </View>
 
-        <TouchableOpacity>
-          <Text style={Styles.forgotButton}>Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Button
-            title="LOGIN"
-            onPress={() => handleLoginAttempt(emailAddress, password)}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={Styles.forgotButton}>Forgot Password?</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleLoginAttempt(emailAddress, password)}
+      >
+        <View style={Styles.welcomeButtonContainer}>
+          <Text style={Styles.welcomeButton}>Log in</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <View style={Styles.welcomeButtonContainer}>
           <Text
-            style={Styles.registerButton}
+            style={Styles.welcomeButton}
             onPress={handleRegisterButtonPress}
           >
-            REGISTER
+            Register
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ImageBackground>
+        </View>
+      </TouchableOpacity>
+    </View>
+    // </ImageBackground>
   );
 }
 

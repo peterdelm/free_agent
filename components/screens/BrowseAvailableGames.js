@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BrowseGames = ({ navigation }) => {
+const BrowseAvailableGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
 
   const getTokenFromStorage = async () => {
@@ -18,7 +18,7 @@ const BrowseGames = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/invites";
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
 
     const fetchData = async () => {
       try {
@@ -64,7 +64,7 @@ const BrowseGames = ({ navigation }) => {
         key={game.id}
         onPress={() => navigation.navigate("ViewPlayer", { playerId: game.id })}
       >
-        <Text key={index} style={Styles.activeGames}>
+        <Text key={index} style={Styles.pendingGames}>
           {game.sport} @ {game.time}
         </Text>
       </TouchableOpacity>
@@ -87,4 +87,4 @@ const BrowseGames = ({ navigation }) => {
   );
 };
 
-export default BrowseGames;
+export default BrowseAvailableGames;

@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Button,
+  Dimensions,
   ImageBackground,
   StyleSheet,
   Text,
@@ -10,6 +11,8 @@ import {
   Touchable,
   TouchableOpacity,
 } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
 
 const Styles = StyleSheet.create({
   background: {
@@ -151,10 +154,10 @@ const Styles = StyleSheet.create({
   pendingGamesContainer: {
     justifyContent: "flex-start", // Left-align children
     width: "100%",
-    // borderColor: "orange", // Border color
-    // borderWidth: 1, // Border width
-    // borderRadius: 5, // Border radius (optional)
-    // padding: 5, // Optional padding
+    borderColor: "orange", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
   },
 
   requestPlayerContainer: {
@@ -245,6 +248,88 @@ const Styles = StyleSheet.create({
     padding: 5, // Optional padding
     backgroundColor: "#FFFFFF",
     paddingLeft: 20,
+  },
+
+  managerBrowseGamesContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#A4D65E",
+  },
+
+  upcomingGameListContainer: {
+    justifyContent: "flex-start", // Left-align children
+    width: "100%",
+    borderColor: "orange", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  upcomingGameContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-start", // Left-align children
+    borderColor: "black", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  upcomingGameDateContainer: {
+    justifyContent: "flex-start", // Left-align children
+    borderColor: "red", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+  upcomingGameAddressContainer: {
+    flex: 1,
+    justifyContent: "flex-start", // Left-align children
+    borderColor: "red", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+  welcomeScreenContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  welcomeScreenInputView: {
+    backgroundColor: "white",
+    borderRadius: 30,
+    width: 250,
+    height: 50,
+    marginBottom: 20,
+    alignItems: "center",
+    borderColor: "black", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  welcomeScreenLogoContainer: {
+    padding: 5, // Optional padding
+    margin: 20,
+    width: "95%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  welcomeButtonContainer: {
+    marginTop: 40,
+  },
+  welcomeButton: {
+    width: screenWidth - 50,
+    color: "white",
+    fontWeight: "500",
+    height: 50,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#d90e0e",
+    textAlign: "center",
+    textAlignVertical: "center",
   },
 });
 
