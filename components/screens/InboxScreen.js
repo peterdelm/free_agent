@@ -11,7 +11,12 @@ const InboxScreen = ({ navigation }) => {
 
   return (
     <View style={Styles.managerBrowseGamesContainer}>
-      <View style={Styles.screenContainer}>
+      <View
+        style={[
+          Styles.screenContainer,
+          { borderBottomColor: "black", borderBottomWidth: 2 },
+        ]}
+      >
         <View style={Styles.screenHeader}>
           <Image
             source={require("../../assets/chat-regular.png")}

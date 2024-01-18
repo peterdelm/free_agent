@@ -56,7 +56,7 @@ const Footer = ({ navigation }) => {
             source={require("../../assets/user-solid.png")}
             style={{ width: 50, height: 50, resizeMode: "contain" }}
           />
-          <Text style={{ textAlign: "center" }}>Profile</Text>
+          <Text style={{ textAlign: "center" }}>Manage</Text>
         </View>
       </TouchableOpacity>
     </View>

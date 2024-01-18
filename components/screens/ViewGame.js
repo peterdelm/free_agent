@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text } from "react-native";
+import { View, Text, Image, StatusBar } from "react-native";
 import { useRoute } from "@react-navigation/native";
+import NavigationFooter from "./NavigationFooter";
 
 function ViewGame({ navigation, message }) {
   const route = useRoute();
@@ -55,15 +56,43 @@ function ViewGame({ navigation, message }) {
 
   return (
     <View style={Styles.container}>
-      <Text style={Styles.primaryButton}>{game.location}</Text>
-      <Text style={Styles.primaryButton}>
+      {/* <StatusBar hidden={true} /> */}
+      <View style={Styles.screenContainer}>
+        <View style={Styles.screenHeader}>
+          <Image
+            source={require("../../assets/prayingHands.png")}
+            style={{ width: 50, height: 50, resizeMode: "contain" }}
+          />
+          <Text style={{ fontSize: 35, padding: 20 }}>View Game</Text>
+        </View>
+      </View>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>Address</Text>
+
+      <Text style={Styles.gameInfo}>{game.location}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+        Date/Time
+      </Text>
+      <Text style={Styles.gameInfo}>
         {game.date} @ {game.time}
       </Text>
-      <Text style={Styles.primaryButton}>{game.position}</Text>
-      <Text style={Styles.primaryButton}>{game.calibre}</Text>
-      <Text style={Styles.primaryButton}>Gender: {game.gender}</Text>
-      <Text style={Styles.primaryButton}>{game.game_type}</Text>
-      <Text style={Styles.primaryButton}>{game.game_length} Minutes</Text>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+        Position
+      </Text>
+      <Text style={Styles.gameInfo}>{game.position}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>Calibre</Text>
+      <Text style={Styles.gameInfo}>{game.calibre}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>Gender</Text>
+      <Text style={Styles.gameInfo}>Gender: {game.gender}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+        Game Type
+      </Text>
+      <Text style={Styles.gameInfo}>{game.game_type}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+        Game Length
+      </Text>
+      <Text style={Styles.gameInfo}>{game.game_length} Minutes</Text>
+
+      <NavigationFooter navigation={navigation}></NavigationFooter>
     </View>
   );
 }

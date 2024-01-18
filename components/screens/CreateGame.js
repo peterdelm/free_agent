@@ -236,7 +236,7 @@ const CreateGame = ({ navigation }) => {
           <Picker
             style={Styles.dropdown}
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             language={calibres}
             onValueChange={handleCalibreChange}
             label="Calibre"
@@ -248,7 +248,7 @@ const CreateGame = ({ navigation }) => {
             style={Styles.dropdown}
             placeholder="Game Type"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGameTypeChange}
             language={gameTypes}
             label="Game Type"
@@ -258,8 +258,7 @@ const CreateGame = ({ navigation }) => {
           <Picker
             style={Styles.dropdown}
             defaultValue=""
-            placeholderText
-            Color="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGenderChange}
             language={genders}
             label="Gender"
@@ -269,8 +268,7 @@ const CreateGame = ({ navigation }) => {
           <Picker
             style={Styles.dropdown}
             defaultValue=""
-            placeholderText
-            Color="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handlePositionChange}
             language={positions}
             label="Position"
@@ -302,7 +300,7 @@ const CreateGame = ({ navigation }) => {
             style={Styles.dropdown}
             placeholder="Game Length (minutes)"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGameLengthChange}
             language={gameLengths}
             label="Game Length"
@@ -313,7 +311,7 @@ const CreateGame = ({ navigation }) => {
             style={Styles.TextInput}
             placeholder="Additional Info"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onChangeText={(additional_info) =>
               setAdditionalInfo(additional_info)
             }

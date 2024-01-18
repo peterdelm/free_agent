@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
 
-const ManagerBrowseGames = ({ navigation }) => {
+const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
 
   const getTokenFromStorage = async () => {
@@ -130,4 +130,4 @@ const ManagerBrowseGames = ({ navigation }) => {
   );
 };
 
-export default ManagerBrowseGames;
+export default UserProfile;

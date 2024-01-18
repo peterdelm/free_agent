@@ -10,6 +10,7 @@ import {
   TextInput,
   Touchable,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
@@ -24,7 +25,7 @@ const Styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#A4D65E",
+    backgroundColor: "#FFFFFF",
   },
   image: {
     width: 100,
@@ -139,10 +140,23 @@ const Styles = StyleSheet.create({
   screenContainer: {
     alignItems: "flex-start",
     width: "100%",
-    borderWidth: 1, // Border width
-    borderColor: "blue", // Border color
-    borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    // borderWidth: 1, // Border width
+    // borderColor: "blue", // Border color
+    // borderRadius: 5, // Border radius (optional)
+    // padding: 5, // Optional padding
+  },
+
+  pendingScreenContainer: {
+    alignItems: "flex-start",
+    width: "100%",
+    borderTopWidth: 2,
+    borderTopColor: "black",
+    borderTopStyle: "solid",
+    padding: 16,
+    padding: 5,
+    borderBottomWidth: 2,
+    borderBottomColor: "black",
+    borderBottomStyle: "solid",
   },
 
   pendingContainer: {
@@ -154,7 +168,7 @@ const Styles = StyleSheet.create({
   pendingGamesContainer: {
     justifyContent: "flex-start", // Left-align children
     width: "100%",
-    borderColor: "orange", // Border color
+    borderColor: "black", // Border color
     borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)
     padding: 5, // Optional padding
@@ -163,32 +177,39 @@ const Styles = StyleSheet.create({
   requestPlayerContainer: {
     alignItems: "flex-start",
     width: "100%",
-    borderWidth: 1, // Border width
-    borderColor: "blue", // Border color
-    borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    // borderWidth: 1, // Border width
+    // borderColor: "blue", // Border color
+    // borderRadius: 5, // Border radius (optional)
+    // padding: 5, // Optional padding
   },
 
   requestPlayerButtonContainer: {
     alignItems: "center",
     width: "100%",
-    borderWidth: 1, // Border width
-    borderColor: "red", // Border color
-    borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    // borderWidth: 1, // Border width
+    // borderColor: "dark", // Border color
+    // borderRadius: 5, // Border radius (optional)
+    borderTopWidth: 2,
+    borderTopColor: "black",
+    borderTopStyle: "solid",
+    padding: 16,
+    padding: 5,
   },
 
   requestPlayerButton: {
     width: 385,
     borderRadius: 10,
     height: 100,
-    backgroundColor: "#EB6FBD",
+    backgroundColor: "#e04848",
     textAlign: "center",
     textAlignVertical: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
+    borderColor: "dark green", // Border color
+    borderRadius: 5, // Border radius (optional)
+    margin: 5,
   },
 
   requestPlayerButtonText: {
@@ -217,10 +238,8 @@ const Styles = StyleSheet.create({
   sportsPickerDropdownContainer: {
     alignItems: "center",
     width: "100%",
-    borderWidth: 1, // Border width
-    borderColor: "red", // Border color
     borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    padding: 2, // Optional padding
   },
 
   sportsPickerDropdown: {
@@ -228,7 +247,8 @@ const Styles = StyleSheet.create({
     borderWidth: 1, // Border width
     borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    padding: 2,
+    margin: 2,
     backgroundColor: "#FFFFFF",
   },
 
@@ -254,13 +274,13 @@ const Styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#A4D65E",
+    backgroundColor: "#FFFFFF",
   },
 
   upcomingGameListContainer: {
     justifyContent: "flex-start", // Left-align children
     width: "100%",
-    borderColor: "orange", // Border color
+    borderColor: "black", // Border color
     borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)
     padding: 5, // Optional padding
@@ -269,8 +289,6 @@ const Styles = StyleSheet.create({
   upcomingGameContainer: {
     flexDirection: "row",
     justifyContent: "flex-start", // Left-align children
-    borderColor: "black", // Border color
-    borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)
     padding: 5, // Optional padding
   },
@@ -291,6 +309,12 @@ const Styles = StyleSheet.create({
     padding: 5, // Optional padding
   },
   welcomeScreenContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+  },
+  homeScreenContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -330,6 +354,18 @@ const Styles = StyleSheet.create({
     backgroundColor: "#d90e0e",
     textAlign: "center",
     textAlignVertical: "center",
+  },
+  gameInfo: {
+    width: 385,
+    borderRadius: 25,
+    height: 50,
+    marginBottom: 10,
+    paddingTop: 15,
+    borderColor: "red", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    textAlign: "center",
+    justifyContent: "center",
   },
 });
 

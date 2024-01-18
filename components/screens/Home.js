@@ -301,7 +301,7 @@ function HomeScreen({ navigation, message }) {
   }
 
   return (
-    <View style={Styles.container}>
+    <View style={Styles.homeScreenContainer}>
       {<Banner message={successMessage} />}
       <View style={Styles.screenContainer}>
         <View style={Styles.screenHeader}>
@@ -312,8 +312,8 @@ function HomeScreen({ navigation, message }) {
           <Text style={{ fontSize: 35, padding: 20 }}>Requests</Text>
         </View>
       </View>
-      <View style={Styles.screenContainer}>
-        <View style={Styles.screenHeader}>
+      {/* <View style={Styles.pendingScreenContainer}>
+        <View style={[Styles.screenHeader, { marginBottom: 10 }]}>
           <Text style={{ fontSize: 30 }}>Pending</Text>
         </View>
         <View style={Styles.pendingGamesContainer}>
@@ -321,50 +321,30 @@ function HomeScreen({ navigation, message }) {
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
-      </View>
-      <View style={Styles.requestPlayerContainer}>
-        <View style={Styles.requestPlayerButtonContainer}>
-          <TouchableOpacity onPress={() => handleFormSubmit()}>
-            <View style={Styles.requestPlayerButton}>
-              <Text style={Styles.requestPlayerButtonText}>
-                Request a Player
-              </Text>
-              <Image
-                source={require("../../assets/circle-plus-solid.png")}
-                style={Styles.requestPlayerButtonImage}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </View> */}
       <ScrollView style={{ width: "100%" }}>
         <View style={Styles.screenContainer}>
-          <View style={Styles.sportsPickerDropdownContainer}>
+          <View
+            style={[
+              Styles.sportsPickerDropdownContainer,
+              { flex: 1, flexDirection: "row" },
+            ]}
+          >
             <SportsPicker
               style={Styles.TextInput}
               defaultValue=""
-              placeholderTextColor="#005F66"
+              placeholderTextColor="grey"
               sportsData={sportSpecificValues}
               onValueChange={handleSportChange}
               label="Sport"
               selectedSport={selectedSport}
             />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
+            {/* </View>
+          <View style={Styles.sportsPickerDropdownContainer}> */}
             <Picker
               style={Styles.sportsPickerDropdown}
               defaultValue=""
-              placeholderTextColor="#005F66"
-              language={calibreList}
-              onValueChange={handleCalibreChange}
-              label="Calibre"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="#005F66"
+              placeholderTextColor="grey"
               onValueChange={handleGameTypeChange}
               language={gameTypeList}
               label="Game Type"
@@ -374,8 +354,18 @@ function HomeScreen({ navigation, message }) {
             <Picker
               style={Styles.sportsPickerDropdown}
               defaultValue=""
-              placeholderText
-              Color="#005F66"
+              placeholderTextColor="grey"
+              language={calibreList}
+              onValueChange={handleCalibreChange}
+              label="Calibre"
+            />
+          </View>
+
+          <View style={Styles.sportsPickerDropdownContainer}>
+            <Picker
+              style={Styles.sportsPickerDropdown}
+              defaultValue=""
+              placeholderTextColor="grey"
               onValueChange={handleGenderChange}
               language={genderList}
               label="Gender"
@@ -385,8 +375,7 @@ function HomeScreen({ navigation, message }) {
             <Picker
               style={Styles.sportsPickerDropdown}
               defaultValue=""
-              placeholderText
-              Color="#005F66"
+              placeholderTextColor="grey"
               onValueChange={handlePositionChange}
               language={positionList}
               label="Position"
@@ -428,7 +417,7 @@ function HomeScreen({ navigation, message }) {
             style={Styles.sportsPickerDropdown}
             placeholder="Game Length (minutes)"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGameLengthChange}
             language={gameLengthList}
             label="Game Length"
@@ -439,11 +428,26 @@ function HomeScreen({ navigation, message }) {
             style={Styles.additionalInfo}
             placeholder="Additional Info..."
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onChangeText={(additional_info) =>
               setAdditionalInfo(additional_info)
             }
           />
+        </View>
+        <View style={Styles.requestPlayerContainer}>
+          <View style={Styles.requestPlayerButtonContainer}>
+            <TouchableOpacity onPress={() => handleFormSubmit()}>
+              <View style={Styles.requestPlayerButton}>
+                <Text style={Styles.requestPlayerButtonText}>
+                  Request a Player
+                </Text>
+                <Image
+                  source={require("../../assets/circle-plus-solid.png")}
+                  style={Styles.requestPlayerButtonImage}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
       {/* 

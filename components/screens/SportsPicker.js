@@ -14,6 +14,7 @@ class SportsPicker extends Component {
           style={Styles.sportsPickerDropdown}
           selectedValue={selectedSport}
           onValueChange={(itemValue) => onValueChange(itemValue)}
+          placeholderTextColor="grey"
         >
           <Picker.Item color={colour} label={label} value="" />
 

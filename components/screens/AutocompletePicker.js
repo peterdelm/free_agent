@@ -113,7 +113,7 @@ class AutoCompletePicker extends Component {
           placeholder="Location"
           defaultValue=""
           value={this.state.inputValue}
-          placeholderTextColor="#005F66"
+          placeholderTextColor="grey"
           onChangeText={(addressFragment) => {
             this.handleAddressChange(addressFragment);
             this.setState({ inputValue: addressFragment });
@@ -121,6 +121,7 @@ class AutoCompletePicker extends Component {
           label="Location"
           onFocus={this.handleTextInputFocus}
           onBlur={this.handleTextInputBlur}
+          style={{ margin: 2, padding: 20 }}
         />
 
         <Modal
