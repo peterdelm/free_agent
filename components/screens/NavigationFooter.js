@@ -10,7 +10,7 @@ const Footer = ({ navigation }) => {
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center", // Center items vertically
-        height: "10%",
+        height: 90,
         width: "100%",
         backgroundColor: "lightblue",
         borderWidth: 1,
@@ -48,9 +48,7 @@ const Footer = ({ navigation }) => {
           <Text style={{ textAlign: "center" }}>Inbox</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("BrowseAvailableGames")}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate("UserProfile")}>
         <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/user-solid.png")}

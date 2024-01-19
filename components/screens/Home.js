@@ -206,7 +206,8 @@ function HomeScreen({ navigation, message }) {
       position,
       game_type,
       date,
-      location,
+      //stand in Location until credit renewal
+      location: "123 Jasper Street",
       time,
       game_length,
       team_name,
@@ -303,13 +304,22 @@ function HomeScreen({ navigation, message }) {
   return (
     <View style={Styles.homeScreenContainer}>
       {<Banner message={successMessage} />}
-      <View style={Styles.screenContainer}>
+      <View
+        style={[
+          Styles.screenContainer,
+          {
+            borderBottomColor: "black",
+            borderBottomWidth: 2,
+            borderBottomStyle: "solid",
+          },
+        ]}
+      >
         <View style={Styles.screenHeader}>
           <Image
             source={require("../../assets/prayingHands.png")}
             style={{ width: 50, height: 50, resizeMode: "contain" }}
           />
-          <Text style={{ fontSize: 35, padding: 20 }}>Requests</Text>
+          <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
         </View>
       </View>
       {/* <View style={Styles.pendingScreenContainer}>
@@ -325,30 +335,36 @@ function HomeScreen({ navigation, message }) {
       <ScrollView style={{ width: "100%" }}>
         <View style={Styles.screenContainer}>
           <View
-            style={[
-              Styles.sportsPickerDropdownContainer,
-              { flex: 1, flexDirection: "row" },
-            ]}
+            style={{
+              width: "100%",
+              flexDirection: "row",
+            }}
           >
-            <SportsPicker
-              style={Styles.TextInput}
-              defaultValue=""
-              placeholderTextColor="grey"
-              sportsData={sportSpecificValues}
-              onValueChange={handleSportChange}
-              label="Sport"
-              selectedSport={selectedSport}
-            />
-            {/* </View>
-          <View style={Styles.sportsPickerDropdownContainer}> */}
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handleGameTypeChange}
-              language={gameTypeList}
-              label="Game Type"
-            />
+            <View
+              style={[Styles.sportsPickerDropdownContainer, { width: "50%" }]}
+            >
+              <SportsPicker
+                style={Styles.TextInput}
+                defaultValue=""
+                placeholderTextColor="grey"
+                sportsData={sportSpecificValues}
+                onValueChange={handleSportChange}
+                label="Sport"
+                selectedSport={selectedSport}
+              />
+            </View>
+            <View
+              style={[Styles.sportsPickerDropdownContainer, { width: "50%" }]}
+            >
+              <Picker
+                style={Styles.sportsPickerDropdown}
+                defaultValue=""
+                placeholderTextColor="grey"
+                onValueChange={handleGameTypeChange}
+                language={gameTypeList}
+                label="Game Type"
+              />
+            </View>
           </View>
           <View style={Styles.sportsPickerDropdownContainer}>
             <Picker
@@ -391,10 +407,12 @@ function HomeScreen({ navigation, message }) {
                 width: "100%",
               }}
             >
-              <AutoCompletePicker
+              <Text>Location Input Stand-in Until Credit card Renewal</Text>
+
+              {/* <AutoCompletePicker
                 onInputSelected={captureSelectedLocation}
                 style={Styles.sportsPickerDropdown}
-              />
+              /> */}
             </View>
           </View>
         </View>

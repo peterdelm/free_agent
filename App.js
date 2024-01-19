@@ -17,6 +17,7 @@ import ManagerBrowseGames from "./components/screens/ManagerBrowseGames";
 import InboxScreen from "./components/screens/InboxScreen";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import UserProfile from "./components/screens/UserProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,8 @@ export default function App() {
         <Stack.Screen name="EditPlayer" component={EditPlayer} />
         <Stack.Screen name="ManagePlayers" component={ManagePlayers} />
         <Stack.Screen name="InboxScreen" component={InboxScreen} />
+        <Stack.Screen name="UserProfile" component={UserProfile} />
+
         <Stack.Screen
           name="BrowseAvailableGames"
           component={BrowseAvailableGames}

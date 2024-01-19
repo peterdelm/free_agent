@@ -78,6 +78,15 @@ const UserProfile = ({ navigation }) => {
     ));
   }
   return (
+    //Show Profile
+    //Personal info
+    //Login/Security
+    //Settings
+    //Switch to player
+    //Referrals
+    //Help
+    //How it works
+    //Terms of Service
     <View style={Styles.managerBrowseGamesContainer}>
       <View style={Styles.screenContainer}>
         <View
@@ -88,7 +97,7 @@ const UserProfile = ({ navigation }) => {
         >
           <View style={Styles.screenHeader}>
             <Image
-              source={require("../../assets/volleyball-solid.png")}
+              source={require("../../assets/user-solid.png")}
               style={{ width: 50, height: 50, resizeMode: "contain" }}
             />
             <Text
@@ -97,28 +106,13 @@ const UserProfile = ({ navigation }) => {
                 padding: 20,
               }}
             >
-              Games
+              Profile
             </Text>
           </View>
         </View>
         <View style={Styles.screenContainer}>
           <View style={Styles.screenHeader}>
             <Text style={{ fontSize: 30, paddingTop: 20 }}>Upcoming Games</Text>
-          </View>
-          <View style={Styles.upcomingGameListContainer}>
-            <ScrollView>
-              {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-            </ScrollView>
-          </View>
-        </View>
-        <View style={Styles.screenContainer}>
-          <View style={Styles.screenHeader}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Previous Games</Text>
-          </View>
-          <View style={Styles.pendingGamesContainer}>
-            <ScrollView>
-              {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-            </ScrollView>
           </View>
         </View>
       </View>
