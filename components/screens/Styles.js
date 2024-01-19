@@ -367,6 +367,12 @@ const Styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
   },
+  profileLinkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start", // Left-align children
+    paddingLeft: "5%", // Optional padding
+  },
 });
 
 export default Styles;

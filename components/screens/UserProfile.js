@@ -111,8 +111,32 @@ const UserProfile = ({ navigation }) => {
           </View>
         </View>
         <View style={Styles.screenContainer}>
-          <View style={Styles.screenHeader}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Upcoming Games</Text>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Show Profile</Text>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Personal Info</Text>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Login/Security</Text>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Settings/Text
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Switch to Player</Text>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Referrals</Text>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Help</Text>
+          </View>        
+           <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>How it works</Text>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={{ fontSize: 30, paddingTop: 20 }}>Terms of Service</Text>
           </View>
         </View>
       </View>
