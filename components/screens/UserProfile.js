@@ -33,11 +33,11 @@ const UserProfile = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         };
 
-        const requestOptions = {
+        const requestions = {
           headers,
         };
 
-        fetch(url, requestOptions)
+        fetch(url, requestions)
           .then((res) => {
             if (res.ok) {
               console.log("res was ok");
@@ -111,32 +111,104 @@ const UserProfile = ({ navigation }) => {
           </View>
         </View>
         <View style={Styles.screenContainer}>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Show Profile</Text>
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Personal Info</Text>
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Login/Security</Text>
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Settings/Text
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Switch to Player</Text>
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Referrals</Text>
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Help</Text>
-          </View>        
-           <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>How it works</Text>
-          </View>
-          <View style={Styles.profileLinkContainer}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Terms of Service</Text>
+          <View style={Styles.profileLinksContainer}>
+            <View style={Styles.profileLinkContainer}>
+              <View style={Styles.profileLinkTextContainer}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textAlignVertical: "center",
+                  }}
+                >
+                  Show Profile
+                </Text>
+              </View>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>Personal Info</Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>
+                Login/Security
+              </Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>Settings/Text</Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>
+                Switch to Player
+              </Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>Referrals</Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>Help</Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>How it works</Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
+            <View style={Styles.profileLinkContainer}>
+              <Text style={Styles.profileLinkTextContainer}>
+                Terms of Service
+              </Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </View>
           </View>
         </View>
       </View>

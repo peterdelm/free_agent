@@ -10,7 +10,7 @@ const Footer = ({ navigation }) => {
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center", // Center items vertically
-        height: 90,
+        height: "8%",
         width: "100%",
         backgroundColor: "lightblue",
         borderWidth: 1,
@@ -22,7 +22,7 @@ const Footer = ({ navigation }) => {
         <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/prayingHands.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
+            style={{ width: 25, height: 25, resizeMode: "contain" }}
           />
           <Text style={{ textAlign: "center" }}>Requests</Text>
         </View>
@@ -34,7 +34,7 @@ const Footer = ({ navigation }) => {
         <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/volleyball-solid.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
+            style={{ width: 25, height: 25, resizeMode: "contain" }}
           />
           <Text style={{ textAlign: "center" }}>Games</Text>
         </View>
@@ -43,7 +43,7 @@ const Footer = ({ navigation }) => {
         <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/chat-regular.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
+            style={{ width: 25, height: 25, resizeMode: "contain" }}
           />
           <Text style={{ textAlign: "center" }}>Inbox</Text>
         </View>
@@ -52,7 +52,7 @@ const Footer = ({ navigation }) => {
         <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/user-solid.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
+            style={{ width: 25, height: 25, resizeMode: "contain" }}
           />
           <Text style={{ textAlign: "center" }}>Manage</Text>
         </View>

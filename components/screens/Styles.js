@@ -140,10 +140,6 @@ const Styles = StyleSheet.create({
   screenContainer: {
     alignItems: "flex-start",
     width: "100%",
-    // borderWidth: 1, // Border width
-    // borderColor: "blue", // Border color
-    // borderRadius: 5, // Border radius (optional)
-    // padding: 5, // Optional padding
   },
 
   pendingScreenContainer: {
@@ -160,7 +156,7 @@ const Styles = StyleSheet.create({
   },
 
   pendingContainer: {
-    justifyContent: "flex-start", // Left-align children
+    justifyContent: "flex-start",
     alignItems: "center",
     width: "100%",
   },
@@ -186,9 +182,6 @@ const Styles = StyleSheet.create({
   requestPlayerButtonContainer: {
     alignItems: "center",
     width: "100%",
-    // borderWidth: 1, // Border width
-    // borderColor: "dark", // Border color
-    // borderRadius: 5, // Border radius (optional)
     borderTopWidth: 2,
     borderTopColor: "black",
     borderTopStyle: "solid",
@@ -367,11 +360,36 @@ const Styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
   },
+  profileLinksContainer: {
+    // borderColor: "green", // Border color
+    // borderWidth: 3, // Border width
+    // borderRadius: 5, // Border radius (optional)
+    width: "100%",
+    alignItems: "center",
+  },
   profileLinkContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start", // Left-align children
+    justifyContent: "space-between", // Left-align children
     paddingLeft: "5%", // Optional padding
+    borderBottomColor: "gray", // Border color
+    borderBottomWidth: 1, // Border width
+    width: "90%",
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  profileLinkTextContainer: {
+    // borderColor: "red", // Border color
+    // borderWidth: 1, // Border width
+    // borderRadius: 5, // Border radius (optional)
+    textAlign: "left",
+    fontSize: 20,
+  },
+  profileLinkImageContainer: {
+    // borderColor: "red", // Border color
+    // borderWidth: 1, // Border width
+    // borderRadius: 5, // Border radius (optional)
+    textAlign: "left",
   },
 });
 
