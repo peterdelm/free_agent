@@ -25,25 +25,71 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="CreateGame" component={CreateGame} />
-        <Stack.Screen name="CreatePlayer" component={CreatePlayer} />
-        <Stack.Screen name="RegisterUser" component={CreateUser} />
-        <Stack.Screen name="ViewGame" component={ViewGame} />
-        <Stack.Screen name="ViewPlayer" component={ViewPlayer} />
-        <Stack.Screen name="EditPlayer" component={EditPlayer} />
-        <Stack.Screen name="ManagePlayers" component={ManagePlayers} />
-        <Stack.Screen name="InboxScreen" component={InboxScreen} />
-        <Stack.Screen name="UserProfile" component={UserProfile} />
+        <Stack.Screen
+          name="Welcome"
+          component={WelcomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateGame"
+          component={CreateGame}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreatePlayer"
+          component={CreatePlayer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RegisterUser"
+          component={CreateUser}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ViewGame"
+          component={ViewGame}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ViewPlayer"
+          component={ViewPlayer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditPlayer"
+          component={EditPlayer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ManagePlayers"
+          component={ManagePlayers}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="InboxScreen"
+          component={InboxScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name="BrowseAvailableGames"
           component={BrowseAvailableGames}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="ManagerBrowseGames"
           component={ManagerBrowseGames}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

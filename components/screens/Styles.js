@@ -140,6 +140,7 @@ const Styles = StyleSheet.create({
   screenContainer: {
     alignItems: "flex-start",
     width: "100%",
+    padding: 10,
   },
 
   pendingScreenContainer: {
@@ -148,8 +149,6 @@ const Styles = StyleSheet.create({
     borderTopWidth: 2,
     borderTopColor: "black",
     borderTopStyle: "solid",
-    padding: 16,
-    padding: 5,
     borderBottomWidth: 2,
     borderBottomColor: "black",
     borderBottomStyle: "solid",
@@ -215,6 +214,7 @@ const Styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start", // Left-align children
     paddingLeft: "5%", // Optional padding
+    paddingTop: "5%",
   },
 
   pendingGames: {

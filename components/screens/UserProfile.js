@@ -78,15 +78,6 @@ const UserProfile = ({ navigation }) => {
     ));
   }
   return (
-    //Show Profile
-    //Personal info
-    //Login/Security
-    //Settings
-    //Switch to player
-    //Referrals
-    //Help
-    //How it works
-    //Terms of Service
     <View style={Styles.managerBrowseGamesContainer}>
       <View style={Styles.screenContainer}>
         <View
