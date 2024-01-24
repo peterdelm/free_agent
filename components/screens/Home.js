@@ -415,56 +415,57 @@ function HomeScreen({ navigation, message }) {
               /> */}
             </View>
           </View>
-        </View>
-        <View style={Styles.sportsPickerDropdownContainer}>
-          {/* DATE SELECTOR */}
-          <DatePicker
-            onInputSelected={captureSelectedDate}
-            style={Styles.datePickerButton}
-          />
-        </View>
-        <View style={Styles.sportsPickerDropdownContainer}>
-          {/* TIME SELECTOR */}
-          <TimePicker
-            onInputSelected={captureSelectedTime}
-            style={Styles.datePickerButton}
-          />
-        </View>
-        <View style={Styles.sportsPickerDropdownContainer}>
-          <Picker
-            style={Styles.sportsPickerDropdown}
-            placeholder="Game Length (minutes)"
-            defaultValue=""
-            placeholderTextColor="grey"
-            onValueChange={handleGameLengthChange}
-            language={gameLengthList}
-            label="Game Length"
-          />
-        </View>
-        <View style={Styles.sportsPickerDropdownContainer}>
-          <TextInput
-            style={Styles.additionalInfo}
-            placeholder="Additional Info..."
-            defaultValue=""
-            placeholderTextColor="grey"
-            onChangeText={(additional_info) =>
-              setAdditionalInfo(additional_info)
-            }
-          />
-        </View>
-        <View style={Styles.requestPlayerContainer}>
-          <View style={Styles.requestPlayerButtonContainer}>
-            <TouchableOpacity onPress={() => handleFormSubmit()}>
-              <View style={Styles.requestPlayerButton}>
-                <Text style={Styles.requestPlayerButtonText}>
-                  Request a Player
-                </Text>
-                <Image
-                  source={require("../../assets/circle-plus-solid.png")}
-                  style={Styles.requestPlayerButtonImage}
-                />
-              </View>
-            </TouchableOpacity>
+
+          <View style={Styles.sportsPickerDropdownContainer}>
+            {/* DATE SELECTOR */}
+            <DatePicker
+              onInputSelected={captureSelectedDate}
+              style={Styles.datePickerButton}
+            />
+          </View>
+          <View style={Styles.sportsPickerDropdownContainer}>
+            {/* TIME SELECTOR */}
+            <TimePicker
+              onInputSelected={captureSelectedTime}
+              style={Styles.datePickerButton}
+            />
+          </View>
+          <View style={Styles.sportsPickerDropdownContainer}>
+            <Picker
+              style={Styles.sportsPickerDropdown}
+              placeholder="Game Length (minutes)"
+              defaultValue=""
+              placeholderTextColor="grey"
+              onValueChange={handleGameLengthChange}
+              language={gameLengthList}
+              label="Game Length"
+            />
+          </View>
+          <View style={Styles.sportsPickerDropdownContainer}>
+            <TextInput
+              style={Styles.additionalInfo}
+              placeholder="Additional Info..."
+              defaultValue=""
+              placeholderTextColor="grey"
+              onChangeText={(additional_info) =>
+                setAdditionalInfo(additional_info)
+              }
+            />
+          </View>
+          <View style={Styles.requestPlayerContainer}>
+            <View style={Styles.requestPlayerButtonContainer}>
+              <TouchableOpacity onPress={() => handleFormSubmit()}>
+                <View style={Styles.requestPlayerButton}>
+                  <Text style={Styles.requestPlayerButtonText}>
+                    Request a Player
+                  </Text>
+                  <Image
+                    source={require("../../assets/circle-plus-solid.png")}
+                    style={Styles.requestPlayerButtonImage}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>

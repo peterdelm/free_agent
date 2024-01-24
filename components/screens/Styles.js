@@ -250,7 +250,8 @@ const Styles = StyleSheet.create({
     borderWidth: 1, // Border width
     borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    padding: 10,
+    margin: 2,
     backgroundColor: "#FFFFFF",
   },
 
