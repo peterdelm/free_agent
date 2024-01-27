@@ -1,12 +1,15 @@
 import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
-import React, { useState, useEffect, useFocusEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
+import getCurrentUser from "./getCurrentUser.helper";
+import { useFocusEffect } from "@react-navigation/native";
 
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
 
   const getTokenFromStorage = async () => {
     try {
@@ -19,43 +22,63 @@ const UserProfile = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
-    const fetchData = async () => {
+  const sendToggleProfileRequest = () => {
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/";
+
+    const toggleProfileRequest = async () => {
       try {
         const token = await getTokenFromStorage();
         console.log("Token is " + token);
         console.log("URL is " + url);
-
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         };
-
-        const requestions = {
-          headers,
+        const body = {
+          addressFragment: "addressFragment",
         };
 
-        fetch(url, requestions)
+        const request = {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(body),
+        };
+
+        fetch(url, request)
           .then((res) => {
             if (res.ok) {
               console.log("res was ok");
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.activeGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
-            // Handle specific error scenarios
+            return;
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
-        // Handle error
       }
     };
-    fetchData();
-  }, []);
+    toggleProfileRequest();
+  };
+
+  const toggleProfile = () => {
+    sendToggleProfileRequest(newProfile);
+  };
 
   let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
@@ -141,7 +164,6 @@ const UserProfile = ({ navigation }) => {
                 />
               </View>
             </View>
-
             <View style={Styles.profileLinkContainer}>
               <Text style={Styles.profileLinkTextContainer}>Settings/Text</Text>
               <View style={Styles.profileLinkImageContainer}>
@@ -151,7 +173,10 @@ const UserProfile = ({ navigation }) => {
                 />
               </View>
             </View>
-            <View style={Styles.profileLinkContainer}>
+            <TouchableOpacity
+              style={Styles.profileLinkContainer}
+              onPress={() => toggleProfile()}
+            >
               <Text style={Styles.profileLinkTextContainer}>
                 Switch to Player
               </Text>
@@ -161,7 +186,7 @@ const UserProfile = ({ navigation }) => {
                   style={{ width: 20, height: 20, resizeMode: "contain" }}
                 />
               </View>
-            </View>
+            </TouchableOpacity>
             <View style={Styles.profileLinkContainer}>
               <Text style={Styles.profileLinkTextContainer}>Referrals</Text>
               <View style={Styles.profileLinkImageContainer}>
@@ -204,7 +229,10 @@ const UserProfile = ({ navigation }) => {
         </View>
       </View>
 
-      <NavigationFooter navigation={navigation}>
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      >
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

@@ -2,8 +2,20 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Footer = ({ navigation }) => {
+const Footer = ({ navigation, currentRole }) => {
+  const selectiveDisplay = () => {
+    if (currentRole == "manager") {
+      console.log("Current Role is MANAGER");
+    }
+    if (currentRole == "player") {
+      console.log("Current Role is PLAYER");
+    }
+  };
+
+  selectiveDisplay();
+
   return (
     <View
       style={{

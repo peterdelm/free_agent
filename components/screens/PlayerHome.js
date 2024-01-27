@@ -16,9 +16,8 @@ import AutoCompletePicker from "./AutocompletePicker";
 import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
-import getCurrentUser from "./getCurrentUser.helper";
 
-function HomeScreen({ navigation, message }) {
+function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
   const [sportSpecificValues, setSportSpecificValues] = useState();
   const [selectedSport, setSelectedSport] = useState({});
@@ -40,7 +39,6 @@ function HomeScreen({ navigation, message }) {
   const [selectedSportId, setSelectedSportId] = useState();
   const [position, setPosition] = useState("");
   const [positionList, setPositionList] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
 
   const handleSportChange = (selectedSport) => {
     setSelectedSport(selectedSport);
@@ -102,17 +100,6 @@ function HomeScreen({ navigation, message }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const fetchUser = async () => {
-        try {
-          const user = await getCurrentUser();
-          setCurrentUser(user);
-        } catch (error) {
-          console.error("Error fetching user:", error);
-        }
-      };
-      const user = fetchUser();
-      console.log(user.currentRole);
-
       const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
       console.log("UsefocusEffect Fetch games called");
 
@@ -336,15 +323,15 @@ function HomeScreen({ navigation, message }) {
         </View>
       </View>
       {/* <View style={Styles.pendingScreenContainer}>
-        <View style={[Styles.screenHeader, { marginBottom: 10 }]}>
-          <Text style={{ fontSize: 30 }}>Pending</Text>
-        </View>
-        <View style={Styles.pendingGamesContainer}>
-          <ScrollView>
-            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-          </ScrollView>
-        </View>
-      </View> */}
+          <View style={[Styles.screenHeader, { marginBottom: 10 }]}>
+            <Text style={{ fontSize: 30 }}>Pending</Text>
+          </View>
+          <View style={Styles.pendingGamesContainer}>
+            <ScrollView>
+              {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+            </ScrollView>
+          </View>
+        </View> */}
       <ScrollView style={{ width: "100%" }}>
         <View style={Styles.screenContainer}>
           <View
@@ -423,9 +410,9 @@ function HomeScreen({ navigation, message }) {
               <Text>Location Input Stand-in Until Credit card Renewal</Text>
 
               {/* <AutoCompletePicker
-                onInputSelected={captureSelectedLocation}
-                style={Styles.sportsPickerDropdown}
-              /> */}
+                  onInputSelected={captureSelectedLocation}
+                  style={Styles.sportsPickerDropdown}
+                /> */}
             </View>
           </View>
 
@@ -483,22 +470,19 @@ function HomeScreen({ navigation, message }) {
         </View>
       </ScrollView>
       {/* 
-      <View style={Styles.homeContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
-          <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("BrowseAvailableGames")}>
-          <Text style={Styles.primaryButton}>Browse Games</Text>
-        </TouchableOpacity>
-      </View> */}
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+        <View style={Styles.homeContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
+            <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("BrowseAvailableGames")}>
+            <Text style={Styles.primaryButton}>Browse Games</Text>
+          </TouchableOpacity>
+        </View> */}
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>
   );
 }
 
-export default HomeScreen;
+export default PlayerHome;
