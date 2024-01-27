@@ -10,6 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [alternateRoleText, setAlternateRoleText] = useState("");
 
   const getTokenFromStorage = async () => {
     try {
@@ -28,6 +29,7 @@ const UserProfile = ({ navigation }) => {
         try {
           const user = await getCurrentUser();
           setCurrentUser(user);
+          setAlternateRole(user.currentRole);
         } catch (error) {
           console.error("Error during fetch:", error);
         }
@@ -58,17 +60,18 @@ const UserProfile = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        fetch(url, request)
-          .then((res) => {
-            if (res.ok) {
-              console.log("res was ok");
-              return res.json();
-            } else throw new Error("Network response was not ok.");
-          })
-          .catch((error) => {
-            console.log("Error during fetch:", error);
-            return;
-          });
+        const response = await fetch(url, request);
+        if (response.ok) {
+          // Parse and use the data
+          const userData = await response.json();
+          console.log("User data:", userData);
+          setAlternateRole(userData.newProfile);
+
+          return userData;
+        } else {
+          // Handle non-ok responses
+          throw new Error("Network response was not ok.");
+        }
       } catch (error) {
         console.log("Error making authenticated request:", error);
       }
@@ -76,8 +79,18 @@ const UserProfile = ({ navigation }) => {
     toggleProfileRequest();
   };
 
+  const swapProfileText = () => {};
+
   const toggleProfile = () => {
-    sendToggleProfileRequest(newProfile);
+    sendToggleProfileRequest();
+  };
+
+  const setAlternateRole = (currentRole) => {
+    if (currentRole === "manager") {
+      setAlternateRoleText("Player");
+    } else if (currentRole === "player") {
+      setAlternateRoleText("Manager");
+    }
   };
 
   let allActiveGames = []; // Initialize as null initially
@@ -175,10 +188,12 @@ const UserProfile = ({ navigation }) => {
             </View>
             <TouchableOpacity
               style={Styles.profileLinkContainer}
-              onPress={() => toggleProfile()}
+              onPress={() => {
+                toggleProfile(), swapProfileText();
+              }}
             >
               <Text style={Styles.profileLinkTextContainer}>
-                Switch to Player
+                Switch to {alternateRoleText}
               </Text>
               <View style={Styles.profileLinkImageContainer}>
                 <Image
