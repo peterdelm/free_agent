@@ -4,8 +4,12 @@ import Styles from "./Styles";
 import { View, Text, Image, StatusBar } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import NavigationFooter from "./NavigationFooter";
+import getCurrentUser from "./getCurrentUser.helper";
+import { useFocusEffect } from "@react-navigation/native";
 
 function ViewGame({ navigation, message }) {
+  const [currentUser, setCurrentUser] = useState({});
+
   const route = useRoute();
   const { gameId } = route.params;
   const [game, setGame] = useState([]);
@@ -19,6 +23,20 @@ function ViewGame({ navigation, message }) {
       return null;
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
   useEffect(() => {
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/" + gameId;
@@ -92,7 +110,10 @@ function ViewGame({ navigation, message }) {
       </Text>
       <Text style={Styles.gameInfo}>{game.game_length} Minutes</Text>
 
-      <NavigationFooter navigation={navigation}></NavigationFooter>
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      ></NavigationFooter>
     </View>
   );
 }

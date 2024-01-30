@@ -115,40 +115,6 @@ function HomeScreen({ navigation, message }) {
 
       const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
       console.log("UsefocusEffect Fetch games called");
-
-      const fetchData = async () => {
-        try {
-          const token = await getTokenFromStorage();
-          console.log("Token is " + token);
-          console.log("URL is " + url);
-
-          const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          };
-
-          const requestOptions = {
-            headers,
-          };
-
-          fetch(url, requestOptions)
-            .then((res) => {
-              if (res.ok) {
-                console.log("res was ok");
-                return res.json();
-              } else throw new Error("Network response was not ok.");
-            })
-            .then((res) => setActiveGames(res.activeGames))
-            .catch((error) => {
-              console.log("Error during fetch:", error);
-              // Handle specific error scenarios
-            });
-        } catch (error) {
-          console.log("Error making authenticated request:", error);
-          // Handle error
-        }
-      };
-      fetchData();
     }, [])
   );
 
@@ -219,7 +185,6 @@ function HomeScreen({ navigation, message }) {
       position,
       game_type,
       date,
-      //stand in Location until credit renewal
       location: "123 Jasper Street",
       time,
       game_length,
@@ -230,7 +195,7 @@ function HomeScreen({ navigation, message }) {
       sportId: selectedSportId,
     };
 
-    console.log("CreateGame Request body is: " + body);
+    console.log("CreateGame Request date is: " + body.date);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
 
     const postGame = async () => {
@@ -281,21 +246,6 @@ function HomeScreen({ navigation, message }) {
     onSubmit();
   };
 
-  let allActiveGames = []; // Initialize as null initially
-  const noActiveGames = <Text>No Games yet. Why not</Text>;
-
-  if (activeGames.length > 0) {
-    allActiveGames = activeGames.map((game, index) => (
-      <TouchableOpacity
-        key={game.id}
-        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
-      >
-        <Text key={index} style={Styles.pendingGames}>
-          {game.location} @ {game.time}
-        </Text>
-      </TouchableOpacity>
-    ));
-  }
   function Banner({ message }) {
     const result = message["successMessage"] || "";
     const isMessageEmpty = result === "";

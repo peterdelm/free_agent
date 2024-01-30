@@ -15,6 +15,7 @@ import ManagePlayers from "./components/screens/ManagePlayers";
 import BrowseAvailableGames from "./components/screens/BrowseAvailableGames";
 import ManagerBrowseGames from "./components/screens/ManagerBrowseGames";
 import InboxScreen from "./components/screens/InboxScreen";
+import PlayerHome from "./components/screens/PlayerHome";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import UserProfile from "./components/screens/UserProfile";
@@ -89,6 +90,11 @@ export default function App() {
         <Stack.Screen
           name="ManagerBrowseGames"
           component={ManagerBrowseGames}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PlayerHome"
+          component={PlayerHome}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

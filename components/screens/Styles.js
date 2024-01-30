@@ -161,8 +161,16 @@ const Styles = StyleSheet.create({
   },
 
   pendingGamesContainer: {
-    justifyContent: "flex-start", // Left-align children
+    justifyContent: "flex-start",
+    flex: 1,
     width: "100%",
+    borderColor: "black", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+  upcomingGames: {
+    height: "50%",
     borderColor: "black", // Border color
     borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)
@@ -265,15 +273,30 @@ const Styles = StyleSheet.create({
   },
 
   managerBrowseGamesContainer: {
-    flex: 1,
+    width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#FFFFFF",
+    borderWidth: 1, // Border width
+    borderColor: "red", // Border color
+    height: "100%",
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+  },
+
+  managerBrowseGamesContentContainer: {
+    width: "95%",
+    flex: 1,
+    borderColor: "red", // Border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
   },
 
   upcomingGameListContainer: {
     justifyContent: "flex-start", // Left-align children
     width: "100%",
+    flex: 1,
     borderColor: "black", // Border color
     borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)
@@ -321,14 +344,14 @@ const Styles = StyleSheet.create({
     height: 50,
     marginBottom: 20,
     alignItems: "center",
-    borderColor: "black", // Border color
-    borderWidth: 1, // Border width
-    borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+    borderColor: "black",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 5,
   },
 
   welcomeScreenLogoContainer: {
-    padding: 5, // Optional padding
+    padding: 5,
     margin: 20,
     width: "95%",
     alignItems: "center",
@@ -391,6 +414,90 @@ const Styles = StyleSheet.create({
     // borderWidth: 1, // Border width
     // borderRadius: 5, // Border radius (optional)
     textAlign: "left",
+  },
+  playerHomeContainer: { height: "100%", justifyContent: "space-between" },
+
+  playerHomeContentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+
+  playerHomeMapContainer: {
+    width: "100%",
+    height: "60%",
+    borderColor: "red",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+  },
+  playerHomeAvailableGamesContainer: {
+    borderColor: "green",
+    borderWidth: 1,
+    borderRadius: 5,
+    width: "100%",
+    alignItems: "center",
+    borderRadius: 5,
+    flex: 1,
+  },
+
+  playerHomeTextContentContainer: {
+    flex: 1,
+    borderColor: "dark green",
+    borderRadius: 5,
+    borderWidth: 1,
+    margin: 5,
+    height: "50%",
+    width: "95%",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  goOfflineButtonContainer: {
+    borderColor: "red",
+    borderRadius: 5,
+    borderWidth: 1,
+    width: "100%",
+    height: "20%",
+  },
+  goOfflineButton: {
+    borderRadius: 10,
+    backgroundColor: "#e04848",
+    textAlign: "center",
+    textAlignVertical: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: "red",
+    borderRadius: 5,
+    borderWidth: 1,
+    margin: 5,
+  },
+
+  goOfflineButtonImage: {
+    marginLeft: 20,
+    height: "80%",
+    borderColor: "red",
+    borderRadius: 5,
+    margin: 5,
+  },
+
+  goOfflineButtonText: {
+    marginRight: 20,
+    margin: 5,
+  },
+  playerHomeAvailableGamesHeader: {
+    marginRight: 20,
+    borderColor: "black",
+    borderRadius: 5,
+    borderWidth: 1,
+    margin: 5,
+  },
+  availableGamesScroller: {
+    borderColor: "black",
+    borderRadius: 5,
+    borderWidth: 1,
+    margin: 5,
+    flex: 1,
+    width: "100%",
   },
 });
 

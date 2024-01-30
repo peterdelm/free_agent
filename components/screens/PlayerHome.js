@@ -16,6 +16,8 @@ import AutoCompletePicker from "./AutocompletePicker";
 import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
+import getCurrentUser from "./getCurrentUser.helper";
+import formatDate from "./formatDate";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -39,6 +41,22 @@ function PlayerHome({ navigation }) {
   const [selectedSportId, setSelectedSportId] = useState();
   const [position, setPosition] = useState("");
   const [positionList, setPositionList] = useState([]);
+
+  const [currentUser, setCurrentUser] = useState({});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
   const handleSportChange = (selectedSport) => {
     setSelectedSport(selectedSport);
@@ -139,9 +157,8 @@ function PlayerHome({ navigation }) {
     }, [])
   );
 
-  //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
+    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
 
     const fetchData = async () => {
       try {
@@ -161,14 +178,14 @@ function PlayerHome({ navigation }) {
         fetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
+              console.log("res was ok");
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => {
-            setSportSpecificValues(res.sports);
-
-            console.log("Results are...");
-            console.log(res.sports);
+          .then((res) => setActiveGames(res.activeGames))
+          .catch((error) => {
+            console.log("Error during fetch:", error);
+            // Handle specific error scenarios
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
@@ -269,7 +286,7 @@ function PlayerHome({ navigation }) {
   };
 
   let allActiveGames = []; // Initialize as null initially
-  const noActiveGames = <Text>No Games yet. Why not</Text>;
+  const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
     allActiveGames = activeGames.map((game, index) => (
@@ -277,208 +294,66 @@ function PlayerHome({ navigation }) {
         key={game.id}
         onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
       >
-        <Text key={index} style={Styles.pendingGames}>
-          {game.location} @ {game.time}
-        </Text>
+        <View key={index} style={Styles.upcomingGameContainer}>
+          <View style={Styles.upcomingGameDateContainer}>
+            <Text key={index}>{formatDate(game.date)}</Text>
+          </View>
+          <View style={Styles.upcomingGameAddressContainer}>
+            <Text key={index}>{game.location}</Text>
+          </View>
+        </View>
       </TouchableOpacity>
     ));
   }
-  function Banner({ message }) {
-    const result = message["successMessage"] || "";
-    const isMessageEmpty = result === "";
-
-    if (isMessageEmpty) {
-      return null; // Don't render anything if the message is empty
-    }
-
-    //set a timer
-    //do a slide animation
-    //highlight the new game for a few seconds
-    return (
-      <View>
-        <Text style={Styles.primaryButton}>{result}</Text>
-      </View>
-    );
-  }
 
   return (
-    <View style={Styles.homeScreenContainer}>
-      {<Banner message={successMessage} />}
-      <View
-        style={[
-          Styles.screenContainer,
-          {
-            borderBottomColor: "black",
-            borderBottomWidth: 2,
-            borderBottomStyle: "solid",
-          },
-        ]}
-      >
-        <View style={Styles.screenHeader}>
+    <View style={Styles.playerHomeContainer}>
+      <View style={Styles.screenHeader}>
+        <Image
+          resizeMode="cover"
+          source={require("../../assets/prayingHands.png")}
+          style={{ width: 50, height: 50, resizeMode: "contain" }}
+        />
+        <Text style={{ fontSize: 35, padding: 20 }}>Player Home</Text>
+      </View>
+      <View style={Styles.playerHomeContentContainer}>
+        <View style={Styles.playerHomeMapContainer}>
           <Image
-            source={require("../../assets/prayingHands.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
+            resizeMode="cover"
+            source={require("../../assets/standin-map.jpg")}
+            style={{ height: "100%", width: "100%" }}
           />
-          <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
+        </View>
+        <View style={Styles.playerHomeTextContentContainer}>
+          <View style={Styles.playerHomeAvailableGamesContainer}>
+            <View style={[Styles.playerHomeAvailableGamesHeader]}>
+              <Text style={{ fontSize: 20 }}>Available Games</Text>
+            </View>
+            <View style={Styles.availableGamesScroller}>
+              <ScrollView>
+                {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+              </ScrollView>
+            </View>
+          </View>
+          <View style={Styles.goOfflineButtonContainer}>
+            <TouchableOpacity
+              onPress={() => console.log("goOffline Button Pressed")}
+            >
+              <View style={Styles.goOfflineButton}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={Styles.goOfflineButtonImage}
+                />
+                <Text style={Styles.goOfflineButtonText}>Go Offline</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-      {/* <View style={Styles.pendingScreenContainer}>
-          <View style={[Styles.screenHeader, { marginBottom: 10 }]}>
-            <Text style={{ fontSize: 30 }}>Pending</Text>
-          </View>
-          <View style={Styles.pendingGamesContainer}>
-            <ScrollView>
-              {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-            </ScrollView>
-          </View>
-        </View> */}
-      <ScrollView style={{ width: "100%" }}>
-        <View style={Styles.screenContainer}>
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "row",
-            }}
-          >
-            <View
-              style={[Styles.sportsPickerDropdownContainer, { width: "50%" }]}
-            >
-              <SportsPicker
-                style={Styles.TextInput}
-                defaultValue=""
-                placeholderTextColor="grey"
-                sportsData={sportSpecificValues}
-                onValueChange={handleSportChange}
-                label="Sport"
-                selectedSport={selectedSport}
-              />
-            </View>
-            <View
-              style={[Styles.sportsPickerDropdownContainer, { width: "50%" }]}
-            >
-              <Picker
-                style={Styles.sportsPickerDropdown}
-                defaultValue=""
-                placeholderTextColor="grey"
-                onValueChange={handleGameTypeChange}
-                language={gameTypeList}
-                label="Game Type"
-              />
-            </View>
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              language={calibreList}
-              onValueChange={handleCalibreChange}
-              label="Calibre"
-            />
-          </View>
-
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handleGenderChange}
-              language={genderList}
-              label="Gender"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handlePositionChange}
-              language={positionList}
-              label="Position"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            {/* LOCATION SELECTOR */}
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <Text>Location Input Stand-in Until Credit card Renewal</Text>
-
-              {/* <AutoCompletePicker
-                  onInputSelected={captureSelectedLocation}
-                  style={Styles.sportsPickerDropdown}
-                /> */}
-            </View>
-          </View>
-
-          <View style={Styles.sportsPickerDropdownContainer}>
-            {/* DATE SELECTOR */}
-            <DatePicker
-              onInputSelected={captureSelectedDate}
-              style={Styles.datePickerButton}
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            {/* TIME SELECTOR */}
-            <TimePicker
-              onInputSelected={captureSelectedTime}
-              style={Styles.datePickerButton}
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              placeholder="Game Length (minutes)"
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handleGameLengthChange}
-              language={gameLengthList}
-              label="Game Length"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <TextInput
-              style={Styles.additionalInfo}
-              placeholder="Additional Info..."
-              defaultValue=""
-              placeholderTextColor="grey"
-              onChangeText={(additional_info) =>
-                setAdditionalInfo(additional_info)
-              }
-            />
-          </View>
-          <View style={Styles.requestPlayerContainer}>
-            <View style={Styles.requestPlayerButtonContainer}>
-              <TouchableOpacity onPress={() => handleFormSubmit()}>
-                <View style={Styles.requestPlayerButton}>
-                  <Text style={Styles.requestPlayerButtonText}>
-                    Request a Player
-                  </Text>
-                  <Image
-                    source={require("../../assets/circle-plus-solid.png")}
-                    style={Styles.requestPlayerButtonImage}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-      {/* 
-        <View style={Styles.homeContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
-            <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("BrowseAvailableGames")}>
-            <Text style={Styles.primaryButton}>Browse Games</Text>
-          </TouchableOpacity>
-        </View> */}
-      <NavigationFooter navigation={navigation}>
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      >
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

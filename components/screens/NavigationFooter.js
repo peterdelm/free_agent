@@ -8,13 +8,34 @@ const Footer = ({ navigation, currentRole }) => {
   const selectiveDisplay = () => {
     if (currentRole == "manager") {
       console.log("Current Role is MANAGER");
+
+      return (
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <View style={{ alignItems: "center" }}>
+            <Image
+              source={require("../../assets/prayingHands.png")}
+              style={{ width: 25, height: 25, resizeMode: "contain" }}
+            />
+            <Text style={{ textAlign: "center" }}>Requests</Text>
+          </View>
+        </TouchableOpacity>
+      );
     }
     if (currentRole == "player") {
       console.log("Current Role is PLAYER");
+      return (
+        <TouchableOpacity onPress={() => navigation.navigate("PlayerHome")}>
+          <View style={{ alignItems: "center" }}>
+            <Image
+              source={require("../../assets/user-plus-solid.png")}
+              style={{ width: 25, height: 25, resizeMode: "contain" }}
+            />
+            <Text style={{ textAlign: "center" }}>Requests</Text>
+          </View>
+        </TouchableOpacity>
+      );
     }
   };
-
-  selectiveDisplay();
 
   return (
     <View
@@ -30,16 +51,7 @@ const Footer = ({ navigation, currentRole }) => {
         padding: 5,
       }}
     >
-      <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-        <View style={{ alignItems: "center" }}>
-          <Image
-            source={require("../../assets/prayingHands.png")}
-            style={{ width: 25, height: 25, resizeMode: "contain" }}
-          />
-          <Text style={{ textAlign: "center" }}>Requests</Text>
-        </View>
-      </TouchableOpacity>
-
+      {selectiveDisplay()}
       <TouchableOpacity
         onPress={() => navigation.navigate("ManagerBrowseGames")}
       >

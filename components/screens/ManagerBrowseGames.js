@@ -1,12 +1,29 @@
 import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
-import React, { useState, useEffect, useFocusEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
+import getCurrentUser from "./getCurrentUser.helper";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ManagerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
   const getTokenFromStorage = async () => {
     try {
@@ -79,51 +96,50 @@ const ManagerBrowseGames = ({ navigation }) => {
   }
   return (
     <View style={Styles.managerBrowseGamesContainer}>
-      <View style={Styles.screenContainer}>
-        <View
-          style={[
-            Styles.screenContainer,
-            { borderBottomColor: "black", borderBottomWidth: 2 },
-          ]}
-        >
-          <View style={Styles.screenHeader}>
-            <Image
-              source={require("../../assets/volleyball-solid.png")}
-              style={{ width: 50, height: 50, resizeMode: "contain" }}
-            />
-            <Text
-              style={{
-                fontSize: 35,
-                padding: 20,
-              }}
-            >
-              Games
-            </Text>
-          </View>
+      <View
+        style={[
+          Styles.screenContainer,
+          { borderBottomColor: "black", borderBottomWidth: 2 },
+        ]}
+      >
+        <View style={Styles.screenHeader}>
+          <Image
+            source={require("../../assets/volleyball-solid.png")}
+            style={{ width: 50, height: 50, resizeMode: "contain" }}
+          />
+          <Text
+            style={{
+              fontSize: 35,
+              padding: 20,
+            }}
+          >
+            Games
+          </Text>
         </View>
-        <View style={Styles.screenContainer}>
-          <View style={Styles.screenHeader}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Upcoming Games</Text>
-          </View>
-          <View style={Styles.upcomingGameListContainer}>
-            <ScrollView>
-              {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-            </ScrollView>
-          </View>
+      </View>
+      <View style={Styles.managerBrowseGamesContentContainer}>
+        <View style={Styles.screenHeader}>
+          <Text style={{ fontSize: 30, paddingTop: 20 }}>Upcoming Games</Text>
         </View>
-        <View style={Styles.screenContainer}>
-          <View style={Styles.screenHeader}>
-            <Text style={{ fontSize: 30, paddingTop: 20 }}>Previous Games</Text>
-          </View>
-          <View style={Styles.pendingGamesContainer}>
-            <ScrollView>
-              {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-            </ScrollView>
-          </View>
+        <View style={Styles.pendingGamesContainer}>
+          <ScrollView>
+            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+          </ScrollView>
+        </View>
+        <View style={Styles.screenHeader}>
+          <Text style={{ fontSize: 30, paddingTop: 20 }}>Previous Games</Text>
+        </View>
+        <View style={Styles.pendingGamesContainer}>
+          <ScrollView>
+            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+          </ScrollView>
         </View>
       </View>
 
-      <NavigationFooter navigation={navigation}>
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      >
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>
