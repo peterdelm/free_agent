@@ -225,6 +225,11 @@ const Styles = StyleSheet.create({
     paddingTop: "5%",
   },
 
+  managerBrowseGamesContainerHeader: {
+    alignItems: "center",
+    padding: "2%",
+  },
+
   pendingGames: {
     width: 385,
     borderRadius: 25,
@@ -277,20 +282,15 @@ const Styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#FFFFFF",
-    borderWidth: 1, // Border width
-    borderColor: "red", // Border color
+
     height: "100%",
-    borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
   },
 
   managerBrowseGamesContentContainer: {
     width: "95%",
     flex: 1,
-    borderColor: "red", // Border color
-    borderWidth: 1, // Border width
-    borderRadius: 5, // Border radius (optional)
-    padding: 5, // Optional padding
+
+    justifyContent: "space-between",
   },
 
   upcomingGameListContainer: {
@@ -431,9 +431,6 @@ const Styles = StyleSheet.create({
     padding: 10,
   },
   playerHomeAvailableGamesContainer: {
-    borderColor: "green",
-    borderWidth: 1,
-    borderRadius: 5,
     width: "100%",
     alignItems: "center",
     borderRadius: 5,
@@ -442,9 +439,7 @@ const Styles = StyleSheet.create({
 
   playerHomeTextContentContainer: {
     flex: 1,
-    borderColor: "dark green",
-    borderRadius: 5,
-    borderWidth: 1,
+
     margin: 5,
     height: "50%",
     width: "95%",
@@ -452,9 +447,7 @@ const Styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   goOfflineButtonContainer: {
-    borderColor: "red",
-    borderRadius: 5,
-    borderWidth: 1,
+    marginTop: 2,
     width: "100%",
     height: "20%",
   },
@@ -486,9 +479,7 @@ const Styles = StyleSheet.create({
   },
   playerHomeAvailableGamesHeader: {
     marginRight: 20,
-    borderColor: "black",
-    borderRadius: 5,
-    borderWidth: 1,
+
     margin: 5,
   },
   availableGamesScroller: {
@@ -499,6 +490,7 @@ const Styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  viewGameContentContainer: { flex: 1 },
 });
 
 export default Styles;

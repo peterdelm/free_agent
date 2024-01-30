@@ -118,18 +118,18 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
       </View>
       <View style={Styles.managerBrowseGamesContentContainer}>
-        <View style={Styles.screenHeader}>
-          <Text style={{ fontSize: 30, paddingTop: 20 }}>Upcoming Games</Text>
+        <View style={Styles.managerBrowseGamesContainerHeader}>
+          <Text style={{ fontSize: 30 }}>Upcoming Games</Text>
         </View>
         <View style={Styles.pendingGamesContainer}>
           <ScrollView>
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
-        <View style={Styles.screenHeader}>
-          <Text style={{ fontSize: 30, paddingTop: 20 }}>Previous Games</Text>
+        <View style={Styles.managerBrowseGamesContainerHeader}>
+          <Text style={{ fontSize: 30 }}>Previous Games</Text>
         </View>
-        <View style={Styles.pendingGamesContainer}>
+        <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
           <ScrollView>
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>

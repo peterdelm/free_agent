@@ -75,6 +75,7 @@ function ViewGame({ navigation, message }) {
   return (
     <View style={Styles.container}>
       {/* <StatusBar hidden={true} /> */}
+
       <View style={Styles.screenContainer}>
         <View style={Styles.screenHeader}>
           <Image
@@ -84,32 +85,39 @@ function ViewGame({ navigation, message }) {
           <Text style={{ fontSize: 35, padding: 20 }}>View Game</Text>
         </View>
       </View>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>Address</Text>
+      <View style={Styles.viewGameContentContainer}>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Address
+        </Text>
 
-      <Text style={Styles.gameInfo}>{game.location}</Text>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-        Date/Time
-      </Text>
-      <Text style={Styles.gameInfo}>
-        {game.date} @ {game.time}
-      </Text>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-        Position
-      </Text>
-      <Text style={Styles.gameInfo}>{game.position}</Text>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>Calibre</Text>
-      <Text style={Styles.gameInfo}>{game.calibre}</Text>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>Gender</Text>
-      <Text style={Styles.gameInfo}>Gender: {game.gender}</Text>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-        Game Type
-      </Text>
-      <Text style={Styles.gameInfo}>{game.game_type}</Text>
-      <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-        Game Length
-      </Text>
-      <Text style={Styles.gameInfo}>{game.game_length} Minutes</Text>
-
+        <Text style={Styles.gameInfo}>{game.location}</Text>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Date/Time
+        </Text>
+        <Text style={Styles.gameInfo}>
+          {game.date} @ {game.time}
+        </Text>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Position
+        </Text>
+        <Text style={Styles.gameInfo}>{game.position}</Text>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Calibre
+        </Text>
+        <Text style={Styles.gameInfo}>{game.calibre}</Text>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Gender
+        </Text>
+        <Text style={Styles.gameInfo}>Gender: {game.gender}</Text>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Game Type
+        </Text>
+        <Text style={Styles.gameInfo}>{game.game_type}</Text>
+        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+          Game Length
+        </Text>
+        <Text style={Styles.gameInfo}>{game.game_length} Minutes</Text>
+      </View>
       <NavigationFooter
         currentRole={currentUser.currentRole}
         navigation={navigation}
