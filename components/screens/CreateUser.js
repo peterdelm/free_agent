@@ -36,14 +36,7 @@ const CreateUser = ({ navigation }) => {
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'User Created, Welcome' notification
   };
-
-  // const handleError = (errror, input) => {
-  //   setErrors((prevState) => ({ ...prevState, [input]: error }));
-  // };
 
   const validateInputs = () => {
     if (!emailAddress) {
