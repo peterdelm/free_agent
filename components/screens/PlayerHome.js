@@ -21,11 +21,8 @@ import formatDate from "./formatDate";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
-  const [sportSpecificValues, setSportSpecificValues] = useState();
   const [selectedSport, setSelectedSport] = useState({});
-  const [calibreList, setCalibreList] = useState([]);
   const [calibre, setCalibre] = useState("");
-
   const [gender, setGender] = useState("");
   const [game_type, setGameType] = useState("");
   const [location, setGameAddress] = useState("");
@@ -34,13 +31,10 @@ function PlayerHome({ navigation }) {
   const [game_length, setGameLength] = useState("");
   const [team_name, setTeamName] = useState("");
   const [additional_info, setAdditionalInfo] = useState("");
-  const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
-  const [gameLengthList, setGameLengthList] = useState([]);
-  const [isSportSelected, setIsSportSelected] = useState(false);
+
   const [selectedSportId, setSelectedSportId] = useState();
   const [position, setPosition] = useState("");
-  const [positionList, setPositionList] = useState([]);
 
   const [currentUser, setCurrentUser] = useState({});
 
@@ -57,43 +51,6 @@ function PlayerHome({ navigation }) {
       fetchCurrentUser();
     }, [])
   );
-
-  const handleSportChange = (selectedSport) => {
-    setSelectedSport(selectedSport);
-    setCalibreList(selectedSport.calibre);
-    setGameTypeList(selectedSport.game_type);
-    setGameLengthList(selectedSport.game_length);
-    setPositionList(selectedSport.position);
-    setSelectedSportId(selectedSport.id);
-
-    console.log("Selected sport is:", selectedSport.sport);
-    console.log("Selected sport details:", selectedSport.calibre);
-  };
-
-  captureSelectedDate = (selectedInput) => {
-    console.log("Selected Date input: " + selectedInput);
-    setGameDate(selectedInput);
-  };
-  captureSelectedTime = (selectedInput) => {
-    console.log("Selected Time input: " + selectedInput);
-    setGameTime(selectedInput);
-  };
-
-  const handleCalibreChange = (input) => {
-    setCalibre(input);
-  };
-  const handleGenderChange = (input) => {
-    setGender(input);
-  };
-  const handleGameLengthChange = (input) => {
-    setGameLength(input);
-  };
-  const handleGameTypeChange = (input) => {
-    setGameType(input);
-  };
-  const handlePositionChange = (input) => {
-    setPosition(input);
-  };
 
   captureSelectedLocation = (selectedInput) => {
     console.log("Selected Location input: " + selectedInput);
@@ -279,10 +236,6 @@ function PlayerHome({ navigation }) {
       }
     };
     postGame();
-  };
-
-  const handleFormSubmit = () => {
-    onSubmit();
   };
 
   let allActiveGames = []; // Initialize as null initially

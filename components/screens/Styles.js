@@ -439,7 +439,6 @@ const Styles = StyleSheet.create({
 
   playerHomeTextContentContainer: {
     flex: 1,
-
     margin: 5,
     height: "50%",
     width: "95%",
@@ -479,7 +478,6 @@ const Styles = StyleSheet.create({
   },
   playerHomeAvailableGamesHeader: {
     marginRight: 20,
-
     margin: 5,
   },
   availableGamesScroller: {

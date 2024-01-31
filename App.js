@@ -16,6 +16,7 @@ import BrowseAvailableGames from "./components/screens/BrowseAvailableGames";
 import ManagerBrowseGames from "./components/screens/ManagerBrowseGames";
 import InboxScreen from "./components/screens/InboxScreen";
 import PlayerHome from "./components/screens/PlayerHome";
+import ResetPasswordScreen from "./components/screens/ResetPasswordScreen.js";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import UserProfile from "./components/screens/UserProfile";
@@ -27,7 +28,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Welcome"
+          name="WelcomeScreen"
           component={WelcomeScreen}
           options={{ headerShown: false }}
         />
@@ -95,6 +96,11 @@ export default function App() {
         <Stack.Screen
           name="PlayerHome"
           component={PlayerHome}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ResetPasswordScreen"
+          component={ResetPasswordScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

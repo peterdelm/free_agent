@@ -240,6 +240,20 @@ const UserProfile = ({ navigation }) => {
                 />
               </View>
             </View>
+            <TouchableOpacity
+              style={Styles.profileLinkContainer}
+              onPress={() => {
+                navigation.navigate("WelcomeScreen");
+              }}
+            >
+              <Text style={Styles.profileLinkTextContainer}>Logout </Text>
+              <View style={Styles.profileLinkImageContainer}>
+                <Image
+                  source={require("../../assets/chevron-right-solid.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

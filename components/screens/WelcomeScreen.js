@@ -1,17 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  Button,
-  ImageBackground,
-  Stylesheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,9 +7,6 @@ function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [token, setToken] = useState("");
-  const [result, setResult] = useState([]);
-
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users";
 
   const storeSessionToken = async (token) => {
     try {
@@ -55,14 +40,11 @@ function WelcomeScreen({ navigation }) {
         return data;
       } else if (response.status === 401) {
         console.log("Invalid credentials");
-        // Handle invalid credentials
       } else {
         console.log("Unexpected response:", response.status);
-        // Handle other unexpected responses
       }
     } catch (error) {
       console.log("Error during login attempt:", error);
-      // Handle other errors
     }
   };
 
@@ -103,6 +85,11 @@ function WelcomeScreen({ navigation }) {
     }
   };
 
+  const handleResetPasswordButtonPress = () => {
+    console.log("RestPassword Button Pressed!");
+    navigation.navigate("ResetPasswordScreen");
+  };
+
   return (
     <View style={Styles.welcomeScreenContainer}>
       <View style={Styles.welcomeScreenLogoContainer}>
@@ -133,7 +120,7 @@ function WelcomeScreen({ navigation }) {
         />
       </View>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => handleResetPasswordButtonPress()}>
         <Text style={Styles.forgotButton}>Forgot Password?</Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -154,7 +141,6 @@ function WelcomeScreen({ navigation }) {
         </View>
       </TouchableOpacity>
     </View>
-    // </ImageBackground>
   );
 }
 
