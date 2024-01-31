@@ -10,12 +10,16 @@ import {
   Touchable,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
+import AutoCompletePicker from "./AutocompletePicker";
+import DatePicker from "./DatePicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TimePicker from "./TimePicker";
 
 const CreateGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -27,15 +31,16 @@ const CreateGame = ({ navigation }) => {
   const [game_length, setGameLength] = useState("");
   const [team_name, setTeamName] = useState("");
   const [additional_info, setAdditionalInfo] = useState("");
-  const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
+  const [selectedSportId, setSelectedSportId] = useState();
+  const [position, setPosition] = useState();
+  const [positionList, setPositionList] = useState();
 
   const getTokenFromStorage = async () => {
     try {
@@ -62,18 +67,31 @@ const CreateGame = ({ navigation }) => {
   const handleGameTypeChange = (input) => {
     setGameType(input);
   };
+  const handlePositionChange = (input) => {
+    setPosition(input);
+  };
+
+  captureSelectedLocation = (selectedInput) => {
+    console.log("Selected Location input: " + selectedInput);
+    setGameAddress(selectedInput);
+  };
+
+  captureSelectedDate = (selectedInput) => {
+    console.log("Selected Date input: " + selectedInput);
+    setGameDate(selectedInput);
+  };
+
+  captureSelectedTime = (selectedInput) => {
+    console.log("Selected Time input: " + selectedInput);
+    setGameTime(selectedInput);
+  };
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'Game Created' notification
   };
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    console.log("CreateGame useEffect called");
-
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
 
     const fetchData = async () => {
@@ -143,6 +161,7 @@ const CreateGame = ({ navigation }) => {
     const body = {
       gender,
       calibre,
+      position,
       game_type,
       date,
       location,
@@ -151,9 +170,11 @@ const CreateGame = ({ navigation }) => {
       team_name,
       additional_info,
       is_active: true,
+      sport: selectedSport,
+      sportId: selectedSportId,
     };
 
-    console.log(body);
+    console.log("CreateGame Request body is: " + body);
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
 
     const postGame = async () => {
@@ -207,14 +228,15 @@ const CreateGame = ({ navigation }) => {
     var gameTypes = gameTypeList;
     var genders = genderList;
     var gameLengths = gameLengthList;
+    var positions = positionList;
 
     return (
       <View style={Styles.container}>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             language={calibres}
             onValueChange={handleCalibreChange}
             label="Calibre"
@@ -223,10 +245,10 @@ const CreateGame = ({ navigation }) => {
 
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             placeholder="Game Type"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGameTypeChange}
             language={gameTypes}
             label="Game Type"
@@ -234,56 +256,51 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             defaultValue=""
-            placeholderText
-            Color="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGenderChange}
             language={genders}
             label="Gender"
           />
         </View>
         <View style={Styles.inputView}>
-          {/* This will be a LOCATION SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Location"
+          <Picker
+            style={Styles.dropdown}
             defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(location) => setGameAddress(location)}
-            language={gameTypes}
-            label="Location"
+            placeholderTextColor="grey"
+            onValueChange={handlePositionChange}
+            language={positions}
+            label="Position"
           />
         </View>
         <View style={Styles.inputView}>
-          {/* This will be a DATE SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Date"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(date) => setGameDate(date)}
-            language={gameTypes}
-            label="Date"
-          />
+          {/* LOCATION SELECTOR */}
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <AutoCompletePicker onInputSelected={captureSelectedLocation} />
+          </View>
         </View>
         <View style={Styles.inputView}>
-          {/* This will be a TIME SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Time"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(time) => setGameTime(time)}
-            label="Time"
-          />
+          {/* DATE SELECTOR */}
+          <DatePicker onInputSelected={captureSelectedDate} />
+        </View>
+        <View style={Styles.inputView}>
+          {/* TIME SELECTOR */}
+          <TimePicker onInputSelected={captureSelectedTime} />
         </View>
         <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={Styles.dropdown}
             placeholder="Game Length (minutes)"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onValueChange={handleGameLengthChange}
             language={gameLengths}
             label="Game Length"
@@ -294,7 +311,7 @@ const CreateGame = ({ navigation }) => {
             style={Styles.TextInput}
             placeholder="Additional Info"
             defaultValue=""
-            placeholderTextColor="#005F66"
+            placeholderTextColor="grey"
             onChangeText={(additional_info) =>
               setAdditionalInfo(additional_info)
             }
@@ -302,7 +319,7 @@ const CreateGame = ({ navigation }) => {
         </View>
         <View>
           <TouchableOpacity>
-            <Button title="CREATE GAME" onPress={() => handleFormSubmit()} />
+            <Button title="CREATE REQUEST" onPress={() => handleFormSubmit()} />
           </TouchableOpacity>
         </View>
       </View>
@@ -318,9 +335,12 @@ const CreateGame = ({ navigation }) => {
           onPress={() => {
             setIsSportSelected(true);
             setSelectedSport(sport.sport);
+            setSelectedSportId(sport.id);
             setCalibreList(sport.calibre);
             setGameTypeList(sport.game_type);
             setGameLengthList(sport.game_length);
+            setPositionList(sport.position);
+
             if (sport.gender !== null) {
               setGenderList(sport.gender);
             }

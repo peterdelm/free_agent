@@ -31,12 +31,9 @@ const EditPlayer = ({ navigation }) => {
   const [bio, setBio] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
-  const [gameLengthList, setGameLengthList] = useState([]);
-  const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
@@ -213,21 +210,19 @@ const EditPlayer = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        await fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              console.log("Submit successful");
-              navigation.navigate("ViewPlayer", { playerId: game.id });
-            } else {
-              console.log("Submit Failed");
-            }
-          });
+        const res = await fetch(url, requestOptions);
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success === true) {
+            console.log("Submit successful");
+            navigation.navigate("ViewPlayer", { playerId: game.id });
+          } else {
+            console.log("Submit Failed");
+          }
+        } else {
+          throw new Error("Network response was not ok.");
+        }
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error

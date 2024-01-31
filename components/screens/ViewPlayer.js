@@ -60,14 +60,14 @@ function ViewPlayer({ navigation, message }) {
 
   return (
     <View style={Styles.container}>
-      <Text style={Styles.primaryButton}>THIS IS THE PLAYER SCREEN</Text>
+      <Text style={Styles.primaryButton}>PLAYER PROFILE</Text>
+      <Text>Sport: {player.sport}</Text>
       <Text>Calibre: {player.calibre}</Text>
       <Text>Location: {player.location}</Text>
       <Text>Travel Range: {player.travelRange}</Text>
       <Text>Bio: {player.bio}</Text>
       <Text>Position: {player.position}</Text>
-      <Text style={Styles.primaryButton}>{player.calibre}</Text>
-      <Text style={Styles.primaryButton}>{player.gender}</Text>
+      <Text>{player.gender}</Text>
       <TouchableOpacity
         onPress={() =>
           navigation.navigate("EditPlayer", {

@@ -12,8 +12,14 @@ import ViewPlayer from "./components/screens/ViewPlayer";
 import EditPlayer from "./components/screens/EditPlayer";
 import CreatePlayer from "./components/screens/CreatePlayer";
 import ManagePlayers from "./components/screens/ManagePlayers";
+import BrowseAvailableGames from "./components/screens/BrowseAvailableGames";
+import ManagerBrowseGames from "./components/screens/ManagerBrowseGames";
+import InboxScreen from "./components/screens/InboxScreen";
+import PlayerHome from "./components/screens/PlayerHome";
+import ResetPasswordScreen from "./components/screens/ResetPasswordScreen.js";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import UserProfile from "./components/screens/UserProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,15 +27,82 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="CreateGame" component={CreateGame} />
-        <Stack.Screen name="CreatePlayer" component={CreatePlayer} />
-        <Stack.Screen name="RegisterUser" component={CreateUser} />
-        <Stack.Screen name="ViewGame" component={ViewGame} />
-        <Stack.Screen name="ViewPlayer" component={ViewPlayer} />
-        <Stack.Screen name="EditPlayer" component={EditPlayer} />
-        <Stack.Screen name="ManagePlayers" component={ManagePlayers} />
+        <Stack.Screen
+          name="WelcomeScreen"
+          component={WelcomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateGame"
+          component={CreateGame}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreatePlayer"
+          component={CreatePlayer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="RegisterUser"
+          component={CreateUser}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ViewGame"
+          component={ViewGame}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ViewPlayer"
+          component={ViewPlayer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditPlayer"
+          component={EditPlayer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ManagePlayers"
+          component={ManagePlayers}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="InboxScreen"
+          component={InboxScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="BrowseAvailableGames"
+          component={BrowseAvailableGames}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ManagerBrowseGames"
+          component={ManagerBrowseGames}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PlayerHome"
+          component={PlayerHome}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ResetPasswordScreen"
+          component={ResetPasswordScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
