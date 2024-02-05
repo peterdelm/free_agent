@@ -285,16 +285,6 @@ function HomeScreen({ navigation, message }) {
           <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
         </View>
       </View>
-      {/* <View style={Styles.pendingScreenContainer}>
-        <View style={[Styles.screenHeader, { marginBottom: 10 }]}>
-          <Text style={{ fontSize: 30 }}>Pending</Text>
-        </View>
-        <View style={Styles.pendingGamesContainer}>
-          <ScrollView>
-            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-          </ScrollView>
-        </View>
-      </View> */}
       <ScrollView style={{ width: "100%" }}>
         <View style={Styles.screenContainer}>
           <View
@@ -432,15 +422,6 @@ function HomeScreen({ navigation, message }) {
           </View>
         </View>
       </ScrollView>
-      {/* 
-      <View style={Styles.homeContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
-          <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("BrowseAvailableGames")}>
-          <Text style={Styles.primaryButton}>Browse Games</Text>
-        </TouchableOpacity>
-      </View> */}
       <NavigationFooter
         currentRole={currentUser.currentRole}
         navigation={navigation}
