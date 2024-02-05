@@ -114,147 +114,143 @@ const UserProfile = ({ navigation }) => {
     ));
   }
   return (
-    <View style={Styles.managerBrowseGamesContainer}>
-      <View style={Styles.screenContainer}>
-        <View
-          style={[
-            Styles.screenContainer,
-            { borderBottomColor: "black", borderBottomWidth: 2 },
-          ]}
+    <View style={Styles.userProfileScreenContainer}>
+      <View
+        style={[
+          Styles.screenHeader,
+          { borderBottomColor: "black", borderBottomWidth: 2 },
+        ]}
+      >
+        <Image
+          source={require("../../assets/user-solid.png")}
+          style={{ width: 50, height: 50, resizeMode: "contain" }}
+        />
+        <Text
+          style={{
+            fontSize: 35,
+            padding: 20,
+          }}
         >
-          <View style={Styles.screenHeader}>
-            <Image
-              source={require("../../assets/user-solid.png")}
-              style={{ width: 50, height: 50, resizeMode: "contain" }}
-            />
-            <Text
-              style={{
-                fontSize: 35,
-                padding: 20,
-              }}
-            >
-              Profile
+          Profile
+        </Text>
+      </View>
+      <View style={Styles.userProfileContentContainer}></View>
+
+      <View style={Styles.screenContainer}>
+        <View style={Styles.profileLinksContainer}>
+          <View style={Styles.profileLinkContainer}>
+            <View style={Styles.profileLinkTextContainer}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  textAlignVertical: "center",
+                }}
+              >
+                Show Profile
+              </Text>
+            </View>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>Personal Info</Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>Login/Security</Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>Settings/Text</Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() => {
+              toggleProfile(), swapProfileText();
+            }}
+          >
+            <Text style={Styles.profileLinkTextContainer}>
+              Switch to {alternateRoleText}
             </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </TouchableOpacity>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>Referrals</Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
           </View>
-        </View>
-        <View style={Styles.screenContainer}>
-          <View style={Styles.profileLinksContainer}>
-            <View style={Styles.profileLinkContainer}>
-              <View style={Styles.profileLinkTextContainer}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    textAlignVertical: "center",
-                  }}
-                >
-                  Show Profile
-                </Text>
-              </View>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>Help</Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
             </View>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>Personal Info</Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>
-                Login/Security
-              </Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>Settings/Text</Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <TouchableOpacity
-              style={Styles.profileLinkContainer}
-              onPress={() => {
-                toggleProfile(), swapProfileText();
-              }}
-            >
-              <Text style={Styles.profileLinkTextContainer}>
-                Switch to {alternateRoleText}
-              </Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </TouchableOpacity>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>Referrals</Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>Help</Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>How it works</Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <View style={Styles.profileLinkContainer}>
-              <Text style={Styles.profileLinkTextContainer}>
-                Terms of Service
-              </Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </View>
-            <TouchableOpacity
-              style={Styles.profileLinkContainer}
-              onPress={() => {
-                navigation.navigate("WelcomeScreen");
-              }}
-            >
-              <Text style={Styles.profileLinkTextContainer}>Logout </Text>
-              <View style={Styles.profileLinkImageContainer}>
-                <Image
-                  source={require("../../assets/chevron-right-solid.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
-                />
-              </View>
-            </TouchableOpacity>
           </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>How it works</Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </View>
+          <View style={Styles.profileLinkContainer}>
+            <Text style={Styles.profileLinkTextContainer}>
+              Terms of Service
+            </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() => {
+              navigation.navigate("WelcomeScreen");
+            }}
+          >
+            <Text style={Styles.profileLinkTextContainer}>Logout </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
 
