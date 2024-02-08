@@ -134,9 +134,7 @@ const UserProfile = ({ navigation }) => {
           Profile
         </Text>
       </View>
-      <View style={Styles.userProfileContentContainer}></View>
-
-      <View style={Styles.screenContainer}>
+      <View style={Styles.userProfileContentContainer}>
         <View style={Styles.profileLinksContainer}>
           <View style={Styles.profileLinkContainer}>
             <View style={Styles.profileLinkTextContainer}>

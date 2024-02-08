@@ -1,15 +1,6 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Modal,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import Styles from "./Styles";
-import { Calendar, LocaleConfig } from "react-native-calendars";
+import { Text, View, Modal, TouchableOpacity } from "react-native";
+import { Calendar } from "react-native-calendars";
 
 class DatePicker extends Component {
   constructor(props) {
@@ -34,6 +25,7 @@ class DatePicker extends Component {
     this.setState({ selectedDate: date });
     this.setState({ modalVisible: false });
     this.props.onInputSelected(date);
+    console.log(date);
   };
 
   render() {
@@ -43,7 +35,6 @@ class DatePicker extends Component {
           <Text style={{ textAlign: "center" }}>{this.state.inputValue}</Text>
         </TouchableOpacity>
 
-        {/* Date Picker Modal */}
         <Modal visible={this.state.modalVisible} animationType="slide">
           <View>
             <Calendar

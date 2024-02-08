@@ -39,12 +39,16 @@ function WelcomeScreen({ navigation }) {
         const data = await response.json();
         return data;
       } else if (response.status === 401) {
-        console.log("Invalid credentials");
+        // Extract and display the error message from the response
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message);
       } else {
         console.log("Unexpected response:", response.status);
+        throw new Error("Unexpected response from server");
       }
     } catch (error) {
       console.log("Error during login attempt:", error);
+      throw new Error("An unexpected error occurred");
     }
   };
 
@@ -68,20 +72,45 @@ function WelcomeScreen({ navigation }) {
   };
 
   const handleLoginButtonPress = async (emailAddress, password) => {
-    const result = await handleLoginAttempt(emailAddress, password);
-    if (result) {
-      const token = result.token;
-      authenticateUser(token);
-      if (result.user.currentRole === "manager") {
-        navigation.navigate("Home");
-      }
-      if (result.user.currentRole === "player") {
-        navigation.navigate("PlayerHome");
+    try {
+      // Attempt to authenticate the user with the provided credentials
+      const authenticationResult = await handleLoginAttempt(
+        emailAddress,
+        password
+      );
+
+      // If authentication is successful, navigate the user to the appropriate screen based on their role
+      if (authenticationResult) {
+        const token = authenticationResult.token;
+        authenticateUser(token);
+
+        // Check the user's role and navigate accordingly
+        switch (authenticationResult.user.currentRole) {
+          case "manager":
+            navigation.navigate("Home");
+            break;
+          case "player":
+            navigation.navigate("PlayerHome");
+            break;
+          default:
+            console.error(
+              "User's current role is unrecognized:",
+              authenticationResult.user.currentRole
+            );
+            break;
+        }
       } else {
-        console.log("ERROR: Result.user.current role is likely missing");
+        // If authentication fails, log an error message
+        console.error(
+          "Authentication failed: Invalid email address or password."
+        );
       }
-    } else {
-      console.log("FAILURE ON LINE 94!");
+    } catch (error) {
+      // Handle any unexpected errors
+      console.error(
+        "An unexpected error occurred while processing the login request:",
+        error
+      );
     }
   };
 

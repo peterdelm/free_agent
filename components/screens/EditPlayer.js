@@ -22,12 +22,12 @@ const EditPlayer = ({ navigation }) => {
   const [position, setPosition] = useState("");
 
   const [calibre, setCalibre] = useState("");
-  const [game_type, setGameType] = useState("");
+  const [gameType, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [team_name, setTeamName] = useState("");
+  const [gameLength, setGameLength] = useState("");
+  const [teamName, setTeamName] = useState("");
   const [bio, setBio] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
