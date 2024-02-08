@@ -28,8 +28,8 @@ const CreateGame = ({ navigation }) => {
   const [location, setGameAddress] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [team_name, setTeamName] = useState("");
+  const [gameLength, setGameLength] = useState("");
+  const [teamName, setTeamName] = useState("");
   const [additional_info, setAdditionalInfo] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [calibreList, setCalibreList] = useState([]);
@@ -166,10 +166,10 @@ const CreateGame = ({ navigation }) => {
       date,
       location,
       time,
-      game_length,
+      gameLength,
       team_name,
       additional_info,
-      is_active: true,
+      isActive: true,
       sport: selectedSport,
       sportId: selectedSportId,
     };
@@ -338,7 +338,7 @@ const CreateGame = ({ navigation }) => {
             setSelectedSportId(sport.id);
             setCalibreList(sport.calibre);
             setGameTypeList(sport.game_type);
-            setGameLengthList(sport.game_length);
+            setGameLengthList(sport.gameLength);
             setPositionList(sport.position);
 
             if (sport.gender !== null) {

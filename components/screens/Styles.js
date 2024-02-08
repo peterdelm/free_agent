@@ -1,17 +1,4 @@
-import React from "react";
-import {
-  Button,
-  Dimensions,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Touchable,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
 
