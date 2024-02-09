@@ -79,9 +79,9 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 android {
     ndkVersion rootProject.ext.ndkVersion
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion 34 // Update the compileSdkVersion to at least 34
 
-    namespace "com.freeagent"
+    namespace 'com.cabbageconundrum.free_agent'
     defaultConfig {
         applicationId 'com.cabbageconundrum.free_agent'
         minSdkVersion rootProject.ext.minSdkVersion
