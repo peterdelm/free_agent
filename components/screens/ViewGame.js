@@ -112,7 +112,7 @@ function ViewGame({ navigation, message }) {
         <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
           Game Type
         </Text>
-        <Text style={Styles.gameInfo}>{game.game_type}</Text>
+        <Text style={Styles.gameInfo}>{game.gameType}</Text>
         <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
           Game Length
         </Text>

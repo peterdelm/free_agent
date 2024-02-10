@@ -24,13 +24,13 @@ function PlayerHome({ navigation }) {
   const [selectedSport, setSelectedSport] = useState({});
   const [calibre, setCalibre] = useState("");
   const [gender, setGender] = useState("");
-  const [game_type, setGameType] = useState("");
+  const [gameType, setGameType] = useState("");
   const [location, setGameAddress] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
   const [game_length, setGameLength] = useState("");
   const [team_name, setTeamName] = useState("");
-  const [additional_info, setAdditionalInfo] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
 
   const [selectedSportId, setSelectedSportId] = useState();
@@ -178,15 +178,15 @@ function PlayerHome({ navigation }) {
       gender,
       calibre,
       position,
-      game_type,
+      gameType,
       date,
       //stand in Location until credit renewal
       location: "123 Jasper Street",
       time,
-      game_length,
-      team_name,
-      additional_info,
-      is_active: true,
+      gameLength,
+      teamName,
+      additionalInfo,
+      isActive: true,
       sport: selectedSport.sport,
       sportId: selectedSportId,
     };

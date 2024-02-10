@@ -23,7 +23,7 @@ function WelcomeScreen({ navigation }) {
     const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/id";
 
     const credentials = { emailAddress, password };
-    console.log("handleLoginAttempt called");
+    console.log("handleLoginAttempt called to URL " + url);
     console.log(credentials);
 
     try {

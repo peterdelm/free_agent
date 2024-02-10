@@ -16,6 +16,7 @@ const getCurrentUser = async () => {
 
     // Make the fetch request using async/await
     const response = await fetch(url, { headers });
+    console.log("User response is: " + response);
 
     if (response.ok) {
       // Parse and use the data

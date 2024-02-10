@@ -22,7 +22,7 @@ const EditPlayer = ({ navigation }) => {
   const [position, setPosition] = useState("");
 
   const [calibre, setCalibre] = useState("");
-  const [game_type, setGameType] = useState("");
+  const [gameType, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");

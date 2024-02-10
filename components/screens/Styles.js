@@ -489,6 +489,15 @@ const Styles = StyleSheet.create({
     width: "100%",
   },
   viewGameContentContainer: { flex: 1 },
+  userProfileContentContainer: {
+    flex: 1,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  userProfileScreenContainer: {
+    height: "100%",
+  },
 });
 
 export default Styles;

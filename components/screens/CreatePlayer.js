@@ -22,13 +22,13 @@ const CreatePlayer = ({ navigation }) => {
   const [position, setPosition] = useState("");
 
   const [calibre, setCalibre] = useState("");
-  const [game_type, setGameType] = useState("");
+  const [gameType, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
   const [game_length, setGameLength] = useState("");
-  const [team_name, setTeamName] = useState("");
-  const [additional_info, setAdditionalInfo] = useState("");
+  const [teamName, setTeamName] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
@@ -149,7 +149,7 @@ const CreatePlayer = ({ navigation }) => {
       gender,
       calibre,
       location,
-      additional_info,
+      additionalInfo,
       position,
       travelRange,
       sport: sport,
@@ -275,9 +275,7 @@ const CreatePlayer = ({ navigation }) => {
             placeholder="Optional Bio"
             defaultValue=""
             placeholderTextColor="#005F66"
-            onChangeText={(additional_info) =>
-              setAdditionalInfo(additional_info)
-            }
+            onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
         </View>
         <View>
@@ -301,8 +299,8 @@ const CreatePlayer = ({ navigation }) => {
             setSelectedSport(sport.sport);
             setCalibreList(sport.calibre);
             setPositionList(sport.position);
-            setGameTypeList(sport.game_type);
-            setGameLengthList(sport.game_length);
+            setGameTypeList(sport.gameType);
+            setGameLengthList(sport.gameLength);
             if (sport.gender !== null) {
               setGenderList(sport.gender);
             }

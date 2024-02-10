@@ -24,13 +24,13 @@ import TimePicker from "./TimePicker";
 const CreateGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [calibre, setCalibre] = useState("");
-  const [game_type, setGameType] = useState("");
+  const [gameType, setGameType] = useState("");
   const [location, setGameAddress] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [team_name, setTeamName] = useState("");
-  const [additional_info, setAdditionalInfo] = useState("");
+  const [gameLength, setGameLength] = useState("");
+  const [teamName, setTeamName] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
@@ -162,14 +162,14 @@ const CreateGame = ({ navigation }) => {
       gender,
       calibre,
       position,
-      game_type,
+      gameType,
       date,
       location,
       time,
-      game_length,
-      team_name,
-      additional_info,
-      is_active: true,
+      gameLength,
+      teamName,
+      additionalInfo,
+      isActive: true,
       sport: selectedSport,
       sportId: selectedSportId,
     };
@@ -312,9 +312,7 @@ const CreateGame = ({ navigation }) => {
             placeholder="Additional Info"
             defaultValue=""
             placeholderTextColor="grey"
-            onChangeText={(additional_info) =>
-              setAdditionalInfo(additional_info)
-            }
+            onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
         </View>
         <View>
@@ -337,8 +335,8 @@ const CreateGame = ({ navigation }) => {
             setSelectedSport(sport.sport);
             setSelectedSportId(sport.id);
             setCalibreList(sport.calibre);
-            setGameTypeList(sport.game_type);
-            setGameLengthList(sport.game_length);
+            setGameTypeList(sport.gameType);
+            setGameLengthList(sport.gameLength);
             setPositionList(sport.position);
 
             if (sport.gender !== null) {
