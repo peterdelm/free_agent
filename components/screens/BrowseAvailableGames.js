@@ -2,6 +2,7 @@ import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const BrowseAvailableGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -18,7 +19,7 @@ const BrowseAvailableGames = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
 
     const fetchData = async () => {
       try {

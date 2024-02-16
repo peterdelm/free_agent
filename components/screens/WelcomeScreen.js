@@ -2,6 +2,7 @@ import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
@@ -20,7 +21,7 @@ function WelcomeScreen({ navigation }) {
   };
 
   const handleLoginAttempt = async (emailAddress, password) => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/id";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
 
     const credentials = { emailAddress, password };
     console.log("handleLoginAttempt called to URL " + url);

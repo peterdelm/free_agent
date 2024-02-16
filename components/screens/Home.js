@@ -17,6 +17,7 @@ import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 function HomeScreen({ navigation, message }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -113,14 +114,14 @@ function HomeScreen({ navigation, message }) {
       const user = fetchUser();
       console.log(user.currentRole);
 
-      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
       console.log("UsefocusEffect Fetch games called");
     }, [])
   );
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/sports`;
 
     const fetchData = async () => {
       try {
@@ -198,7 +199,7 @@ function HomeScreen({ navigation, message }) {
     };
 
     console.log("CreateGame Request date is: " + body.date);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
     const postGame = async () => {
       try {

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Styles from "./Styles";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 class AutoCompletePicker extends Component {
   constructor(props) {
@@ -50,7 +51,7 @@ class AutoCompletePicker extends Component {
   };
 
   async fetchAutocompleteSuggestions(addressFragment) {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/geocoding`;
     console.log("AddressFragment is " + addressFragment);
     console.log("Fetch Autocomplete Suggestions called");
 

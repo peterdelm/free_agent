@@ -6,6 +6,7 @@ import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const ManagerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -37,7 +38,7 @@ const ManagerBrowseGames = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
 
     const fetchData = async () => {
       try {

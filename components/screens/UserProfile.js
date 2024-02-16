@@ -6,6 +6,7 @@ import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -39,7 +40,7 @@ const UserProfile = ({ navigation }) => {
   );
 
   const sendToggleProfileRequest = () => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/users/`;
 
     const toggleProfileRequest = async () => {
       try {

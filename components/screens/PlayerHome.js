@@ -18,6 +18,7 @@ import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -75,7 +76,7 @@ function PlayerHome({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
       console.log("UsefocusEffect Fetch games called");
 
       const fetchData = async () => {
@@ -115,7 +116,7 @@ function PlayerHome({ navigation }) {
   );
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
 
     const fetchData = async () => {
       try {
@@ -192,7 +193,7 @@ function PlayerHome({ navigation }) {
     };
 
     console.log("CreateGame Request body is: " + body);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
     const postGame = async () => {
       try {

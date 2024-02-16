@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const getCurrentUser = async () => {
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/";
+  const url = `${EXPO_PUBLIC_BASE_URL}api/users/`;
   console.log("getCurrentUser called using url " + url);
 
   try {

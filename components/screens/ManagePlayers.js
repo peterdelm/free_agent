@@ -18,6 +18,7 @@ import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import react from "react";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const ManagePlayers = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -34,7 +35,7 @@ const ManagePlayers = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/player_roster";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players/player_roster`;
 
     const fetchData = async () => {
       try {

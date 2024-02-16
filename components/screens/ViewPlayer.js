@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 function ViewPlayer({ navigation, message }) {
   const route = useRoute();
@@ -24,7 +25,7 @@ function ViewPlayer({ navigation, message }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players/" + playerId`;
 
       const fetchData = async () => {
         try {

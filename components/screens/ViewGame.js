@@ -6,6 +6,7 @@ import { useRoute } from "@react-navigation/native";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 function ViewGame({ navigation, message }) {
   const [currentUser, setCurrentUser] = useState({});
@@ -39,7 +40,7 @@ function ViewGame({ navigation, message }) {
   );
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/" + gameId;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/" + gameId`;
 
     const fetchData = async () => {
       try {

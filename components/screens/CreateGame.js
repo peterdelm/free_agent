@@ -20,6 +20,7 @@ import AutoCompletePicker from "./AutocompletePicker";
 import DatePicker from "./DatePicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TimePicker from "./TimePicker";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const CreateGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -53,7 +54,7 @@ const CreateGame = ({ navigation }) => {
     }
   };
 
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+  const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
   const handleCalibreChange = (input) => {
     setCalibre(input);
@@ -92,7 +93,7 @@ const CreateGame = ({ navigation }) => {
 
   //Retrieve the relevant values for the selected sport
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/sports`;
 
     const fetchData = async () => {
       try {
@@ -175,7 +176,7 @@ const CreateGame = ({ navigation }) => {
     };
 
     console.log("CreateGame Request body is: " + body);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
     const postGame = async () => {
       try {

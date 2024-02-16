@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -53,7 +54,7 @@ const CreatePlayer = ({ navigation }) => {
     }
   };
 
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+  const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
   const handleCalibreChange = (input) => {
     setCalibre(input);
@@ -79,7 +80,7 @@ const CreatePlayer = ({ navigation }) => {
   useEffect(() => {
     console.log("CreatePlayer useEffect called");
 
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/sports`;
 
     const fetchData = async () => {
       try {
@@ -157,7 +158,7 @@ const CreatePlayer = ({ navigation }) => {
     };
 
     console.log("CreatePlayer OnSubmit body is " + body.travelRange);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
 
     const postPlayer = async () => {
       try {

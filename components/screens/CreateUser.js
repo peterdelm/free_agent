@@ -14,6 +14,7 @@ import React, { useEffect, useState, useRef, Component } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const CreateUser = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
@@ -21,7 +22,7 @@ const CreateUser = ({ navigation }) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
 
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users";
+  const url = `${EXPO_PUBLIC_BASE_URL}api/users`;
 
   const storeSessionToken = async (token) => {
     try {

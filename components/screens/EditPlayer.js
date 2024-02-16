@@ -16,6 +16,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -57,7 +58,7 @@ const EditPlayer = ({ navigation }) => {
     }
   };
 
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+  const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
   const handleCalibreChange = (input) => {
     setCalibre(input);
@@ -76,7 +77,7 @@ const EditPlayer = ({ navigation }) => {
   ///////////////////////////////////////////////////////
   //retrieve the player values
   const fetchPlayerData = async () => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players/" + playerId`;
     console.log("FetchplayerData called with url " + url);
 
     try {
@@ -117,7 +118,7 @@ const EditPlayer = ({ navigation }) => {
     console.log("EditPlayer useEffect called");
 
     const fetchSportData = async () => {
-      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports/" + sportId;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/sports/" + sportId`;
 
       try {
         const token = await getTokenFromStorage();
@@ -190,7 +191,7 @@ const EditPlayer = ({ navigation }) => {
     };
 
     console.log("SavePlayer submit body.calibre is: " + body.position);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+    const url = `${EXPO_PUBLIC_BASE_URL} + ${playerId}`;
 
     const postPlayer = async () => {
       try {
