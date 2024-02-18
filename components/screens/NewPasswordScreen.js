@@ -4,7 +4,7 @@ import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config";
 
-function ResetPasswordScreen({ navigation }) {
+function NewPasswordScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
   const [token, setToken] = useState("");
 
@@ -78,4 +78,4 @@ function ResetPasswordScreen({ navigation }) {
   );
 }
 
-export default ResetPasswordScreen;
+export default NewPasswordScreen;

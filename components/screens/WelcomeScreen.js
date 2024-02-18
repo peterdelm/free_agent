@@ -82,7 +82,7 @@ function WelcomeScreen({ navigation }) {
         console.log("ERROR: Result.user.current role is likely missing");
       }
     } else {
-      console.log("FAILURE ON LINE 94!");
+      console.log("FAILURE ON LINE 85!");
     }
   };
 
