@@ -1,26 +1,31 @@
 import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config";
+import React, { useState, useEffect } from "react";
+import { useRoute } from "@react-navigation/native";
 
 function NewPasswordScreen({ navigation }) {
-  const [emailAddress, setEmailAddress] = useState("");
-  const [token, setToken] = useState("");
+  const route = useRoute();
+  const { token } = route.params;
 
-  const handleResetAttempt = async (emailAddress) => {
-    const credentials = { emailAddress };
-    console.log("handleLoginAttempt called");
-    console.log(credentials);
+  useEffect(() => {
+    console.log("Token received:", token);
+  }, []);
+  const [newPassword, setNewPassword] = useState("");
+
+  const handleResetAttempt = async (newPassword) => {
+    console.log("handleNewPassword called with password: " + newPassword);
     const url = `${EXPO_PUBLIC_BASE_URL}api/users/reset`;
 
     try {
       const response = await fetch(url, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(credentials),
+        body: JSON.stringify({ newPassword }),
       });
 
       if (response.status === 200) {
@@ -39,7 +44,7 @@ function NewPasswordScreen({ navigation }) {
   const handleResetButtonPress = async () => {
     try {
       console.log("Reset Button Pressed");
-      const result = await handleResetAttempt(emailAddress);
+      const result = await handleResetAttempt(newPassword);
       if (result) {
         console.log(result.message);
       }
@@ -62,9 +67,9 @@ function NewPasswordScreen({ navigation }) {
       <View style={Styles.welcomeScreenInputView}>
         <TextInput
           style={Styles.TextInput}
-          placeholder="Email"
+          placeholder="New Password"
           placeholderTextColor="#005F66"
-          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+          onChangeText={(newPassword) => setNewPassword(newPassword)}
         />
       </View>
 
@@ -74,7 +79,6 @@ function NewPasswordScreen({ navigation }) {
         </View>
       </TouchableOpacity>
     </View>
-    // </ImageBackground>
   );
 }
 

@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -31,7 +31,9 @@ export default function App() {
   const linking = {
     prefixes: [prefix],
     config: {
-      NewPasswordScreen: "resetPassword/:email/:code",
+      screens: {
+        NewPasswordScreen: "NewPasswordScreen",
+      },
     },
   };
 
