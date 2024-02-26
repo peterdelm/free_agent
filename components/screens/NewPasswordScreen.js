@@ -1,24 +1,30 @@
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config";
-import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 
 function NewPasswordScreen({ navigation }) {
   const route = useRoute();
   const { token } = route.params;
 
-  useEffect(() => {
-    console.log("Token received:", token);
-  }, []);
   const [newPassword, setNewPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [responseMessage, setResponseMessage] = useState("");
 
   const handleResetAttempt = async (newPassword) => {
-    console.log("handleNewPassword called with password: " + newPassword);
-    const url = `${EXPO_PUBLIC_BASE_URL}api/users/reset`;
-
+    setLoading(true);
     try {
+      const url = `${EXPO_PUBLIC_BASE_URL}api/users/reset`;
       const response = await fetch(url, {
         method: "PUT",
         headers: {
@@ -30,26 +36,41 @@ function NewPasswordScreen({ navigation }) {
 
       if (response.status === 200) {
         const data = await response.json();
-        return data;
+        setResponseMessage(data.message);
       } else if (response.status === 401) {
-        console.log("Invalid credentials");
+        setError("Invalid credentials");
       } else {
-        console.log("Unexpected response:", response.status);
+        setError(`Unexpected response: ${response.status}`);
       }
     } catch (error) {
-      console.log("Error during login attempt:", error);
+      setError(`Error during password reset: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleResetButtonPress = async () => {
+    setError(null);
+    setResponseMessage("");
+
+    if (
+      newPassword.length < 7 ||
+      !/\d/.test(newPassword) ||
+      !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(newPassword)
+    ) {
+      setError(
+        "Password must be at least 7 characters long and contain at least one number and one symbol."
+      );
+      return;
+    }
+
     try {
-      console.log("Reset Button Pressed");
-      const result = await handleResetAttempt(newPassword);
-      if (result) {
-        console.log(result.message);
-      }
+      setLoading(true);
+      await handleResetAttempt(newPassword);
     } catch {
       console.log("ERROR in handleResetButtonPress");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,12 +91,23 @@ function NewPasswordScreen({ navigation }) {
           placeholder="New Password"
           placeholderTextColor="#005F66"
           onChangeText={(newPassword) => setNewPassword(newPassword)}
+          secureTextEntry
         />
       </View>
-
-      <TouchableOpacity onPress={() => handleResetButtonPress()}>
+      {error && <Text style={Styles.errorText}>{error}</Text>}
+      {responseMessage !== "" && (
+        <Text style={Styles.responseMessage}>{responseMessage}</Text>
+      )}
+      <TouchableOpacity
+        onPress={() => handleResetButtonPress()}
+        disabled={loading}
+      >
         <View style={Styles.welcomeButtonContainer}>
-          <Text style={Styles.welcomeButton}>Reset Password</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={Styles.welcomeButton}>Reset Password</Text>
+          )}
         </View>
       </TouchableOpacity>
     </View>

@@ -498,6 +498,12 @@ const Styles = StyleSheet.create({
   userProfileScreenContainer: {
     height: "100%",
   },
+  responseMessage: {
+    color: "green",
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+  },
 });
 
 export default Styles;
