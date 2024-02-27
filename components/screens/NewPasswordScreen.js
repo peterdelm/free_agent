@@ -37,6 +37,9 @@ function NewPasswordScreen({ navigation }) {
       if (response.status === 200) {
         const data = await response.json();
         setResponseMessage(data.message);
+
+        // Navigate to the login screen after a successful password reset
+        navigation.navigate("WelcomeScreen", { message: data.message });
       } else if (response.status === 401) {
         setError("Invalid credentials");
       } else {

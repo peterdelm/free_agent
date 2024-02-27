@@ -1,14 +1,32 @@
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import { useFocusEffect } from "@react-navigation/native";
 
-function WelcomeScreen({ navigation }) {
+function WelcomeScreen({ navigation, route }) {
   const [password, setPassword] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
-  const [token, setToken] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { message } = route.params || {};
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (message) {
+        setErrorMessage(message);
+      }
+    }, [message])
+  );
 
   const storeSessionToken = async (token) => {
     try {
@@ -53,7 +71,6 @@ function WelcomeScreen({ navigation }) {
 
   const authenticateUser = async (token) => {
     console.log("Token is : " + token);
-    setToken(token);
     const successfulStorage = await storeSessionToken(token);
 
     if (successfulStorage) {
@@ -70,7 +87,10 @@ function WelcomeScreen({ navigation }) {
     navigation.navigate("RegisterUser");
   };
 
-  const handleLoginButtonPress = async (emailAddress, password) => {
+  const handleLoginButtonPress = async () => {
+    setErrorMessage("");
+    setLoading(true);
+
     const result = await handleLoginAttempt(emailAddress, password);
     if (result && result.token) {
       const token = result.token;
@@ -86,10 +106,12 @@ function WelcomeScreen({ navigation }) {
       console.log("Login failed:", result.error);
       setErrorMessage(result.error || "An unexpected error occurred");
     }
+
+    setLoading(false);
   };
 
   const handleResetPasswordButtonPress = () => {
-    console.log("RestPassword Button Pressed!");
+    console.log("ResetPassword Button Pressed!");
     navigation.navigate("ResetPasswordScreen");
   };
 
@@ -104,6 +126,9 @@ function WelcomeScreen({ navigation }) {
           }}
         />
       </View>
+      {errorMessage ? (
+        <Text style={Styles.errorText}>{errorMessage}</Text>
+      ) : null}
       <View style={Styles.welcomeScreenInputView}>
         <TextInput
           style={Styles.TextInput}
@@ -121,17 +146,16 @@ function WelcomeScreen({ navigation }) {
           onChangeText={(password) => setPassword(password)}
         />
       </View>
-      {errorMessage ? (
-        <Text style={Styles.errorText}>{errorMessage}</Text>
-      ) : null}
       <TouchableOpacity onPress={() => handleResetPasswordButtonPress()}>
         <Text style={Styles.forgotButton}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => handleLoginButtonPress(emailAddress, password)}
-      >
+      <TouchableOpacity onPress={handleLoginButtonPress}>
         <View style={Styles.welcomeButtonContainer}>
-          <Text style={Styles.welcomeButton}>Log in</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={Styles.welcomeButton}>Log in</Text>
+          )}
         </View>
       </TouchableOpacity>
       <TouchableOpacity>

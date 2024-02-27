@@ -1,16 +1,14 @@
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
+import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import Styles from "./Styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config";
 
 function ResetPasswordScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
-  const [token, setToken] = useState("");
 
-  const handleResetAttempt = async (emailAddress) => {
+  const handleResetAttempt = async () => {
     const credentials = { emailAddress };
-    console.log("handleLoginAttempt called");
+    console.log("handleResetAttempt called");
     console.log(credentials);
     const url = `${EXPO_PUBLIC_BASE_URL}api/users/reset`;
 
@@ -25,26 +23,14 @@ function ResetPasswordScreen({ navigation }) {
 
       if (response.status === 200) {
         const data = await response.json();
-        return data;
+        navigation.navigate("WelcomeScreen", { message: data.message });
       } else if (response.status === 401) {
         console.log("Invalid credentials");
       } else {
         console.log("Unexpected response:", response.status);
       }
     } catch (error) {
-      console.log("Error during login attempt:", error);
-    }
-  };
-
-  const handleResetButtonPress = async () => {
-    try {
-      console.log("Reset Button Pressed");
-      const result = await handleResetAttempt(emailAddress);
-      if (result) {
-        console.log(result.message);
-      }
-    } catch {
-      console.log("ERROR in handleResetButtonPress");
+      console.log("Error during password reset attempt:", error);
     }
   };
 
@@ -67,14 +53,12 @@ function ResetPasswordScreen({ navigation }) {
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
-
-      <TouchableOpacity onPress={() => handleResetButtonPress()}>
+      <TouchableOpacity onPress={handleResetAttempt}>
         <View style={Styles.welcomeButtonContainer}>
           <Text style={Styles.welcomeButton}>Reset Password</Text>
         </View>
       </TouchableOpacity>
     </View>
-    // </ImageBackground>
   );
 }
 
