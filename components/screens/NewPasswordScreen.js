@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -14,6 +14,8 @@ import { useRoute } from "@react-navigation/native";
 
 function NewPasswordScreen({ navigation }) {
   const route = useRoute();
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const { token } = route.params;
 
   const [newPassword, setNewPassword] = useState("");
@@ -56,6 +58,11 @@ function NewPasswordScreen({ navigation }) {
     setError(null);
     setResponseMessage("");
 
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     if (
       newPassword.length < 7 ||
       !/\d/.test(newPassword) ||
@@ -75,7 +82,17 @@ function NewPasswordScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
+
+    setConfirmPassword("");
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      setConfirmPassword("");
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <View style={Styles.welcomeScreenContainer}>
@@ -97,6 +114,18 @@ function NewPasswordScreen({ navigation }) {
           secureTextEntry
         />
       </View>
+      <View style={Styles.welcomeScreenInputView}>
+        <TextInput
+          style={Styles.TextInput}
+          placeholder="Confirm New Password"
+          placeholderTextColor="#005F66"
+          onChangeText={(confirmPassword) =>
+            setConfirmPassword(confirmPassword)
+          }
+          secureTextEntry
+        />
+      </View>
+
       {error && <Text style={Styles.errorText}>{error}</Text>}
       {responseMessage !== "" && (
         <Text style={Styles.responseMessage}>{responseMessage}</Text>
