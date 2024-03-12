@@ -98,24 +98,21 @@ const ManagerBrowseGames = ({ navigation }) => {
   return (
     <View style={Styles.managerBrowseGamesContainer}>
       <View
-        style={[
-          Styles.screenContainer,
-          { borderBottomColor: "black", borderBottomWidth: 2 },
-        ]}
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          width: "100%",
+        }}
       >
-        <View style={Styles.screenHeader}>
+        <View
+          style={[Styles.screenHeader, (style = { justifyContent: "center" })]}
+        >
           <Image
             source={require("../../assets/volleyball-solid.png")}
             style={{ width: 50, height: 50, resizeMode: "contain" }}
           />
-          <Text
-            style={{
-              fontSize: 35,
-              padding: 20,
-            }}
-          >
-            Games
-          </Text>
+          <Text style={{ fontSize: 35, padding: 20 }}>Browse Games</Text>
         </View>
       </View>
       <View style={Styles.managerBrowseGamesContentContainer}>

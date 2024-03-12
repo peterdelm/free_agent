@@ -71,6 +71,7 @@ function WelcomeScreen({ navigation }) {
   };
 
   const handleLoginButtonPress = async (emailAddress, password) => {
+    console.log("handleLoginButtonPress called");
     const result = await handleLoginAttempt(emailAddress, password);
     if (result && result.token) {
       const token = result.token;

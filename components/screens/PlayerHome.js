@@ -181,8 +181,7 @@ function PlayerHome({ navigation }) {
       position,
       gameType,
       date,
-      //stand in Location until credit renewal
-      location: "123 Jasper Street",
+      location: location,
       time,
       gameLength,
       teamName,

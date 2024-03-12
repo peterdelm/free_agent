@@ -5,13 +5,13 @@ import Styles from "./Styles";
 
 class SportsPicker extends Component {
   render() {
-    const { sportsData, label, colour, onValueChange, selectedSport } =
+    const { sportsData, label, colour, onValueChange, selectedSport, style } =
       this.props;
 
     return (
-      <View style={Styles.sportsPickerDropdown}>
+      <View style={style}>
         <Picker
-          style={Styles.sportsPickerDropdown}
+          style={style}
           selectedValue={selectedSport}
           onValueChange={(itemValue) => onValueChange(itemValue)}
           placeholderTextColor="grey"

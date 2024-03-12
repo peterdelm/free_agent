@@ -141,6 +141,7 @@ const Styles = StyleSheet.create({
     alignItems: "flex-start",
     width: "100%",
     padding: 10,
+    flex: 1,
   },
 
   pendingScreenContainer: {
@@ -180,42 +181,45 @@ const Styles = StyleSheet.create({
   requestPlayerContainer: {
     alignItems: "flex-start",
     width: "100%",
+    // height: "15%",
     // borderWidth: 1, // Border width
     // borderColor: "blue", // Border color
     // borderRadius: 5, // Border radius (optional)
     // padding: 5, // Optional padding
+    // display: "flex",
   },
 
   requestPlayerButtonContainer: {
     alignItems: "center",
     width: "100%",
-    borderTopWidth: 2,
-    borderTopColor: "black",
-    borderTopStyle: "solid",
-    padding: 16,
-    padding: 5,
+    // borderTopWidth: 2,
+    // borderTopColor: "black",
+    // borderTopStyle: "solid",
   },
 
   requestPlayerButton: {
-    width: 385,
-    borderRadius: 10,
-    height: 100,
+    width: "95%",
     backgroundColor: "#e04848",
     textAlign: "center",
     textAlignVertical: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
-    borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
     margin: 5,
   },
 
   requestPlayerButtonText: {
     fontSize: 20,
+    paddingLeft: 10,
   },
-  requestPlayerButtonSymbol: {},
+  requestPlayerButtonImage: {
+    width: "auto",
+    height: "100%",
+    resizeMode: "contain",
+    padding: 20,
+    margin: 10,
+  },
 
   screenHeader: {
     flexDirection: "row",
@@ -253,7 +257,7 @@ const Styles = StyleSheet.create({
     borderWidth: 1, // Border width
     borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
-    padding: 2,
+    // padding: 2,
     margin: 2,
     backgroundColor: "#FFFFFF",
   },
@@ -275,6 +279,8 @@ const Styles = StyleSheet.create({
     padding: 5, // Optional padding
     backgroundColor: "#FFFFFF",
     paddingLeft: 20,
+    alignItems: "center",
+    margin: 2,
   },
 
   managerBrowseGamesContainer: {
@@ -510,6 +516,17 @@ const Styles = StyleSheet.create({
     marginTop: 10,
     textAlign: "center",
   },
+  input: {
+    height: "10%",
+    borderColor: "black",
+    borderRadius: 5,
+    borderWidth: 1,
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  // successBanner: {
+  //   height: 20,
+  // },
 });
 
 export default Styles;

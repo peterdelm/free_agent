@@ -10,6 +10,7 @@ const CreateUser = ({ navigation }) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const url = `${EXPO_PUBLIC_BASE_URL}api/users`;
 
@@ -56,9 +57,11 @@ const CreateUser = ({ navigation }) => {
 
   const onSubmit = async () => {
     try {
-      if (!validateInputs()) {
+      if (loading || !validateInputs()) {
         return;
       }
+
+      setLoading(true);
 
       const body = {
         firstName,
@@ -93,6 +96,9 @@ const CreateUser = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error making authenticated request:", error);
+      setErrorMessage("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,12 +130,16 @@ const CreateUser = ({ navigation }) => {
           style={Styles.TextInput}
           placeholder="Password"
           onChangeText={(password) => setPassword(password)}
+          secureTextEntry={true}
         />
       </View>
       <View>
         {errorMessage ? <Text>{errorMessage}</Text> : null}
-        <TouchableOpacity>
-          <Button title="REGISTER ACCOUNT" onPress={() => onSubmit()} />
+        <TouchableOpacity disabled={loading}>
+          <Button
+            title={loading ? "Loading..." : "REGISTER ACCOUNT"}
+            onPress={() => onSubmit()}
+          />
         </TouchableOpacity>
       </View>
     </View>
