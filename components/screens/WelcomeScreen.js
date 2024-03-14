@@ -128,6 +128,7 @@ function WelcomeScreen({ navigation }) {
       <TouchableOpacity onPress={() => handleResetPasswordButtonPress()}>
         <Text style={Styles.forgotButton}>Forgot Password?</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => handleLoginButtonPress(emailAddress, password)}
       >

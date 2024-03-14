@@ -23,6 +23,15 @@ class DatePicker extends Component {
     };
   }
 
+  resetDatePickerValues = () => {
+    this.setState({
+      modalVisible: false,
+      selected: "",
+      availableDates: generateAvailableDates(),
+      inputValue: "Date",
+    });
+  };
+
   openDatePicker = () => {
     this.setState({ modalVisible: true });
   };

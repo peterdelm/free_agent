@@ -7,7 +7,7 @@ import {
   TextInput,
   Keyboard,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,6 +42,10 @@ function HomeScreen({ navigation, message }) {
   const [position, setPosition] = useState("");
   const [positionList, setPositionList] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+
+  const autoCompletePickerRef = useRef(null);
+  const timePickerRef = useRef(null);
+  const datePickerRef = useRef(null);
 
   const handleSportChange = (selectedSport) => {
     setSelectedSport(selectedSport);
@@ -244,6 +248,15 @@ function HomeScreen({ navigation, message }) {
               setGameLengthList([]);
               setPosition("");
               setPositionList([]);
+              if (autoCompletePickerRef.current) {
+                autoCompletePickerRef.current.resetPickerValues();
+              }
+              if (timePickerRef.current) {
+                timePickerRef.current.resetTimePickerValues();
+              }
+              if (datePickerRef.current) {
+                datePickerRef.current.resetDatePickerValues();
+              }
               console.log("Submit successful");
               navigation.navigate("ManagerBrowseGames", {
                 successMessage:
@@ -282,6 +295,13 @@ function HomeScreen({ navigation, message }) {
       </View>
     );
   }
+
+  // const resetAutoCompletePicker = () => {
+  //   // Access the reference to the AutoCompletePicker component and call its resetPickerValues function
+  //   if (autoCompletePickerRef.current) {
+  //     autoCompletePickerRef.current.resetPickerValues();
+  //   }
+  // };
 
   return (
     <ScrollView
@@ -386,17 +406,20 @@ function HomeScreen({ navigation, message }) {
           <AutoCompletePicker
             onInputSelected={captureSelectedLocation}
             style={[Styles.sportsPickerDropdown, Styles.input]}
+            ref={autoCompletePickerRef}
           />
 
           {/* DATE SELECTOR */}
           <DatePicker
             onInputSelected={captureSelectedDate}
             style={[Styles.datePickerButton, Styles.input]}
+            ref={datePickerRef}
           />
           {/* TIME SELECTOR */}
           <TimePicker
             onInputSelected={captureSelectedTime}
             style={[Styles.datePickerButton, Styles.input]}
+            ref={timePickerRef}
           />
           <Picker
             style={[Styles.sportsPickerDropdown, Styles.input]}

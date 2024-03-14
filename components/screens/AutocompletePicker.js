@@ -100,13 +100,29 @@ class AutoCompletePicker extends Component {
     this.textInputRef.measureInWindow((x, y, width, height) => {
       this.setState({
         inputPosition: { x, y, width, height },
+        addressInputSelected: true,
       });
       console.log("Input position is" + this.state.inputPosition.y);
     });
     this.addressFragment;
   };
 
-  handleTextInputBlur = () => {};
+  handleTextInputBlur = () => {
+    if (this.state.inputValue === "") {
+      this.setState({
+        addressInputSelected: false,
+      });
+    }
+  };
+
+  resetPickerValues = () => {
+    this.setState({
+      query: "",
+      suggestionList: [],
+      inputValue: "", // Reset the input value
+      addressInputSelected: false,
+    });
+  };
 
   render() {
     return (
@@ -124,7 +140,10 @@ class AutoCompletePicker extends Component {
           label="Location"
           onFocus={this.handleTextInputFocus}
           onBlur={this.handleTextInputBlur}
-          style={{ margin: 2 }}
+          style={{
+            textAlign: this.state.addressInputSelected ? "left" : "center",
+            paddingLeft: this.state.addressInputSelected ? 10 : 0, // Adjust the padding value as needed
+          }}
         />
 
         <Modal

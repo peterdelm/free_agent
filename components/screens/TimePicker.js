@@ -29,6 +29,16 @@ class TimePicker extends Component {
     });
   }
 
+  resetTimePickerValues = () => {
+    this.setState({
+      modalVisible: false,
+      selected: "",
+      inputValue: "Time",
+      selectedHour: "00",
+      selectedMinute: "00",
+    });
+  };
+
   handleTimeSelect = () => {
     selectedTime = `${this.state.selectedHour}:${this.state.selectedMinute}`;
     this.setState({ inputValue: selectedTime });
