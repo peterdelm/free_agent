@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   TextInput,
+  Keyboard,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
@@ -37,7 +38,6 @@ function HomeScreen({ navigation, message }) {
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [gameLengthList, setGameLengthList] = useState([]);
-  const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSportId, setSelectedSportId] = useState();
   const [position, setPosition] = useState("");
   const [positionList, setPositionList] = useState([]);
@@ -167,7 +167,7 @@ function HomeScreen({ navigation, message }) {
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const getTokenFromStorage = async () => {
       try {
         const token = await AsyncStorage.getItem("@session_token");
@@ -188,7 +188,7 @@ function HomeScreen({ navigation, message }) {
       position,
       gameType,
       date: dateString,
-      location: "123 Jasper Street",
+      location: location,
       time,
       gameLength,
       teamName,
@@ -228,8 +228,24 @@ function HomeScreen({ navigation, message }) {
           })
           .then((data) => {
             if (data.success === true) {
+              // Reset state values
+              setGender("");
+              setGameType("");
+              setGameAddress("");
+              setGameDate("");
+              setGameTime("");
+              setGameLength("");
+              setTeamName("");
+              setAdditionalInfo("");
+              setSelectedSport({});
+              setCalibreList([]);
+              setCalibre("");
+              setGameTypeList([]);
+              setGameLengthList([]);
+              setPosition("");
+              setPositionList([]);
               console.log("Submit successful");
-              navigation.navigate("Home", {
+              navigation.navigate("ManagerBrowseGames", {
                 successMessage:
                   "Game created successfully. Free Agent pending.",
               });
@@ -262,45 +278,62 @@ function HomeScreen({ navigation, message }) {
     //highlight the new game for a few seconds
     return (
       <View>
-        <Text style={Styles.primaryButton}>{result}</Text>
+        <Text style={Styles.successBanner}>{result}</Text>
       </View>
     );
   }
 
   return (
-    <View style={Styles.homeScreenContainer}>
-      {<Banner message={successMessage} />}
-      <View
-        style={[
-          Styles.screenContainer,
-          {
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
             borderBottomColor: "black",
             borderBottomWidth: 2,
             borderBottomStyle: "solid",
-          },
-        ]}
-      >
-        <View style={Styles.screenHeader}>
-          <Image
-            source={require("../../assets/prayingHands.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
-          />
-          <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
+          }}
+        >
+          <View style={Styles.screenHeader}>
+            <Image
+              source={require("../../assets/prayingHands.png")}
+              style={{ width: 50, height: 50, resizeMode: "contain" }}
+            />
+            <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
+          </View>
         </View>
-      </View>
-      <ScrollView style={{ width: "100%" }}>
-        <View style={Styles.screenContainer}>
+        <View style={Styles.successBanner}>
+          {<Banner message={successMessage} />}
+        </View>
+        <View
+          style={[
+            Styles.screenContainer,
+            (style = {
+              height: "85%",
+              alignItems: "center",
+            }),
+          ]}
+        >
           <View
             style={{
-              width: "100%",
               flexDirection: "row",
+              justifyContent: "space-around",
+              width: "100%",
+              marginLeft: 0,
             }}
           >
             <View
-              style={[Styles.sportsPickerDropdownContainer, { width: "50%" }]}
+              style={{
+                width: "49.5%",
+              }}
             >
               <SportsPicker
-                style={Styles.TextInput}
+                style={[
+                  Styles.sportsPickerDropdown,
+                  (style = { overflow: "hidden", marginLeft: 0 }),
+                ]}
                 defaultValue=""
                 placeholderTextColor="grey"
                 sportsData={sportSpecificValues}
@@ -309,11 +342,12 @@ function HomeScreen({ navigation, message }) {
                 selectedSport={selectedSport}
               />
             </View>
-            <View
-              style={[Styles.sportsPickerDropdownContainer, { width: "50%" }]}
-            >
+            <View style={{ width: "49.5%" }}>
               <Picker
-                style={Styles.sportsPickerDropdown}
+                style={[
+                  Styles.sportsPickerDropdown,
+                  (style = { overflow: "hidden", marginLeft: 0 }),
+                ]}
                 defaultValue=""
                 placeholderTextColor="grey"
                 onValueChange={handleGameTypeChange}
@@ -322,125 +356,88 @@ function HomeScreen({ navigation, message }) {
               />
             </View>
           </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              language={calibreList}
-              onValueChange={handleCalibreChange}
-              label="Calibre"
-            />
-          </View>
 
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handleGenderChange}
-              language={genderList}
-              label="Gender"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handlePositionChange}
-              language={positionList}
-              label="Position"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            {/* LOCATION SELECTOR */}
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <Text>Location Input Stand-in Until Credit card Renewal</Text>
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            defaultValue=""
+            placeholderTextColor="grey"
+            language={calibreList}
+            onValueChange={handleCalibreChange}
+            label="Calibre"
+          />
 
-              {/* <AutoCompletePicker
-                onInputSelected={captureSelectedLocation}
-                style={Styles.sportsPickerDropdown}
-              /> */}
-            </View>
-          </View>
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            defaultValue=""
+            placeholderTextColor="grey"
+            onValueChange={handleGenderChange}
+            language={genderList}
+            label="Gender"
+          />
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            defaultValue=""
+            placeholderTextColor="grey"
+            onValueChange={handlePositionChange}
+            language={positionList}
+            label="Position"
+          />
+          {/* LOCATION SELECTOR */}
+          <AutoCompletePicker
+            onInputSelected={captureSelectedLocation}
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+          />
 
-          <View style={Styles.sportsPickerDropdownContainer}>
-            {/* DATE SELECTOR */}
-            <DatePicker
-              onInputSelected={captureSelectedDate}
-              style={Styles.datePickerButton}
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            {/* TIME SELECTOR */}
-            <TimePicker
-              onInputSelected={captureSelectedTime}
-              style={Styles.datePickerButton}
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <Picker
-              style={Styles.sportsPickerDropdown}
-              placeholder="Game Length (minutes)"
-              defaultValue=""
-              placeholderTextColor="grey"
-              onValueChange={handleGameLengthChange}
-              language={gameLengthList}
-              label="Game Length"
-            />
-          </View>
-          <View style={Styles.sportsPickerDropdownContainer}>
-            <TextInput
-              style={Styles.additionalInfo}
-              placeholder="Additional Info..."
-              defaultValue=""
-              placeholderTextColor="grey"
-              onChangeText={(additionalInfo) =>
-                setAdditionalInfo(additionalInfo)
-              }
-            />
-          </View>
-          <View style={Styles.requestPlayerContainer}>
-            <View style={Styles.requestPlayerButtonContainer}>
-              <TouchableOpacity onPress={() => handleFormSubmit()}>
-                <View style={Styles.requestPlayerButton}>
-                  <Text style={Styles.requestPlayerButtonText}>
-                    Request a Player
-                  </Text>
-                  <Image
-                    source={require("../../assets/circle-plus-solid.png")}
-                    style={Styles.requestPlayerButtonImage}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
+          {/* DATE SELECTOR */}
+          <DatePicker
+            onInputSelected={captureSelectedDate}
+            style={[Styles.datePickerButton, Styles.input]}
+          />
+          {/* TIME SELECTOR */}
+          <TimePicker
+            onInputSelected={captureSelectedTime}
+            style={[Styles.datePickerButton, Styles.input]}
+          />
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            placeholder="Game Length (minutes)"
+            defaultValue=""
+            placeholderTextColor="grey"
+            onValueChange={handleGameLengthChange}
+            language={gameLengthList}
+            label="Game Length"
+          />
+          <TextInput
+            style={[Styles.additionalInfo, Styles.input]}
+            placeholder="Additional Info..."
+            defaultValue=""
+            placeholderTextColor="grey"
+            onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
+          />
+        </View>
+        <View style={Styles.requestPlayerContainer}>
+          <View style={Styles.requestPlayerButtonContainer}>
+            <TouchableOpacity onPress={() => handleFormSubmit()}>
+              <View style={Styles.requestPlayerButton}>
+                <Text style={Styles.requestPlayerButtonText}>
+                  Request a Player
+                </Text>
+                <Image
+                  source={require("../../assets/circle-plus-solid.png")}
+                  style={Styles.requestPlayerButtonImage}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-      {/* 
-      <View style={Styles.homeContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("ManagePlayers")}>
-          <Text style={Styles.primaryButton}>Manage Your Player Profiles</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("BrowseAvailableGames")}>
-          <Text style={Styles.primaryButton}>Browse Games</Text>
-        </TouchableOpacity>
-      </View> */}
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
-        <Text>FOOTER</Text>
-      </NavigationFooter>
-    </View>
+        <NavigationFooter
+          currentRole={currentUser.currentRole}
+          navigation={navigation}
+        >
+          <Text>FOOTER</Text>
+        </NavigationFooter>
+      </View>
+    </ScrollView>
   );
 }
 

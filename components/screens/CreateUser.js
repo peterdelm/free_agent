@@ -1,17 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  Button,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
-import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import { View, TextInput, Button, TouchableOpacity, Text } from "react-native";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
@@ -21,6 +9,8 @@ const CreateUser = ({ navigation }) => {
   const [lastName, setLastName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const url = `${EXPO_PUBLIC_BASE_URL}api/users`;
 
@@ -35,22 +25,43 @@ const CreateUser = ({ navigation }) => {
     }
   };
 
-  const handleFormSubmit = () => {
-    onSubmit();
-  };
-
   const validateInputs = () => {
-    if (!emailAddress) {
-      console.log(emailAddress);
-
-      console.log("No Email Address!");
-      // handleError("Please input calibre", "calibre");
+    if (!emailAddress || !validateEmail(emailAddress)) {
+      setErrorMessage("Please enter a valid email address.");
+      return false;
     }
+
+    if (!password) {
+      setErrorMessage("Please enter a password.");
+      return false;
+    }
+
+    if (
+      password.length < 7 ||
+      !/\d/.test(password) ||
+      !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password)
+    ) {
+      setErrorMessage(
+        "Password must be at least 7 characters long and contain at least one number and one symbol."
+      );
+      return false;
+    }
+
+    setErrorMessage("");
+    return true;
+  };
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const onSubmit = async () => {
     try {
-      validateInputs();
+      if (loading || !validateInputs()) {
+        return;
+      }
+
+      setLoading(true);
 
       const body = {
         firstName,
@@ -58,8 +69,6 @@ const CreateUser = ({ navigation }) => {
         emailAddress,
         password,
       };
-      console.log(body);
-      console.log("URL in onSubmit in CreateUser was " + url);
 
       const response = await fetch(url, {
         method: "POST",
@@ -87,23 +96,18 @@ const CreateUser = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error making authenticated request:", error);
+      setErrorMessage("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleLoginButtonPress = () => {
-    console.log("HandleRegisterButtonPress Called!");
-    const loginSuccessful = handleFormSubmit();
-    if (loginSuccessful) {
-      navigation.navigate("Home");
-    }
-  };
   return (
     <View style={Styles.container}>
       <View style={Styles.inputView}>
         <TextInput
           style={Styles.TextInput}
           placeholder="First Name"
-          placeholderTextColor="#005F66"
           onChangeText={(firstName) => setFirstName(firstName)}
         />
       </View>
@@ -111,7 +115,6 @@ const CreateUser = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Last Name"
-          placeholderTextColor="#005F66"
           onChangeText={(lastName) => setLastName(lastName)}
         />
       </View>
@@ -119,7 +122,6 @@ const CreateUser = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Email..."
-          placeholderTextColor="#005F66"
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
@@ -127,15 +129,16 @@ const CreateUser = ({ navigation }) => {
         <TextInput
           style={Styles.TextInput}
           placeholder="Password"
-          placeholderTextColor="#005F66"
           onChangeText={(password) => setPassword(password)}
+          secureTextEntry={true}
         />
       </View>
       <View>
-        <TouchableOpacity>
+        {errorMessage ? <Text>{errorMessage}</Text> : null}
+        <TouchableOpacity disabled={loading}>
           <Button
-            title="REGISTER ACCOUNT"
-            onPress={() => handleLoginButtonPress()}
+            title={loading ? "Loading..." : "REGISTER ACCOUNT"}
+            onPress={() => onSubmit()}
           />
         </TouchableOpacity>
       </View>

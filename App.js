@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -17,15 +17,28 @@ import ManagerBrowseGames from "./components/screens/ManagerBrowseGames";
 import InboxScreen from "./components/screens/InboxScreen";
 import PlayerHome from "./components/screens/PlayerHome";
 import ResetPasswordScreen from "./components/screens/ResetPasswordScreen.js";
+import NewPasswordScreen from "./components/screens/NewPasswordScreen.js";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import UserProfile from "./components/screens/UserProfile";
+import * as Linking from "expo-linking";
 
 const Stack = createNativeStackNavigator();
 
+const prefix = Linking.createURL("/");
+
 export default function App() {
+  const linking = {
+    prefixes: [prefix],
+    config: {
+      screens: {
+        NewPasswordScreen: "NewPasswordScreen",
+      },
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
       <Stack.Navigator>
         <Stack.Screen
           name="WelcomeScreen"
@@ -82,7 +95,6 @@ export default function App() {
           component={UserProfile}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="BrowseAvailableGames"
           component={BrowseAvailableGames}
@@ -101,6 +113,11 @@ export default function App() {
         <Stack.Screen
           name="ResetPasswordScreen"
           component={ResetPasswordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="NewPasswordScreen"
+          component={NewPasswordScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

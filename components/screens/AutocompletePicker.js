@@ -39,6 +39,8 @@ class AutoCompletePicker extends Component {
               suggestionList: data.addressList,
               addressInputSelected: true,
               showDropdown: true,
+              inputValue: "", // Reset the inputValue after fetching suggestions
+              selectedAddress: "",
             });
 
             console.log("The returned suggestion list is:", data.addressList);
@@ -122,7 +124,7 @@ class AutoCompletePicker extends Component {
           label="Location"
           onFocus={this.handleTextInputFocus}
           onBlur={this.handleTextInputBlur}
-          style={{ margin: 2, padding: 20 }}
+          style={{ margin: 2 }}
         />
 
         <Modal

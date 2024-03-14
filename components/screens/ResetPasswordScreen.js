@@ -1,18 +1,37 @@
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
+import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import Styles from "./Styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config";
 
 function ResetPasswordScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
-  const [token, setToken] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleResetAttempt = async (emailAddress, password) => {
-    const credentials = { emailAddress, password };
-    console.log("handleLoginAttempt called");
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateInputs = () => {
+    if (!emailAddress || !validateEmail(emailAddress)) {
+      setErrorMessage("Please enter a valid email address.");
+      return false;
+    }
+
+    setErrorMessage("");
+    return true;
+  };
+
+  const handleResetAttempt = async () => {
+    const credentials = { emailAddress };
+    console.log("handleResetAttempt called");
     console.log(credentials);
+    const url = `${EXPO_PUBLIC_BASE_URL}api/users/reset`;
 
     try {
+      if (!validateInputs()) {
+        return;
+      }
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -23,19 +42,18 @@ function ResetPasswordScreen({ navigation }) {
 
       if (response.status === 200) {
         const data = await response.json();
-        return data;
+        navigation.navigate("WelcomeScreen", {
+          message:
+            "A link to change your password has been sent to your email. Please be sure to check your junk folder.",
+        });
       } else if (response.status === 401) {
         console.log("Invalid credentials");
       } else {
         console.log("Unexpected response:", response.status);
       }
     } catch (error) {
-      console.log("Error during login attempt:", error);
+      console.log("Error during password reset attempt:", error);
     }
-  };
-
-  const handleResetButtonPress = () => {
-    console.log("Reset Button Pressed");
   };
 
   return (
@@ -57,14 +75,14 @@ function ResetPasswordScreen({ navigation }) {
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
+      {errorMessage && <Text style={Styles.errorText}>{errorMessage}</Text>}
 
-      <TouchableOpacity onPress={() => handleResetButtonPress()}>
+      <TouchableOpacity onPress={handleResetAttempt}>
         <View style={Styles.welcomeButtonContainer}>
           <Text style={Styles.welcomeButton}>Reset Password</Text>
         </View>
       </TouchableOpacity>
     </View>
-    // </ImageBackground>
   );
 }
 

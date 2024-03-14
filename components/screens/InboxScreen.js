@@ -27,10 +27,12 @@ const InboxScreen = ({ navigation }) => {
   return (
     <View style={Styles.managerBrowseGamesContainer}>
       <View
-        style={[
-          Styles.screenContainer,
-          { borderBottomColor: "black", borderBottomWidth: 2 },
-        ]}
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          width: "100%",
+        }}
       >
         <View style={Styles.screenHeader}>
           <Image
