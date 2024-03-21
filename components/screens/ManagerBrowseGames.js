@@ -82,7 +82,9 @@ const ManagerBrowseGames = ({ navigation }) => {
     allActiveGames = activeGames.map((game, index) => (
       <TouchableOpacity
         key={game.id}
-        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+        onPress={() => {
+          navigation.navigate("ViewGame", { gameId: game.id });
+        }}
       >
         <View key={index} style={Styles.upcomingGameContainer}>
           <View style={Styles.upcomingGameDateContainer}>

@@ -312,86 +312,87 @@ function HomeScreen({ navigation, message }) {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            borderBottomColor: "black",
-            borderBottomWidth: 2,
-            borderBottomStyle: "solid",
-          }}
-        >
-          <View style={Styles.screenHeader}>
-            <Image
-              source={require("../../assets/prayingHands.png")}
-              style={{ width: 50, height: 50, resizeMode: "contain" }}
-            />
-            <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
-          </View>
+    <View style={{ flex: 1 }}>
+      <View
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          flex: 0,
+        }}
+      >
+        <View style={Styles.screenHeader}>
+          <Image
+            source={require("../../assets/prayingHands.png")}
+            style={{ width: 50, height: 50, resizeMode: "contain" }}
+          />
+          <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
         </View>
-        <View style={Styles.successBanner}>
+      </View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* <View style={Styles.successBanner}>
           {<Banner message={successMessage} />}
-        </View>
-        <View
-          style={[
-            Styles.screenContainer,
-            (style = {
-              height: "85%",
-              alignItems: "center",
-            }),
-          ]}
-        >
+        </View> */}
+        <View style={{ flex: 1 }}>
           <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              width: "100%",
-              marginLeft: 0,
-            }}
+            style={[
+              (style = {
+                alignItems: "center",
+              }),
+            ]}
           >
             <View
               style={{
-                width: "49.5%",
+                flexDirection: "row",
+                justifyContent: "space-around",
+                width: "100%",
+                marginLeft: 0,
               }}
             >
-              <SportsPicker
-                style={[
-                  Styles.sportsPickerDropdown,
-                  (style = {
-                    overflow: "hidden",
-                    marginLeft: 0,
-                    height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
-                    flexDirection: Platform.OS === "ios" ? "row" : null,
-                  }),
-                ]}
-                defaultValue=""
-                placeholderTextColor="grey"
-                sportsData={sportSpecificValues}
-                onValueChange={handleSportChange}
-                label="Sport"
-                selectedSport={selectedSport}
-              />
-            </View>
-            <View style={{ width: "49.5%" }}>
-              <GameTypePicker
-                style={[
-                  Styles.gameTypePickerDropdown,
-                  (style = {
-                    overflow: "hidden",
-                    marginLeft: 0,
-                    borderColor: "black",
-                    height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
-                  }),
-                ]}
-                defaultValue=""
-                placeholderTextColor="grey"
-                onValueChange={handleGameTypeChange}
-                language={gameTypeList}
-                label="Game Type"
-              />
+              <View
+                style={{
+                  width: "49.5%",
+                }}
+              >
+                <SportsPicker
+                  style={[
+                    Styles.sportsPickerDropdown,
+                    (style = {
+                      overflow: "hidden",
+                      marginLeft: 0,
+                      height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
+                      flexDirection: Platform.OS === "ios" ? "row" : null,
+                    }),
+                  ]}
+                  defaultValue=""
+                  placeholderTextColor="grey"
+                  sportsData={sportSpecificValues}
+                  onValueChange={handleSportChange}
+                  label="Sport"
+                  selectedSport={selectedSport}
+                />
+              </View>
+              <View style={{ width: "49.5%" }}>
+                <GameTypePicker
+                  style={[
+                    Styles.gameTypePickerDropdown,
+                    (style = {
+                      overflow: "hidden",
+                      marginLeft: 0,
+                      borderColor: "black",
+                      height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
+                    }),
+                  ]}
+                  defaultValue=""
+                  placeholderTextColor="grey"
+                  onValueChange={handleGameTypeChange}
+                  language={gameTypeList}
+                  label="Game Type"
+                />
+              </View>
             </View>
           </View>
 
@@ -455,30 +456,31 @@ function HomeScreen({ navigation, message }) {
             placeholderTextColor="grey"
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
-        </View>
-        <View style={Styles.requestPlayerContainer}>
-          <View style={Styles.requestPlayerButtonContainer}>
-            <TouchableOpacity onPress={() => handleFormSubmit()}>
-              <View style={Styles.requestPlayerButton}>
-                <Text style={Styles.requestPlayerButtonText}>
-                  Request a Player
-                </Text>
-                <Image
-                  source={require("../../assets/circle-plus-solid.png")}
-                  style={Styles.requestPlayerButtonImage}
-                />
-              </View>
-            </TouchableOpacity>
+          <View style={Styles.requestPlayerContainer}>
+            <View style={Styles.requestPlayerButtonContainer}>
+              <TouchableOpacity onPress={() => handleFormSubmit()}>
+                <View style={Styles.requestPlayerButton}>
+                  <Text style={Styles.requestPlayerButtonText}>
+                    Request a Player
+                  </Text>
+                  <Image
+                    source={require("../../assets/circle-plus-solid.png")}
+                    style={Styles.requestPlayerButtonImage}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        <NavigationFooter
-          currentRole={currentUser.currentRole}
-          navigation={navigation}
-        >
-          <Text>FOOTER</Text>
-        </NavigationFooter>
-      </View>
-    </ScrollView>
+      </ScrollView>
+
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      >
+        <Text>FOOTER</Text>
+      </NavigationFooter>
+    </View>
   );
 }
 

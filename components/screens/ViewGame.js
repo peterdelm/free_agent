@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text, Image, StatusBar } from "react-native";
+import { View, Text, Image, StatusBar, ScrollView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
@@ -40,7 +40,8 @@ function ViewGame({ navigation, message }) {
   );
 
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/" + gameId`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
+    console.log("Fetching game with id: " + gameId);
 
     const fetchData = async () => {
       try {
@@ -64,7 +65,7 @@ function ViewGame({ navigation, message }) {
             }
             throw new Error("Network response was not ok.");
           })
-          .then((res) => setGame(res));
+          .then((res) => setGame(res.game));
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error
@@ -74,10 +75,17 @@ function ViewGame({ navigation, message }) {
   }, []);
 
   return (
-    <View style={Styles.container}>
+    <View style={{ flex: 1 }}>
       {/* <StatusBar hidden={true} /> */}
 
-      <View style={Styles.screenContainer}>
+      <View
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          flex: 0,
+        }}
+      >
         <View style={Styles.screenHeader}>
           <Image
             source={require("../../assets/prayingHands.png")}
@@ -86,39 +94,65 @@ function ViewGame({ navigation, message }) {
           <Text style={{ fontSize: 35, padding: 20 }}>View Game</Text>
         </View>
       </View>
-      <View style={Styles.viewGameContentContainer}>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Address
-        </Text>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={Styles.screenContainer}>
+          <View style={{ flex: 1 }}>
+            <View style={Styles.viewGameContentContainer}>
+              <Text
+                style={{
+                  textAlign: "left",
+                  fontSize: 18,
+                  fontWeight: 500,
+                  padding: 5,
+                }}
+              >
+                Address
+              </Text>
 
-        <Text style={Styles.gameInfo}>{game.location}</Text>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Date/Time
-        </Text>
-        <Text style={Styles.gameInfo}>
-          {game.date} @ {game.time}
-        </Text>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Position
-        </Text>
-        <Text style={Styles.gameInfo}>{game.position}</Text>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Calibre
-        </Text>
-        <Text style={Styles.gameInfo}>{game.calibre}</Text>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Gender
-        </Text>
-        <Text style={Styles.gameInfo}>Gender: {game.gender}</Text>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Game Type
-        </Text>
-        <Text style={Styles.gameInfo}>{game.gameType}</Text>
-        <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
-          Game Length
-        </Text>
-        <Text style={Styles.gameInfo}>{game.game_length} Minutes</Text>
-      </View>
+              <Text style={Styles.gameInfo}>{game.location}</Text>
+              <Text
+                style={{
+                  textAlign: "left",
+                  fontSize: 18,
+                  fontWeight: 500,
+                  padding: 5,
+                }}
+              >
+                Date/Time
+              </Text>
+              <Text
+                style={[Styles.gameInfo, (style = { textAlign: "center" })]}
+              >
+                {game.date} @ {game.time}
+              </Text>
+              <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+                Position
+              </Text>
+              <Text style={Styles.gameInfo}>{game.position}</Text>
+              <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+                Calibre
+              </Text>
+              <Text style={Styles.gameInfo}>{game.calibre}</Text>
+              <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+                Gender
+              </Text>
+              <Text style={Styles.gameInfo}>Gender: {game.gender}</Text>
+              <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+                Game Type
+              </Text>
+              <Text style={Styles.gameInfo}>{game.gameType}</Text>
+              <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
+                Game Length
+              </Text>
+              <Text style={Styles.gameInfo}>{game.gameLength} Minutes</Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
       <NavigationFooter
         currentRole={currentUser.currentRole}
         navigation={navigation}

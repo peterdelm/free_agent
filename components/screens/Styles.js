@@ -274,7 +274,7 @@ const Styles = StyleSheet.create({
   input: {
     height: Platform.select({
       ios: inputHeight,
-      android: "10%",
+      android: inputHeight,
     }),
     borderColor: "black",
     borderRadius: 5,
@@ -521,7 +521,7 @@ const Styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  viewGameContentContainer: { flex: 1 },
+  viewGameContentContainer: { textAlign: "left", alignItems: "left" },
   userProfileContentContainer: {
     flex: 1,
     height: "100%",

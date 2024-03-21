@@ -45,14 +45,12 @@ const Footer = ({ navigation, currentRole }) => {
         alignItems: "center",
         height: 60, // Adjust the height as needed
         width: "100%",
-        position: Platform.select({
-          ios: "absolute",
-        }),
         bottom: 0,
         backgroundColor: "lightblue",
         borderWidth: 1,
-        borderColor: "darkgreen",
+
         padding: 5,
+        flex: 0,
       }}
     >
       {selectiveDisplay()}
