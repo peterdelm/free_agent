@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   Keyboard,
+  Platform,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import Styles from "./Styles";
@@ -14,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SportsPicker from "./SportsPicker";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker";
+import GameTypePicker from "./GameTypePicker.js";
 import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
@@ -48,15 +50,28 @@ function HomeScreen({ navigation, message }) {
   const datePickerRef = useRef(null);
 
   const handleSportChange = (selectedSport) => {
-    setSelectedSport(selectedSport);
-    setCalibreList(selectedSport.calibre);
-    setGameTypeList(selectedSport.gameType);
-    setGameLengthList(selectedSport.gameLength);
-    setPositionList(selectedSport.position);
-    setSelectedSportId(selectedSport.id);
+    // Check if the selected item is the default placeholder
+    if (selectedSport === undefined) {
+      // Handle the case where the default value is selected
+      setSelectedSport({});
+      setCalibreList([]);
+      setGameTypeList([]);
+      setGameLengthList([]);
+      setPositionList([]);
+      setSelectedSportId(null);
 
-    console.log("Selected sport is:", selectedSport.sport);
-    console.log("Selected sport details:", selectedSport.calibre);
+      console.log("Default value selected, resetting sport data");
+    } else {
+      setSelectedSport(selectedSport);
+      setCalibreList(selectedSport.calibre);
+      setGameTypeList(selectedSport.gameType);
+      setGameLengthList(selectedSport.gameLength);
+      setPositionList(selectedSport.position);
+      setSelectedSportId(selectedSport.id);
+
+      console.log("Selected sport is:", selectedSport.sport);
+      console.log("Selected sport details:", selectedSport.calibre);
+    }
   };
 
   captureSelectedDate = (selectedInput) => {
@@ -296,13 +311,6 @@ function HomeScreen({ navigation, message }) {
     );
   }
 
-  // const resetAutoCompletePicker = () => {
-  //   // Access the reference to the AutoCompletePicker component and call its resetPickerValues function
-  //   if (autoCompletePickerRef.current) {
-  //     autoCompletePickerRef.current.resetPickerValues();
-  //   }
-  // };
-
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -352,7 +360,12 @@ function HomeScreen({ navigation, message }) {
               <SportsPicker
                 style={[
                   Styles.sportsPickerDropdown,
-                  (style = { overflow: "hidden", marginLeft: 0 }),
+                  (style = {
+                    overflow: "hidden",
+                    marginLeft: 0,
+                    height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
+                    flexDirection: Platform.OS === "ios" ? "row" : null,
+                  }),
                 ]}
                 defaultValue=""
                 placeholderTextColor="grey"
@@ -363,10 +376,15 @@ function HomeScreen({ navigation, message }) {
               />
             </View>
             <View style={{ width: "49.5%" }}>
-              <Picker
+              <GameTypePicker
                 style={[
-                  Styles.sportsPickerDropdown,
-                  (style = { overflow: "hidden", marginLeft: 0 }),
+                  Styles.gameTypePickerDropdown,
+                  (style = {
+                    overflow: "hidden",
+                    marginLeft: 0,
+                    borderColor: "black",
+                    height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
+                  }),
                 ]}
                 defaultValue=""
                 placeholderTextColor="grey"
@@ -432,7 +450,7 @@ function HomeScreen({ navigation, message }) {
           />
           <TextInput
             style={[Styles.additionalInfo, Styles.input]}
-            placeholder="Additional Info..."
+            placeholder="Additional Info... (Optional)"
             defaultValue=""
             placeholderTextColor="grey"
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}

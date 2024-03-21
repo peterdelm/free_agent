@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,9 +42,13 @@ const Footer = ({ navigation, currentRole }) => {
       style={{
         flexDirection: "row",
         justifyContent: "space-around",
-        alignItems: "center", // Center items vertically
-        height: "8%",
+        alignItems: "center",
+        height: 60, // Adjust the height as needed
         width: "100%",
+        position: Platform.select({
+          ios: "absolute",
+        }),
+        bottom: 0,
         backgroundColor: "lightblue",
         borderWidth: 1,
         borderColor: "darkgreen",
@@ -82,9 +86,7 @@ const Footer = ({ navigation, currentRole }) => {
         </View>
       </TouchableOpacity>
     </View>
-    //   1e3050ff
   );
 };
 
 export default Footer;
-//   1e3050ff

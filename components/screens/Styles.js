@@ -11,9 +11,13 @@ import {
   Touchable,
   TouchableOpacity,
   StatusBar,
+  Platform,
 } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
+
+const { height } = Dimensions.get("window");
+const inputHeight = height * 0.07; // Adjust the multiplier as needed
 
 const Styles = StyleSheet.create({
   background: {
@@ -192,9 +196,9 @@ const Styles = StyleSheet.create({
   requestPlayerButtonContainer: {
     alignItems: "center",
     width: "100%",
-    // borderTopWidth: 2,
-    // borderTopColor: "black",
-    // borderTopStyle: "solid",
+    paddingBottom: Platform.select({
+      ios: 80,
+    }),
   },
 
   requestPlayerButton: {
@@ -248,8 +252,7 @@ const Styles = StyleSheet.create({
   sportsPickerDropdownContainer: {
     alignItems: "center",
     width: "100%",
-    borderRadius: 5, // Border radius (optional)
-    padding: 2, // Optional padding
+    // borderRadius: 5, // Border radius (optional)
   },
 
   sportsPickerDropdown: {
@@ -257,9 +260,27 @@ const Styles = StyleSheet.create({
     borderWidth: 1, // Border width
     borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
-    // padding: 2,
     margin: 2,
     backgroundColor: "#FFFFFF",
+  },
+  gameTypePickerDropdown: {
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "dark green", // Border color
+    borderRadius: 5, // Border radius (optional)
+    margin: 2,
+    backgroundColor: "#FFFFFF",
+  },
+  input: {
+    height: Platform.select({
+      ios: inputHeight,
+      android: "10%",
+    }),
+    borderColor: "black",
+    borderRadius: 5,
+    borderWidth: 1,
+    overflow: "hidden",
+    justifyContent: "center",
   },
 
   datePickerButton: {
@@ -365,6 +386,9 @@ const Styles = StyleSheet.create({
   },
   welcomeButtonContainer: {
     marginTop: 40,
+    lineHeight: Platform.select({
+      ios: 20,
+    }),
   },
   welcomeButton: {
     width: screenWidth - 50,
@@ -377,6 +401,9 @@ const Styles = StyleSheet.create({
     backgroundColor: "#d90e0e",
     textAlign: "center",
     textAlignVertical: "center",
+    lineHeight: Platform.select({
+      ios: 50,
+    }),
   },
   gameInfo: {
     width: 385,
@@ -516,14 +543,7 @@ const Styles = StyleSheet.create({
     marginTop: 10,
     textAlign: "center",
   },
-  input: {
-    height: "10%",
-    borderColor: "black",
-    borderRadius: 5,
-    borderWidth: 1,
-    overflow: "hidden",
-    justifyContent: "center",
-  },
+
   // successBanner: {
   //   height: 20,
   // },

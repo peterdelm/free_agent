@@ -16,7 +16,16 @@ class Pickering extends Component {
 
   render() {
     return (
-      <View style={this.state.style}>
+      <View
+        style={[
+          this.state.style,
+          (style = {
+            // flexDirection: "row",
+            // borderColor: "red",
+            // borderWidth: 2,
+          }),
+        ]}
+      >
         <Picker
           selectedValue={this.state.language}
           onValueChange={(itemValue) => {
@@ -49,15 +58,9 @@ class Pickering extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
   arrowContainer: {
-    display: "flex",
     position: "absolute",
-    transform: [{ translateX: 350 }], // Half of the arrow height
-    overflow: "visible", // Allow the arrow to overflow the container
+    transform: [{ translateX: 170 }, { translateY: 20 }], // Half of the arrow height
     height: 10,
     width: 10,
   },
