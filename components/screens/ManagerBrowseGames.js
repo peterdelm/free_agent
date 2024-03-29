@@ -38,7 +38,7 @@ const ManagerBrowseGames = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
 
     const fetchData = async () => {
       try {
@@ -62,7 +62,7 @@ const ManagerBrowseGames = ({ navigation }) => {
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.activeGames))
+          .then((res) => setActiveGames(res.availableGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -75,23 +75,21 @@ const ManagerBrowseGames = ({ navigation }) => {
     fetchData();
   }, []);
 
-  let allActiveGames = []; // Initialize as null initially
+  let allActiveGames = []; // Initialize as empty array initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map((game, index) => (
+    allActiveGames = activeGames.map(({ game }) => (
       <TouchableOpacity
         key={game.id}
-        onPress={() => {
-          navigation.navigate("ViewGame", { gameId: game.id });
-        }}
+        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
       >
-        <View key={index} style={Styles.upcomingGameContainer}>
+        <View style={Styles.upcomingGameContainer}>
           <View style={Styles.upcomingGameDateContainer}>
-            <Text key={index}>{formatDate(game.date)}</Text>
+            <Text>{formatDate(game.date)}</Text>
           </View>
           <View style={Styles.upcomingGameAddressContainer}>
-            <Text key={index}>{game.location}</Text>
+            <Text>{game.location}</Text>
           </View>
         </View>
       </TouchableOpacity>

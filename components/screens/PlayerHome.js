@@ -101,7 +101,7 @@ function PlayerHome({ navigation }) {
                 return res.json();
               } else throw new Error("Network response was not ok.");
             })
-            .then((res) => setActiveGames(res.activeGames))
+            // .then((res) => setActiveGames(res.activeGames))
             .catch((error) => {
               console.log("Error during fetch:", error);
               // Handle specific error scenarios
@@ -140,7 +140,8 @@ function PlayerHome({ navigation }) {
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.activeGames))
+          .then((res) => setActiveGames(res.availableGames))
+          .then(console.log("Active games are: ", activeGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -173,86 +174,23 @@ function PlayerHome({ navigation }) {
         return null;
       }
     };
-
-    validateInputs();
-    const body = {
-      gender,
-      calibre,
-      position,
-      gameType,
-      date,
-      location: location,
-      time,
-      gameLength,
-      teamName,
-      additionalInfo,
-      isActive: true,
-      sport: selectedSport.sport,
-      sportId: selectedSportId,
-    };
-
-    console.log("CreateGame Request body is: " + body);
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
-
-    const postGame = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-        console.log("postgGame async request called at line 138");
-
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-
-        const requestOptions = {
-          method: "POST",
-          headers,
-          body: JSON.stringify(body),
-        };
-
-        await fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              console.log("Submit successful");
-              navigation.navigate("Home", {
-                successMessage:
-                  "Game created successfully. Free Agent pending.",
-              });
-            } else {
-              console.log("Submit Failed");
-            }
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    postGame();
   };
 
-  let allActiveGames = []; // Initialize as null initially
+  let allActiveGames = []; // Initialize as empty array initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map((game, index) => (
+    allActiveGames = activeGames.map(({ game }) => (
       <TouchableOpacity
         key={game.id}
         onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
       >
-        <View key={index} style={Styles.upcomingGameContainer}>
+        <View style={Styles.upcomingGameContainer}>
           <View style={Styles.upcomingGameDateContainer}>
-            <Text key={index}>{formatDate(game.date)}</Text>
+            <Text>{formatDate(game.date)}</Text>
           </View>
           <View style={Styles.upcomingGameAddressContainer}>
-            <Text key={index}>{game.location}</Text>
+            <Text>{game.location}</Text>
           </View>
         </View>
       </TouchableOpacity>

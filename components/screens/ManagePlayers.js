@@ -35,7 +35,7 @@ const ManagePlayers = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/players/player_roster`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players/playerRoster`;
 
     const fetchData = async () => {
       try {
