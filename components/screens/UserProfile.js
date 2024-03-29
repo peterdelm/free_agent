@@ -150,6 +150,20 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() => navigation.navigate("ManagePlayers")}
+          >
+            <Text style={Styles.profileLinkTextContainer}>
+              Manage Player Profiles
+            </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </TouchableOpacity>
           <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Personal Info</Text>
             <View style={Styles.profileLinkImageContainer}>

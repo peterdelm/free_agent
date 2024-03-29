@@ -25,7 +25,16 @@ class AutoCompletePicker extends Component {
       selectedAddress: "",
       inputValue: "",
       style: props.style,
+      placeholder: props.value || "Default Placeholder",
+      defaultValue: props.placeholder || "Default Placeholder",
+      label: "",
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.placeholder !== prevProps.placeholder) {
+      this.setState({ placeholder: this.props.placeholder });
+    }
   }
 
   handleAddressChange = (input) => {
@@ -88,6 +97,8 @@ class AutoCompletePicker extends Component {
       return data;
     } catch (err) {
       console.error(err);
+      // Handle the rejection here
+      // For example, you could set state to display an error message
       throw err;
     }
   }
@@ -129,15 +140,14 @@ class AutoCompletePicker extends Component {
       <View style={this.state.style}>
         <TextInput
           ref={(ref) => (this.textInputRef = ref)}
-          placeholder="Location"
-          defaultValue=""
+          placeholder={this.state.placeholder}
           value={this.state.inputValue}
           placeholderTextColor="grey"
           onChangeText={(addressFragment) => {
             this.handleAddressChange(addressFragment);
             this.setState({ inputValue: addressFragment });
           }}
-          label="Location"
+          label={this.state.label}
           onFocus={this.handleTextInputFocus}
           onBlur={this.handleTextInputBlur}
           style={{

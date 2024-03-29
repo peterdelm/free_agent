@@ -76,7 +76,7 @@ function PlayerHome({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
       console.log("UsefocusEffect Fetch games called");
 
       const fetchData = async () => {
@@ -116,7 +116,7 @@ function PlayerHome({ navigation }) {
   );
 
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
 
     const fetchData = async () => {
       try {

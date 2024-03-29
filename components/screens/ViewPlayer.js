@@ -25,7 +25,7 @@ function ViewPlayer({ navigation, message }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/players/" + playerId`;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
 
       const fetchData = async () => {
         try {
@@ -73,7 +73,7 @@ function ViewPlayer({ navigation, message }) {
         onPress={() =>
           navigation.navigate("EditPlayer", {
             playerId: player.id,
-            sportId: player.sportId,
+            playerSport: player.sport,
           })
         }
       >

@@ -11,6 +11,7 @@ class Pickering extends Component {
       label: props.label,
       colour: props.colour,
       style: props.style,
+      defaultValue: props.defaultValue,
     };
   }
 
@@ -18,6 +19,7 @@ class Pickering extends Component {
     return (
       <View style={this.state.style}>
         <Picker
+          value={this.state.defaultValue}
           selectedValue={this.state.language}
           onValueChange={(itemValue) => {
             this.setState({ language: itemValue });
