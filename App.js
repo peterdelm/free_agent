@@ -18,6 +18,7 @@ import InboxScreen from "./components/screens/InboxScreen";
 import PlayerHome from "./components/screens/PlayerHome";
 import ResetPasswordScreen from "./components/screens/ResetPasswordScreen.js";
 import NewPasswordScreen from "./components/screens/NewPasswordScreen.js";
+import PlayerBrowseGames from "./components/screens/PlayerBrowseGames.js";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import UserProfile from "./components/screens/UserProfile";
@@ -118,6 +119,11 @@ export default function App() {
         <Stack.Screen
           name="NewPasswordScreen"
           component={NewPasswordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="PlayerBrowseGames"
+          component={PlayerBrowseGames}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

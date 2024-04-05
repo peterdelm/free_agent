@@ -101,6 +101,8 @@ function PlayerHome({ navigation }) {
                 return res.json();
               } else throw new Error("Network response was not ok.");
             })
+            .then((res) => setActiveGames(res.availableGames))
+            .then(console.log("Active games are: ", activeGames))
             // .then((res) => setActiveGames(res.activeGames))
             .catch((error) => {
               console.log("Error during fetch:", error);
