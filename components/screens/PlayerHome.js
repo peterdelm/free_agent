@@ -19,6 +19,7 @@ import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import MapComponent from "./MapComponent.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -210,13 +211,14 @@ function PlayerHome({ navigation }) {
         <Text style={{ fontSize: 35, padding: 20 }}>Player Home</Text>
       </View>
       <View style={Styles.playerHomeContentContainer}>
-        <View style={Styles.playerHomeMapContainer}>
-          <Image
+        {/* <View style={Styles.playerHomeMapContainer}> */}
+        {/* <Image
             resizeMode="cover"
             source={require("../../assets/standin-map.jpg")}
             style={{ height: "100%", width: "100%" }}
-          />
-        </View>
+          /> */}
+        {MapComponent()}
+        {/* </View> */}
         <View style={Styles.playerHomeTextContentContainer}>
           <View style={Styles.playerHomeAvailableGamesContainer}>
             <View style={[Styles.playerHomeAvailableGamesHeader]}>
