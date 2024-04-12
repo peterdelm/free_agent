@@ -1,5 +1,5 @@
 import React from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
 import Styles from "./Styles";
 
@@ -37,6 +37,7 @@ export default function MapComponent() {
             key={marker.id}
             coordinate={marker.coordinate}
             title={marker.title}
+            provider={PROVIDER_GOOGLE}
             onPress={() => handleMarkerPress(marker)}
           />
         ))}
