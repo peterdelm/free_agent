@@ -451,7 +451,7 @@ function HomeScreen({ navigation, message }) {
           />
           <TextInput
             style={[Styles.additionalInfo, Styles.input]}
-            placeholder="Additional Info... (Optional)"
+            placeholder="Additional Info... (Team Name, Cash Incentive)"
             defaultValue=""
             placeholderTextColor="grey"
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
