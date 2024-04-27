@@ -157,28 +157,6 @@ function PlayerHome({ navigation }) {
     fetchData();
   }, []);
 
-  const validateInputs = () => {
-    if (!calibre) {
-      console.log(calibre);
-
-      console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
-    }
-  };
-
-  const onSubmit = () => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-  };
-
   let allActiveGames = []; // Initialize as empty array initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
@@ -211,7 +189,11 @@ function PlayerHome({ navigation }) {
         <Text style={{ fontSize: 35, padding: 20 }}>Player Home</Text>
       </View>
       <View style={Styles.playerHomeContentContainer}>
-        {MapComponent()}
+        {activeGames && activeGames.length > 0 ? (
+          <MapComponent activeGames={activeGames} />
+        ) : (
+          <MapComponent activeGames={[]} />
+        )}
         <View style={Styles.playerHomeTextContentContainer}>
           <View style={Styles.playerHomeAvailableGamesContainer}>
             <View style={[Styles.playerHomeAvailableGamesHeader]}>
