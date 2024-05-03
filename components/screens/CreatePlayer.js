@@ -10,12 +10,15 @@ import {
   Touchable,
   TouchableOpacity,
   ScrollView,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
+import AutoCompletePicker from "./AutocompletePicker.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -42,6 +45,8 @@ const CreatePlayer = ({ navigation }) => {
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
 
+  const autoCompletePickerRef = useRef(null);
+
   const getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem("@session_token");
@@ -53,7 +58,7 @@ const CreatePlayer = ({ navigation }) => {
     }
   };
 
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
+  const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
   const handleCalibreChange = (input) => {
     setCalibre(input);
@@ -67,6 +72,10 @@ const CreatePlayer = ({ navigation }) => {
   const handleTravelRangeChange = (input) => {
     setTravelRange(input);
   };
+  captureSelectedLocation = (selectedInput) => {
+    console.log("Selected Location input: " + selectedInput);
+    setPlayerAddress(selectedInput);
+  };
 
   const handleFormSubmit = () => {
     onSubmit();
@@ -79,7 +88,7 @@ const CreatePlayer = ({ navigation }) => {
   useEffect(() => {
     console.log("CreatePlayer useEffect called");
 
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/sports`;
 
     const fetchData = async () => {
       try {
@@ -151,13 +160,14 @@ const CreatePlayer = ({ navigation }) => {
       location,
       additionalInfo,
       position,
+      location,
       travelRange,
       sport: sport,
       sportId: sportId,
     };
 
-    console.log("CreatePlayer OnSubmit body is " + body.travelRange);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players";
+    console.log("CreatePlayer OnSubmit body is " + body.calibre);
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
 
     const postPlayer = async () => {
       try {
@@ -214,20 +224,39 @@ const CreatePlayer = ({ navigation }) => {
     var positions = positionList;
 
     return (
-      <View style={Styles.container}>
-        <View style={Styles.inputView}>
+      <View style={{ flex: 1 }}>
+        <View style={Styles.screenHeader}>
+          <Image
+            source={require("../../assets/user-solid.png")}
+            style={{ width: 50, height: 50, resizeMode: "contain" }}
+          />
+          <Text
+            style={{
+              fontSize: 35,
+              padding: 20,
+            }}
+          >
+            New Player Profile
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            height: "100%",
+            justifyContent: "space-around",
+            padding: 10,
+          }}
+        >
           <Picker
-            style={Styles.TextInput}
+            style={[Styles.sportsPickerDropdown, Styles.input]}
             defaultValue=""
-            placeholderTextColor="#005F66"
-            language={calibres}
+            placeholderTextColor="grey"
+            language={calibreList}
             onValueChange={handleCalibreChange}
             label="Calibre"
           />
-        </View>
-        <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={[Styles.sportsPickerDropdown, Styles.input]}
             defaultValue=""
             placeholderText
             Color="#005F66"
@@ -235,10 +264,8 @@ const CreatePlayer = ({ navigation }) => {
             language={genders}
             label="Gender"
           />
-        </View>
-        <View style={Styles.inputView}>
           <Picker
-            style={Styles.TextInput}
+            style={[Styles.sportsPickerDropdown, Styles.input]}
             defaultValue=""
             placeholderText
             Color="#005F66"
@@ -246,42 +273,43 @@ const CreatePlayer = ({ navigation }) => {
             language={positions}
             label="Position"
           />
-        </View>
-        <View style={Styles.inputView}>
           {/* This will be a LOCATION SELECTOR */}
-          <TextInput
-            style={Styles.TextInput}
-            placeholder="Location"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={(location) => setPlayerAddress(location)}
-            language={gameTypes}
-            label="Location"
+          <AutoCompletePicker
+            onInputSelected={captureSelectedLocation}
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            ref={autoCompletePickerRef}
           />
-        </View>
-        {/* Make this a sliding scale and move it to a subsequent window */}
-        <View style={Styles.inputView}>
+          {/* Make this a sliding scale and move it to a subsequent window */}
           <TextInput
-            style={Styles.TextInput}
+            style={[
+              Styles.sportsPickerDropdown,
+              Styles.input,
+              (styles = { textAlign: "center" }),
+            ]}
             placeholder="Travel Range (km)"
             defaultValue=""
             placeholderTextColor="#005F66"
             onChangeText={handleTravelRangeChange}
           />
-        </View>
-        <View style={Styles.inputView}>
           <TextInput
-            style={Styles.TextInput}
+            style={[
+              Styles.sportsPickerDropdown,
+              Styles.input,
+              (styles = { textAlign: "center" }),
+            ]}
             placeholder="Optional Bio"
             defaultValue=""
             placeholderTextColor="#005F66"
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
-        </View>
-        <View>
-          <TouchableOpacity>
-            <Button title="CREATE PLAYER" onPress={() => handleFormSubmit()} />
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity>
+              <Button
+                title="CREATE PLAYER"
+                onPress={() => handleFormSubmit()}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -305,8 +333,22 @@ const CreatePlayer = ({ navigation }) => {
               setGenderList(sport.gender);
             }
           }}
+          style={{ padding: 10 }}
         >
-          <Text key={index} style={Styles.primaryButton}>
+          <Text
+            key={index}
+            style={[
+              Styles.input,
+              (style = {
+                fontSize: 35,
+                textAlign: "center",
+                textAlignVertical: "center",
+                lineHeight: Platform.select({
+                  ios: 50,
+                }),
+              }),
+            ]}
+          >
             {sport.sport}
           </Text>
         </TouchableOpacity>
@@ -314,9 +356,34 @@ const CreatePlayer = ({ navigation }) => {
       console.log("sportSpecificValues are " + sportSpecificValues[0].sport);
     }
     return (
-      <View style={Styles.container}>
-        <View style={Styles.homeContainer}>
-          <ScrollView>
+      <View
+        style={{
+          height: "100%",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            borderBottomColor: "black",
+            borderBottomWidth: 2,
+            borderBottomStyle: "solid",
+            flex: 0,
+          }}
+        >
+          <View style={Styles.screenHeader}>
+            <Text style={{ fontSize: 35, padding: 20 }}>Select a Sport</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            height: "100%",
+            width: "96%",
+            flexDirection: "column",
+            justifyContent: "space-around",
+          }}
+        >
+          <ScrollView style={{ flex: 1 }}>
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>

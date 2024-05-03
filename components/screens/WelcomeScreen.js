@@ -2,11 +2,13 @@ import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [token, setToken] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const storeSessionToken = async (token) => {
     try {
@@ -20,7 +22,7 @@ function WelcomeScreen({ navigation }) {
   };
 
   const handleLoginAttempt = async (emailAddress, password) => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/id";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
 
     const credentials = { emailAddress, password };
     console.log("handleLoginAttempt called to URL " + url);
@@ -39,12 +41,13 @@ function WelcomeScreen({ navigation }) {
         const data = await response.json();
         return data;
       } else if (response.status === 401) {
-        console.log("Invalid credentials");
+        return { error: "Invalid credentials" }; // Return error message
       } else {
         console.log("Unexpected response:", response.status);
       }
     } catch (error) {
       console.log("Error during login attempt:", error);
+      return { error: "An unexpected error occurred" }; // Return generic error message
     }
   };
 
@@ -68,20 +71,21 @@ function WelcomeScreen({ navigation }) {
   };
 
   const handleLoginButtonPress = async (emailAddress, password) => {
+    console.log("handleLoginButtonPress called");
     const result = await handleLoginAttempt(emailAddress, password);
-    if (result) {
+    if (result && result.token) {
       const token = result.token;
       authenticateUser(token);
       if (result.user.currentRole === "manager") {
         navigation.navigate("Home");
-      }
-      if (result.user.currentRole === "player") {
+      } else if (result.user.currentRole === "player") {
         navigation.navigate("PlayerHome");
       } else {
         console.log("ERROR: Result.user.current role is likely missing");
       }
     } else {
-      console.log("FAILURE ON LINE 94!");
+      console.log("Login failed:", result.error);
+      setErrorMessage(result.error || "An unexpected error occurred");
     }
   };
 
@@ -109,7 +113,6 @@ function WelcomeScreen({ navigation }) {
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
-
       <View style={Styles.welcomeScreenInputView}>
         <TextInput
           style={Styles.TextInput}
@@ -119,10 +122,13 @@ function WelcomeScreen({ navigation }) {
           onChangeText={(password) => setPassword(password)}
         />
       </View>
-
+      {errorMessage ? (
+        <Text style={[Styles.errorText, { marginTop: 0 }]}>{errorMessage}</Text>
+      ) : null}
       <TouchableOpacity onPress={() => handleResetPasswordButtonPress()}>
         <Text style={Styles.forgotButton}>Forgot Password?</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => handleLoginButtonPress(emailAddress, password)}
       >

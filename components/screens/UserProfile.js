@@ -6,6 +6,7 @@ import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -39,7 +40,7 @@ const UserProfile = ({ navigation }) => {
   );
 
   const sendToggleProfileRequest = () => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/users/";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/users/`;
 
     const toggleProfileRequest = async () => {
       try {
@@ -149,6 +150,20 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() => navigation.navigate("ManagePlayers")}
+          >
+            <Text style={Styles.profileLinkTextContainer}>
+              Manage Player Profiles
+            </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </TouchableOpacity>
           <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Personal Info</Text>
             <View style={Styles.profileLinkImageContainer}>

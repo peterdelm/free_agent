@@ -1,10 +1,10 @@
 import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
-import Styles from "./Styles";
+import Styles from "./Styles.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import NavigationFooter from "./NavigationFooter";
-import formatDate from "./formatDate";
-import getCurrentUser from "./getCurrentUser.helper";
+import NavigationFooter from "./NavigationFooter.js";
+import formatDate from "./formatDate.js";
+import getCurrentUser from "./getCurrentUser.helper.js";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
@@ -38,7 +38,7 @@ const ManagerBrowseGames = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/acceptedplayerinvites`;
 
     const fetchData = async () => {
       try {
@@ -76,51 +76,25 @@ const ManagerBrowseGames = ({ navigation }) => {
   }, []);
 
   let allActiveGames = []; // Initialize as empty array initially
-  const currentDate = new Date();
-
-  let allUpcomingGames = [];
-  let allPreviousGames = [];
-
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
-    allUpcomingGames = activeGames
-      .filter(({ game }) => new Date(game.date) > currentDate)
-      .map(({ game }) => (
-        <TouchableOpacity
-          key={game.id}
-          onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
-        >
-          <View style={Styles.upcomingGameContainer}>
-            <View style={Styles.upcomingGameDateContainer}>
-              <Text>{formatDate(game.date)}</Text>
-            </View>
-            <View style={Styles.upcomingGameAddressContainer}>
-              <Text>{game.location}</Text>
-            </View>
+    allActiveGames = activeGames.map(({ game }) => (
+      <TouchableOpacity
+        key={game.id}
+        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+      >
+        <View style={Styles.upcomingGameContainer}>
+          <View style={Styles.upcomingGameDateContainer}>
+            <Text>{formatDate(game.date)}</Text>
           </View>
-        </TouchableOpacity>
-      ));
-
-    allPreviousGames = activeGames
-      .filter(({ game }) => new Date(game.date) <= currentDate)
-      .map(({ game }) => (
-        <TouchableOpacity
-          key={game.id}
-          onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
-        >
-          <View style={Styles.upcomingGameContainer}>
-            <View style={Styles.upcomingGameDateContainer}>
-              <Text>{formatDate(game.date)}</Text>
-            </View>
-            <View style={Styles.upcomingGameAddressContainer}>
-              <Text>{game.location}</Text>
-            </View>
+          <View style={Styles.upcomingGameAddressContainer}>
+            <Text>{game.location}</Text>
           </View>
-        </TouchableOpacity>
-      ));
+        </View>
+      </TouchableOpacity>
+    ));
   }
-
   return (
     <View style={Styles.managerBrowseGamesContainer}>
       <View
@@ -138,7 +112,7 @@ const ManagerBrowseGames = ({ navigation }) => {
             source={require("../../assets/volleyball-solid.png")}
             style={{ width: 50, height: 50, resizeMode: "contain" }}
           />
-          <Text style={{ fontSize: 35, padding: 20 }}>Manager Games</Text>
+          <Text style={{ fontSize: 35, padding: 20 }}>Player Games</Text>
         </View>
       </View>
       <View style={Styles.managerBrowseGamesContentContainer}>
@@ -147,7 +121,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
         <View style={Styles.pendingGamesContainer}>
           <ScrollView>
-            {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
+            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
         <View style={Styles.managerBrowseGamesContainerHeader}>
@@ -155,7 +129,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
         <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
           <ScrollView>
-            {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
+            {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
       </View>

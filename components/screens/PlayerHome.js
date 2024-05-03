@@ -18,6 +18,8 @@ import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import MapComponent from "./MapComponent.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -75,7 +77,7 @@ function PlayerHome({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
       console.log("UsefocusEffect Fetch games called");
 
       const fetchData = async () => {
@@ -100,7 +102,9 @@ function PlayerHome({ navigation }) {
                 return res.json();
               } else throw new Error("Network response was not ok.");
             })
-            .then((res) => setActiveGames(res.activeGames))
+            .then((res) => setActiveGames(res.availableGames))
+            .then(console.log("Active games are: ", activeGames))
+            // .then((res) => setActiveGames(res.activeGames))
             .catch((error) => {
               console.log("Error during fetch:", error);
               // Handle specific error scenarios
@@ -115,7 +119,7 @@ function PlayerHome({ navigation }) {
   );
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
 
     const fetchData = async () => {
       try {
@@ -139,7 +143,8 @@ function PlayerHome({ navigation }) {
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.activeGames))
+          .then((res) => setActiveGames(res.availableGames))
+          .then(console.log("Active games are: ", activeGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -152,107 +157,21 @@ function PlayerHome({ navigation }) {
     fetchData();
   }, []);
 
-  const validateInputs = () => {
-    if (!calibre) {
-      console.log(calibre);
-
-      console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
-    }
-  };
-
-  const onSubmit = () => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-
-    validateInputs();
-    const body = {
-      gender,
-      calibre,
-      position,
-      gameType,
-      date,
-      //stand in Location until credit renewal
-      location: "123 Jasper Street",
-      time,
-      gameLength,
-      teamName,
-      additionalInfo,
-      isActive: true,
-      sport: selectedSport.sport,
-      sportId: selectedSportId,
-    };
-
-    console.log("CreateGame Request body is: " + body);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
-
-    const postGame = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-        console.log("postgGame async request called at line 138");
-
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-
-        const requestOptions = {
-          method: "POST",
-          headers,
-          body: JSON.stringify(body),
-        };
-
-        await fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              console.log("Submit successful");
-              navigation.navigate("Home", {
-                successMessage:
-                  "Game created successfully. Free Agent pending.",
-              });
-            } else {
-              console.log("Submit Failed");
-            }
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    postGame();
-  };
-
-  let allActiveGames = []; // Initialize as null initially
+  let allActiveGames = []; // Initialize as empty array initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map((game, index) => (
+    allActiveGames = activeGames.map(({ game }) => (
       <TouchableOpacity
         key={game.id}
         onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
       >
-        <View key={index} style={Styles.upcomingGameContainer}>
+        <View style={Styles.upcomingGameContainer}>
           <View style={Styles.upcomingGameDateContainer}>
-            <Text key={index}>{formatDate(game.date)}</Text>
+            <Text>{formatDate(game.date)}</Text>
           </View>
           <View style={Styles.upcomingGameAddressContainer}>
-            <Text key={index}>{game.location}</Text>
+            <Text>{game.location}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -270,13 +189,11 @@ function PlayerHome({ navigation }) {
         <Text style={{ fontSize: 35, padding: 20 }}>Player Home</Text>
       </View>
       <View style={Styles.playerHomeContentContainer}>
-        <View style={Styles.playerHomeMapContainer}>
-          <Image
-            resizeMode="cover"
-            source={require("../../assets/standin-map.jpg")}
-            style={{ height: "100%", width: "100%" }}
-          />
-        </View>
+        {activeGames && activeGames.length > 0 ? (
+          <MapComponent activeGames={activeGames} navigation={navigation} />
+        ) : (
+          <MapComponent activeGames={[]} />
+        )}
         <View style={Styles.playerHomeTextContentContainer}>
           <View style={Styles.playerHomeAvailableGamesContainer}>
             <View style={[Styles.playerHomeAvailableGamesHeader]}>

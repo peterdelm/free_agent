@@ -1,33 +1,29 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Button,
-  ImageBackground,
-  StyleSheet,
-  Text,
   View,
-  Image,
   TextInput,
-  Touchable,
   TouchableOpacity,
-  ScrollView,
+  Image,
+  Text,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AutoCompletePicker from "./AutocompletePicker.js";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
 
   const [calibre, setCalibre] = useState("");
-  const [gameType, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
-  const [date, setGameDate] = useState("");
-  const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [team_name, setTeamName] = useState("");
   const [bio, setBio] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
@@ -40,11 +36,12 @@ const EditPlayer = ({ navigation }) => {
   const [player, setPlayer] = useState({});
 
   const route = useRoute();
-  const { playerId } = route.params;
-  const { sportId } = route.params;
+  const { playerId, playerSport } = route.params;
+  const autoCompletePickerRef = useRef(null);
 
   const [game, setGame] = useState([]);
   console.log("PlayerId is " + playerId);
+  console.log("PlayerSport is " + playerSport);
 
   const getTokenFromStorage = async () => {
     try {
@@ -57,9 +54,8 @@ const EditPlayer = ({ navigation }) => {
     }
   };
 
-  const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games";
-
   const handleCalibreChange = (input) => {
+    console.log("New Calibre is: ", input);
     setCalibre(input);
   };
   const handleGenderChange = (input) => {
@@ -67,6 +63,17 @@ const EditPlayer = ({ navigation }) => {
   };
   const handlePositionChange = (input) => {
     setPosition(input);
+  };
+  const captureSelectedLocation = (input) => {
+    console.log(input);
+    setPlayerAddress(input);
+  };
+  const handleBioChange = (input) => {
+    console.log("New Calibre is: ", input);
+    setBio(input);
+  };
+  const handleTravelRangeChange = (input) => {
+    setTravelRange(input);
   };
 
   const handleFormSubmit = () => {
@@ -76,7 +83,7 @@ const EditPlayer = ({ navigation }) => {
   ///////////////////////////////////////////////////////
   //retrieve the player values
   const fetchPlayerData = async () => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
     console.log("FetchplayerData called with url " + url);
 
     try {
@@ -93,68 +100,87 @@ const EditPlayer = ({ navigation }) => {
         headers,
       };
 
-      fetch(url, requestOptions)
-        .then((res) => {
-          if (res.ok) {
-            console.log("res was ok");
-            return res.json();
-          } else throw new Error("Network response was not ok.");
-        })
-        .then((res) => {
-          console.log(res);
-          setPlayer(res);
-          console.log("Player location is " + player.location);
-        });
+      const res = await fetch(url, requestOptions);
+      if (!res.ok) {
+        throw new Error("Fetch Player Network response was not res.ok.");
+      }
+
+      const data = await res.json();
+      setPlayer(data);
+      console.log("Player location is " + player.location);
     } catch (error) {
-      console.log("Error making authenticated request:", error);
+      console.log("Error fetching player data:", error);
       // Handle error
     }
   };
 
-  //////////////////////////////////////////////////////
-  //Retrieve the sport values
-  useEffect(() => {
-    console.log("EditPlayer useEffect called");
+  const fetchSportData = async () => {
+    const url = `${EXPO_PUBLIC_BASE_URL}api/sports`;
 
-    const fetchSportData = async () => {
-      const url = process.env.EXPO_PUBLIC_BASE_URL + "api/sports/" + sportId;
+    try {
+      const token = await getTokenFromStorage();
+      console.log("Token is " + token);
+      console.log("Fetch Sport Data called with URL " + url);
 
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("Fetch Sport Data called with URL " + url);
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
+      const requestOptions = {
+        headers,
+      };
 
-        const requestOptions = {
-          headers,
-        };
+      const res = await fetch(url, requestOptions);
+      console.log("Sports Results are...");
+      console.log(data);
 
-        fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              console.log("res was ok");
-              return res.json();
-            } else throw new Error("Network response was not ok.");
-          })
-          .then((res) => {
-            console.log("Sports Results are...");
-            console.log(res);
-            setSportSpecificValues(res);
-            setCalibreList(res.calibre);
-            setPositionList(res.position);
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
+      if (!res.ok) {
+        throw new Error("Network response was not res.ok.");
       }
-    };
-    fetchSportData();
-    fetchPlayerData();
+
+      const data = await res.json();
+      console.log("Sports Results are...");
+      console.log(data);
+
+      const sportToFind = playerSport;
+      console.log("PlayerSport is: " + playerSport);
+
+      const foundSport = data.sports.find(
+        (sport) => sport.sport === sportToFind
+      );
+
+      if (foundSport) {
+        console.log("Found sport:", foundSport);
+        setCalibreList(foundSport.calibre);
+        setPositionList(foundSport.position);
+      } else {
+        console.log("Sport not found");
+      }
+    } catch (error) {
+      console.log("Error making authenticated request:", error);
+      // Handle error
+      throw error;
+    }
+  };
+
+  const fetchSportsandPlayers = async () => {
+    await fetchPlayerData().then;
+    await fetchSportData();
+  };
+  //////////////////////////////////////////////////////
+  //Retrieve the player and sport values
+  useEffect(() => {
+    console.log("EditPlayer useEffect scalled");
+
+    fetchSportsandPlayers();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchSportsandPlayers();
+    }, [])
+  );
 
   const validateInputs = () => {
     if (!calibre) {
@@ -188,9 +214,9 @@ const EditPlayer = ({ navigation }) => {
       sport: sport,
       position,
     };
+    console.log(body);
 
-    console.log("SavePlayer submit body.calibre is: " + body.position);
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/players/" + playerId;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
 
     const postPlayer = async () => {
       try {
@@ -239,20 +265,39 @@ const EditPlayer = ({ navigation }) => {
   console.log("Player is " + player);
 
   return (
-    <View style={Styles.container}>
-      <View style={Styles.inputView}>
+    <View style={{ flex: 1 }}>
+      <View style={Styles.screenHeader}>
+        <Image
+          source={require("../../assets/user-solid.png")}
+          style={{ width: 50, height: 50, resizeMode: "contain" }}
+        />
+        <Text
+          style={{
+            fontSize: 35,
+            padding: 20,
+          }}
+        >
+          Edit Player Profile
+        </Text>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          height: "100%",
+          justifyContent: "space-around",
+          padding: 10,
+        }}
+      >
         <Picker
-          style={Styles.TextInput}
+          style={[Styles.sportsPickerDropdown, Styles.input]}
           defaultValue={player.calibre}
-          placeholderTextColor="#005F66"
-          language={calibres}
+          placeholderTextColor="grey"
+          language={calibreList}
           onValueChange={handleCalibreChange}
           label={player.calibre}
         />
-      </View>
-      <View style={Styles.inputView}>
         <Picker
-          style={Styles.TextInput}
+          style={[Styles.sportsPickerDropdown, Styles.input]}
           defaultValue={player.gender}
           placeholderText
           Color="#005F66"
@@ -260,10 +305,8 @@ const EditPlayer = ({ navigation }) => {
           language={genders}
           label={player.gender}
         />
-      </View>
-      <View style={Styles.inputView}>
         <Picker
-          style={Styles.TextInput}
+          style={[Styles.sportsPickerDropdown, Styles.input]}
           defaultValue={player.position}
           placeholderText
           Color="#005F66"
@@ -271,40 +314,38 @@ const EditPlayer = ({ navigation }) => {
           language={positions}
           label={player.position}
         />
-      </View>
-      <View style={Styles.inputView}>
-        {/* This will be a LOCATION SELECTOR */}
-        <TextInput
-          style={Styles.TextInput}
-          placeholder={`${player.location}`}
-          defaultValue={`${player.location}`}
+        <AutoCompletePicker
+          onInputSelected={captureSelectedLocation}
+          style={[Styles.sportsPickerDropdown, Styles.input]}
+          ref={autoCompletePickerRef}
+          value={player.location}
+          placeholder={player.location}
           placeholderTextColor="#005F66"
-          onChangeText={(location) => setPlayerAddress(location)}
-          language={gameTypes}
-          label={`${player.location}`}
         />
-      </View>
-      {/* Make this a sliding scale and move it to a subsequent window */}
-      <View style={Styles.inputView}>
+        {/* Make this a sliding scale and move it to a subsequent window */}
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.sportsPickerDropdown,
+            Styles.input,
+            (style = { textAlign: "center" }),
+          ]}
           placeholder={`Travel Range: ${player.travelRange} km`}
-          defaultValue={player.travelRange}
+          defaultValue={`${player.travelRange}`}
           placeholderTextColor="#005F66"
-          onChangeText={(travelRange) => setTravelRange(travelRange)}
+          onChangeText={(travelRange) => handleTravelRangeChange(travelRange)}
           placeholderText={player.travelRange}
         />
-      </View>
-      <View style={Styles.inputView}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.sportsPickerDropdown,
+            Styles.input,
+            (style = { textAlign: "center" }),
+          ]}
           defaultValue={`${player.bio}`}
           placeholder={`${player.bio}`}
           placeholderTextColor="#005F66"
-          onChangeText={(bio) => setBio(bio)}
+          onChangeText={(bio) => handleBioChange(bio)}
         />
-      </View>
-      <View>
         <TouchableOpacity>
           <Button title="SAVE PLAYER" onPress={() => handleFormSubmit()} />
         </TouchableOpacity>

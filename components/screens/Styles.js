@@ -11,9 +11,13 @@ import {
   Touchable,
   TouchableOpacity,
   StatusBar,
+  Platform,
 } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
+
+const { height } = Dimensions.get("window");
+const inputHeight = height * 0.07; // Adjust the multiplier as needed
 
 const Styles = StyleSheet.create({
   background: {
@@ -141,6 +145,7 @@ const Styles = StyleSheet.create({
     alignItems: "flex-start",
     width: "100%",
     padding: 10,
+    flex: 1,
   },
 
   pendingScreenContainer: {
@@ -180,42 +185,45 @@ const Styles = StyleSheet.create({
   requestPlayerContainer: {
     alignItems: "flex-start",
     width: "100%",
+    // height: "15%",
     // borderWidth: 1, // Border width
     // borderColor: "blue", // Border color
     // borderRadius: 5, // Border radius (optional)
     // padding: 5, // Optional padding
+    // display: "flex",
   },
 
   requestPlayerButtonContainer: {
     alignItems: "center",
     width: "100%",
-    borderTopWidth: 2,
-    borderTopColor: "black",
-    borderTopStyle: "solid",
-    padding: 16,
-    padding: 5,
+    paddingBottom: Platform.select({
+      ios: 80,
+    }),
   },
 
   requestPlayerButton: {
-    width: 385,
-    borderRadius: 10,
-    height: 100,
+    width: "95%",
     backgroundColor: "#e04848",
     textAlign: "center",
     textAlignVertical: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
-    borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
     margin: 5,
   },
 
   requestPlayerButtonText: {
     fontSize: 20,
+    paddingLeft: 10,
   },
-  requestPlayerButtonSymbol: {},
+  requestPlayerButtonImage: {
+    width: "auto",
+    height: "100%",
+    resizeMode: "contain",
+    padding: 20,
+    margin: 10,
+  },
 
   screenHeader: {
     flexDirection: "row",
@@ -244,8 +252,7 @@ const Styles = StyleSheet.create({
   sportsPickerDropdownContainer: {
     alignItems: "center",
     width: "100%",
-    borderRadius: 5, // Border radius (optional)
-    padding: 2, // Optional padding
+    // borderRadius: 5, // Border radius (optional)
   },
 
   sportsPickerDropdown: {
@@ -253,9 +260,27 @@ const Styles = StyleSheet.create({
     borderWidth: 1, // Border width
     borderColor: "dark green", // Border color
     borderRadius: 5, // Border radius (optional)
-    padding: 2,
     margin: 2,
     backgroundColor: "#FFFFFF",
+  },
+  gameTypePickerDropdown: {
+    width: "100%",
+    borderWidth: 1, // Border width
+    borderColor: "dark green", // Border color
+    borderRadius: 5, // Border radius (optional)
+    margin: 2,
+    backgroundColor: "#FFFFFF",
+  },
+  input: {
+    height: Platform.select({
+      ios: inputHeight,
+      android: inputHeight,
+    }),
+    borderColor: "black",
+    borderRadius: 5,
+    borderWidth: 1,
+    overflow: "hidden",
+    justifyContent: "center",
   },
 
   datePickerButton: {
@@ -275,6 +300,8 @@ const Styles = StyleSheet.create({
     padding: 5, // Optional padding
     backgroundColor: "#FFFFFF",
     paddingLeft: 20,
+    alignItems: "center",
+    margin: 2,
   },
 
   managerBrowseGamesContainer: {
@@ -359,6 +386,9 @@ const Styles = StyleSheet.create({
   },
   welcomeButtonContainer: {
     marginTop: 40,
+    lineHeight: Platform.select({
+      ios: 20,
+    }),
   },
   welcomeButton: {
     width: screenWidth - 50,
@@ -371,6 +401,9 @@ const Styles = StyleSheet.create({
     backgroundColor: "#d90e0e",
     textAlign: "center",
     textAlignVertical: "center",
+    lineHeight: Platform.select({
+      ios: 50,
+    }),
   },
   gameInfo: {
     width: 385,
@@ -488,7 +521,7 @@ const Styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  viewGameContentContainer: { flex: 1 },
+  viewGameContentContainer: { textAlign: "left", alignItems: "left" },
   userProfileContentContainer: {
     flex: 1,
     height: "100%",
@@ -498,6 +531,22 @@ const Styles = StyleSheet.create({
   userProfileScreenContainer: {
     height: "100%",
   },
+  responseMessage: {
+    color: "green",
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+  },
+
+  // successBanner: {
+  //   height: 20,
+  // },
 });
 
 export default Styles;

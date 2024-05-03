@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Styles from "./Styles";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 class AutoCompletePicker extends Component {
   constructor(props) {
@@ -24,7 +25,16 @@ class AutoCompletePicker extends Component {
       selectedAddress: "",
       inputValue: "",
       style: props.style,
+      placeholder: props.value || "Location",
+      defaultValue: props.placeholder || "Default Placeholder",
+      label: "",
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.placeholder !== prevProps.placeholder) {
+      this.setState({ placeholder: this.props.placeholder });
+    }
   }
 
   handleAddressChange = (input) => {
@@ -38,6 +48,8 @@ class AutoCompletePicker extends Component {
               suggestionList: data.addressList,
               addressInputSelected: true,
               showDropdown: true,
+              inputValue: "", // Reset the inputValue after fetching suggestions
+              selectedAddress: "",
             });
 
             console.log("The returned suggestion list is:", data.addressList);
@@ -50,7 +62,7 @@ class AutoCompletePicker extends Component {
   };
 
   async fetchAutocompleteSuggestions(addressFragment) {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/geocoding";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/geocoding`;
     console.log("AddressFragment is " + addressFragment);
     console.log("Fetch Autocomplete Suggestions called");
 
@@ -85,6 +97,8 @@ class AutoCompletePicker extends Component {
       return data;
     } catch (err) {
       console.error(err);
+      // Handle the rejection here
+      // For example, you could set state to display an error message
       throw err;
     }
   }
@@ -97,31 +111,49 @@ class AutoCompletePicker extends Component {
     this.textInputRef.measureInWindow((x, y, width, height) => {
       this.setState({
         inputPosition: { x, y, width, height },
+        addressInputSelected: true,
       });
       console.log("Input position is" + this.state.inputPosition.y);
     });
     this.addressFragment;
   };
 
-  handleTextInputBlur = () => {};
+  handleTextInputBlur = () => {
+    if (this.state.inputValue === "") {
+      this.setState({
+        addressInputSelected: false,
+      });
+    }
+  };
+
+  resetPickerValues = () => {
+    this.setState({
+      query: "",
+      suggestionList: [],
+      inputValue: "", // Reset the input value
+      addressInputSelected: false,
+    });
+  };
 
   render() {
     return (
       <View style={this.state.style}>
         <TextInput
           ref={(ref) => (this.textInputRef = ref)}
-          placeholder="Location"
-          defaultValue=""
+          placeholder={this.state.placeholder}
           value={this.state.inputValue}
           placeholderTextColor="grey"
           onChangeText={(addressFragment) => {
             this.handleAddressChange(addressFragment);
             this.setState({ inputValue: addressFragment });
           }}
-          label="Location"
+          label={this.state.label}
           onFocus={this.handleTextInputFocus}
           onBlur={this.handleTextInputBlur}
-          style={{ margin: 2, padding: 20 }}
+          style={{
+            textAlign: this.state.addressInputSelected ? "left" : "center",
+            paddingLeft: this.state.addressInputSelected ? 10 : 0, // Adjust the padding value as needed
+          }}
         />
 
         <Modal

@@ -2,6 +2,7 @@ import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const BrowseAvailableGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -18,7 +19,7 @@ const BrowseAvailableGames = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const url = process.env.EXPO_PUBLIC_BASE_URL + "api/games/active";
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
 
     const fetchData = async () => {
       try {
@@ -42,7 +43,7 @@ const BrowseAvailableGames = ({ navigation }) => {
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.players))
+          .then((res) => setActiveGames(res))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -57,12 +58,11 @@ const BrowseAvailableGames = ({ navigation }) => {
 
   let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
-
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map((game, index) => (
+    allActiveGames = activeGames.map(({ game }) => (
       <TouchableOpacity
         key={game.id}
-        onPress={() => navigation.navigate("ViewPlayer", { playerId: game.id })}
+        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
       >
         <Text key={index} style={Styles.pendingGames}>
           {game.sport} @ {game.time}
