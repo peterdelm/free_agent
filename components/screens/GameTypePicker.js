@@ -11,15 +11,22 @@ class Pickering extends Component {
       label: props.label,
       colour: props.colour,
       style: props.style,
-      defaultValue: props.defaultValue,
     };
   }
 
   render() {
     return (
-      <View style={this.state.style}>
+      <View
+        style={[
+          this.state.style,
+          (style = {
+            // flexDirection: "row",
+            // borderColor: "red",
+            // borderWidth: 2,
+          }),
+        ]}
+      >
         <Picker
-          value={this.state.defaultValue}
           selectedValue={this.state.language}
           onValueChange={(itemValue) => {
             this.setState({ language: itemValue });
@@ -51,15 +58,9 @@ class Pickering extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
   arrowContainer: {
-    display: "flex",
     position: "absolute",
-    transform: [{ translateX: 350 }], // Half of the arrow height
-    overflow: "visible", // Allow the arrow to overflow the container
+    transform: [{ translateX: 170 }, { translateY: 20 }], // Half of the arrow height
     height: 10,
     width: 10,
   },

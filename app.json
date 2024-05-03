@@ -22,6 +22,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDof22OsH_HsjBC9sS9NnsAC3o9IfVfqmA"
+        }
+      },
       "package": "com.cabbageconundrum.free_agent"
     },
     "web": {

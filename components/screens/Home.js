@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   Keyboard,
+  Platform,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import Styles from "./Styles";
@@ -14,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SportsPicker from "./SportsPicker";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker";
+import GameTypePicker from "./GameTypePicker.js";
 import DatePicker from "./DatePicker";
 import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
@@ -48,15 +50,28 @@ function HomeScreen({ navigation, message }) {
   const datePickerRef = useRef(null);
 
   const handleSportChange = (selectedSport) => {
-    setSelectedSport(selectedSport);
-    setCalibreList(selectedSport.calibre);
-    setGameTypeList(selectedSport.gameType);
-    setGameLengthList(selectedSport.gameLength);
-    setPositionList(selectedSport.position);
-    setSelectedSportId(selectedSport.id);
+    // Check if the selected item is the default placeholder
+    if (selectedSport === undefined) {
+      // Handle the case where the default value is selected
+      setSelectedSport({});
+      setCalibreList([]);
+      setGameTypeList([]);
+      setGameLengthList([]);
+      setPositionList([]);
+      setSelectedSportId(null);
 
-    console.log("Selected sport is:", selectedSport.sport);
-    console.log("Selected sport details:", selectedSport.calibre);
+      console.log("Default value selected, resetting sport data");
+    } else {
+      setSelectedSport(selectedSport);
+      setCalibreList(selectedSport.calibre);
+      setGameTypeList(selectedSport.gameType);
+      setGameLengthList(selectedSport.gameLength);
+      setPositionList(selectedSport.position);
+      setSelectedSportId(selectedSport.id);
+
+      console.log("Selected sport is:", selectedSport.sport);
+      console.log("Selected sport details:", selectedSport.calibre);
+    }
   };
 
   captureSelectedDate = (selectedInput) => {
@@ -296,84 +311,88 @@ function HomeScreen({ navigation, message }) {
     );
   }
 
-  // const resetAutoCompletePicker = () => {
-  //   // Access the reference to the AutoCompletePicker component and call its resetPickerValues function
-  //   if (autoCompletePickerRef.current) {
-  //     autoCompletePickerRef.current.resetPickerValues();
-  //   }
-  // };
-
   return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            borderBottomColor: "black",
-            borderBottomWidth: 2,
-            borderBottomStyle: "solid",
-          }}
-        >
-          <View style={Styles.screenHeader}>
-            <Image
-              source={require("../../assets/prayingHands.png")}
-              style={{ width: 50, height: 50, resizeMode: "contain" }}
-            />
-            <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
-          </View>
+    <View style={{ flex: 1 }}>
+      <View
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          flex: 0,
+        }}
+      >
+        <View style={Styles.screenHeader}>
+          <Image
+            source={require("../../assets/prayingHands.png")}
+            style={{ width: 50, height: 50, resizeMode: "contain" }}
+          />
+          <Text style={{ fontSize: 35, padding: 20 }}>Request a Player</Text>
         </View>
-        <View style={Styles.successBanner}>
+      </View>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* <View style={Styles.successBanner}>
           {<Banner message={successMessage} />}
-        </View>
-        <View
-          style={[
-            Styles.screenContainer,
-            (style = {
-              height: "85%",
-              alignItems: "center",
-            }),
-          ]}
-        >
+        </View> */}
+        <View style={{ flex: 1 }}>
           <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              width: "100%",
-              marginLeft: 0,
-            }}
+            style={[
+              (style = {
+                alignItems: "center",
+              }),
+            ]}
           >
             <View
               style={{
-                width: "49.5%",
+                flexDirection: "row",
+                justifyContent: "space-around",
+                width: "100%",
+                marginLeft: 0,
               }}
             >
-              <SportsPicker
-                style={[
-                  Styles.sportsPickerDropdown,
-                  (style = { overflow: "hidden", marginLeft: 0 }),
-                ]}
-                defaultValue=""
-                placeholderTextColor="grey"
-                sportsData={sportSpecificValues}
-                onValueChange={handleSportChange}
-                label="Sport"
-                selectedSport={selectedSport}
-              />
-            </View>
-            <View style={{ width: "49.5%" }}>
-              <Picker
-                style={[
-                  Styles.sportsPickerDropdown,
-                  (style = { overflow: "hidden", marginLeft: 0 }),
-                ]}
-                defaultValue=""
-                placeholderTextColor="grey"
-                onValueChange={handleGameTypeChange}
-                language={gameTypeList}
-                label="Game Type"
-              />
+              <View
+                style={{
+                  width: "49.5%",
+                }}
+              >
+                <SportsPicker
+                  style={[
+                    Styles.sportsPickerDropdown,
+                    (style = {
+                      overflow: "hidden",
+                      marginLeft: 0,
+                      height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
+                      flexDirection: Platform.OS === "ios" ? "row" : null,
+                    }),
+                  ]}
+                  defaultValue=""
+                  placeholderTextColor="grey"
+                  sportsData={sportSpecificValues}
+                  onValueChange={handleSportChange}
+                  label="Sport"
+                  selectedSport={selectedSport}
+                />
+              </View>
+              <View style={{ width: "49.5%" }}>
+                <GameTypePicker
+                  style={[
+                    Styles.gameTypePickerDropdown,
+                    (style = {
+                      overflow: "hidden",
+                      marginLeft: 0,
+                      borderColor: "black",
+                      height: Platform.OS === "ios" ? 50 : null, // Adjust height for iOS
+                    }),
+                  ]}
+                  defaultValue=""
+                  placeholderTextColor="grey"
+                  onValueChange={handleGameTypeChange}
+                  language={gameTypeList}
+                  label="Game Type"
+                />
+              </View>
             </View>
           </View>
 
@@ -432,35 +451,36 @@ function HomeScreen({ navigation, message }) {
           />
           <TextInput
             style={[Styles.additionalInfo, Styles.input]}
-            placeholder="Additional Info..."
+            placeholder="Additional Info... (Team Name, Cash Incentive)"
             defaultValue=""
             placeholderTextColor="grey"
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
-        </View>
-        <View style={Styles.requestPlayerContainer}>
-          <View style={Styles.requestPlayerButtonContainer}>
-            <TouchableOpacity onPress={() => handleFormSubmit()}>
-              <View style={Styles.requestPlayerButton}>
-                <Text style={Styles.requestPlayerButtonText}>
-                  Request a Player
-                </Text>
-                <Image
-                  source={require("../../assets/circle-plus-solid.png")}
-                  style={Styles.requestPlayerButtonImage}
-                />
-              </View>
-            </TouchableOpacity>
+          <View style={Styles.requestPlayerContainer}>
+            <View style={Styles.requestPlayerButtonContainer}>
+              <TouchableOpacity onPress={() => handleFormSubmit()}>
+                <View style={Styles.requestPlayerButton}>
+                  <Text style={Styles.requestPlayerButtonText}>
+                    Request a Player
+                  </Text>
+                  <Image
+                    source={require("../../assets/circle-plus-solid.png")}
+                    style={Styles.requestPlayerButtonImage}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        <NavigationFooter
-          currentRole={currentUser.currentRole}
-          navigation={navigation}
-        >
-          <Text>FOOTER</Text>
-        </NavigationFooter>
-      </View>
-    </ScrollView>
+      </ScrollView>
+
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      >
+        <Text>FOOTER</Text>
+      </NavigationFooter>
+    </View>
   );
 }
 
