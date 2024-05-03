@@ -25,7 +25,7 @@ class AutoCompletePicker extends Component {
       selectedAddress: "",
       inputValue: "",
       style: props.style,
-      placeholder: props.value || "Default Placeholder",
+      placeholder: props.value || "Location",
       defaultValue: props.placeholder || "Default Placeholder",
       label: "",
     };

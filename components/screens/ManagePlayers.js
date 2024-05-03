@@ -1,27 +1,19 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  Button,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  Touchable,
-  TouchableOpacity,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import react from "react";
+import NavigationFooter from "./NavigationFooter";
+import getCurrentUser from "./getCurrentUser.helper";
+
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 const ManagePlayers = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
 
   const getTokenFromStorage = async () => {
     try {
@@ -33,6 +25,24 @@ const ManagePlayers = ({ navigation }) => {
       return null;
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      };
+      const user = fetchUser();
+      console.log(user.currentRole);
+
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+      console.log("UsefocusEffect Fetch games called");
+    }, [])
+  );
 
   useEffect(() => {
     const url = `${EXPO_PUBLIC_BASE_URL}api/players/playerRoster`;
@@ -90,7 +100,11 @@ const ManagePlayers = ({ navigation }) => {
   return (
     <View style={Styles.container}>
       <View style={Styles.homeContainer}>
-        <Text style={Styles.primaryButton}>Manage Player Screen</Text>
+        <View
+          style={[Styles.screenHeader, (style = { justifyContent: "center" })]}
+        >
+          <Text style={Styles.requestPlayerButton}>Manage Player Screen</Text>
+        </View>
         <ScrollView>
           {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
         </ScrollView>
@@ -98,6 +112,12 @@ const ManagePlayers = ({ navigation }) => {
           <Text style={Styles.primaryButton}>Create a new player profile</Text>
         </TouchableOpacity>
       </View>
+      <NavigationFooter
+        currentRole={currentUser.currentRole}
+        navigation={navigation}
+      >
+        <Text>FOOTER</Text>
+      </NavigationFooter>
     </View>
   );
 };
