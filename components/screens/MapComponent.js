@@ -1,9 +1,9 @@
 import React from "react";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE, Callout } from "react-native-maps";
+import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
 import Styles from "./Styles";
 
-export default function MapComponent({ activeGames }) {
+export default function MapComponent({ navigation, activeGames }) {
   const initial_region = {
     latitude: 43.653225,
     longitude: -79.383186,
@@ -17,15 +17,38 @@ export default function MapComponent({ activeGames }) {
           const latitude =
             game.geocoordinates && game.geocoordinates.latitude
               ? game.geocoordinates.latitude
-              : -79.335186;
+              : 0;
           const longitude =
             game.geocoordinates && game.geocoordinates.longitude
               ? game.geocoordinates.longitude
-              : -79.383196;
+              : 0;
+
+          const rawDate = "2024-12-12T00:00:00.000Z";
+          const date = new Date(rawDate);
+          const month = date.toLocaleString("en-US", { month: "long" });
+          const day = date.getDate();
+
+          const time = new Date(`1970-01-01T${game.time}`);
+          const hours = time.getHours();
+          const minutes = time.getMinutes();
+          const formattedTime = `${hours}:${minutes
+            .toString()
+            .padStart(2, "0")}`;
+          const formattedDate = `${month} ${day} @ ${formattedTime}`;
+
+          console.log(formattedDate);
+
+          const address = game.location;
+
+          const description = `${formattedDate}\n${address}`;
 
           return {
             id: index,
-            title: game.id,
+            gameId: game.id,
+            title: game.gameType + " " + game.sport,
+            date: formattedDate,
+            address: address,
+            description: description,
             coordinate: { latitude, longitude },
           };
         })
@@ -33,9 +56,13 @@ export default function MapComponent({ activeGames }) {
 
   console.log("Markers are:", markers);
 
-  const handleMarkerPress = () => {
+  const handleMarkerPress = (gameId) => {
     console.log("Marker Pressed");
-    console.log("Active game 1 is:", markers);
+  };
+
+  const handleCalloutPress = (gameId) => {
+    console.log("Callout Pressed");
+    navigation.navigate("ViewGame", { gameId: gameId });
   };
 
   return (
@@ -45,10 +72,23 @@ export default function MapComponent({ activeGames }) {
           <Marker
             key={marker.id}
             coordinate={marker.coordinate}
-            title={marker.title}
+            description={`${marker.date}`}
             provider={PROVIDER_GOOGLE}
-            onPress={handleMarkerPress}
-          />
+            onPress={() => handleMarkerPress(marker.gameId)}
+          >
+            <Callout onPress={() => handleCalloutPress(marker.gameId)}>
+              <View
+                style={{
+                  alignItems: "center",
+                }}
+              >
+                <Text>{marker.title}</Text>
+                <Text>{marker.date}</Text>
+
+                <Text style={{ color: "red" }}>Details</Text>
+              </View>
+            </Callout>
+          </Marker>
         ))}
       </MapView>
     </View>

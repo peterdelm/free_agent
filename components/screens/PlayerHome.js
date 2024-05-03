@@ -190,7 +190,7 @@ function PlayerHome({ navigation }) {
       </View>
       <View style={Styles.playerHomeContentContainer}>
         {activeGames && activeGames.length > 0 ? (
-          <MapComponent activeGames={activeGames} />
+          <MapComponent activeGames={activeGames} navigation={navigation} />
         ) : (
           <MapComponent activeGames={[]} />
         )}
