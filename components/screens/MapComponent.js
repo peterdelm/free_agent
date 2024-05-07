@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { Marker, PROVIDER_GOOGLE, Callout } from "react-native-maps";
-import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import Styles from "./Styles";
 
 export default function MapComponent({ navigation, activeGames }) {
@@ -84,7 +84,6 @@ export default function MapComponent({ navigation, activeGames }) {
               >
                 <Text>{marker.title}</Text>
                 <Text>{marker.date}</Text>
-
                 <Text style={{ color: "red" }}>Details</Text>
               </View>
             </Callout>

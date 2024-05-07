@@ -1,20 +1,8 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  TextInput,
-} from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SportsPicker from "./SportsPicker";
-import Picker from "./Picker";
-import AutoCompletePicker from "./AutocompletePicker";
-import DatePicker from "./DatePicker";
-import TimePicker from "./TimePicker";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
@@ -23,20 +11,6 @@ import MapComponent from "./MapComponent.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
-  const [selectedSport, setSelectedSport] = useState({});
-  const [calibre, setCalibre] = useState("");
-  const [gender, setGender] = useState("");
-  const [gameType, setGameType] = useState("");
-  const [location, setGameAddress] = useState("");
-  const [date, setGameDate] = useState("");
-  const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [team_name, setTeamName] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
-
-  const [selectedSportId, setSelectedSportId] = useState();
-  const [position, setPosition] = useState("");
 
   const [currentUser, setCurrentUser] = useState({});
 

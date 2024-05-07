@@ -1,11 +1,8 @@
-import { StatusBar } from "expo-status-bar";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState, useEffect } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import react from "react";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 
@@ -14,6 +11,15 @@ import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 const ManagePlayers = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [refreshPlayers, setRefreshPlayers] = useState(false);
+  const route = useRoute();
+  const { refresh } = route.params || {};
+
+  useEffect(() => {
+    if (refresh) {
+      setRefreshPlayers(true);
+    }
+  }, [refresh]);
 
   const getTokenFromStorage = async () => {
     try {
@@ -38,10 +44,7 @@ const ManagePlayers = ({ navigation }) => {
       };
       const user = fetchUser();
       console.log(user.currentRole);
-
-      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
-      console.log("UsefocusEffect Fetch games called");
-    }, [])
+    }, [refreshPlayers])
   );
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const ManagePlayers = ({ navigation }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [refreshPlayers]);
 
   let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Players yet. Why not</Text>;

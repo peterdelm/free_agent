@@ -9,6 +9,7 @@ function ViewPlayer({ navigation, message }) {
   const route = useRoute();
   const { playerId } = route.params;
   const [player, setPlayer] = useState([]);
+  const [loading, setLoading] = useState(true);
   console.log("PlayerId is " + playerId);
   console.log("Player is " + player);
 
@@ -23,41 +24,66 @@ function ViewPlayer({ navigation, message }) {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await getTokenFromStorage();
+        const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
 
-      const fetchData = async () => {
-        try {
-          const token = await getTokenFromStorage();
-          console.log("Token is " + token);
-          console.log("URL is " + url);
+        const requestOptions = {
+          headers,
+        };
 
-          const headers = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          };
-
-          const requestOptions = {
-            headers,
-          };
-
-          fetch(url, requestOptions)
-            .then((res) => {
-              if (res.ok) {
-                return res.json();
-              }
-              throw new Error("Network response was not ok.");
-            })
-            .then((res) => setPlayer(res));
-        } catch (error) {
-          console.log("Error making authenticated request:", error);
-          // Handle error
+        const res = await fetch(url, requestOptions);
+        if (res.ok) {
+          const playerData = await res.json();
+          setPlayer(playerData);
+        } else {
+          throw new Error("Network response was not ok.");
         }
+      } catch (error) {
+        console.log("Error fetching player data:", error);
+        // Handle error
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [playerId]);
+
+  const handleDeletePlayerButtonPress = async () => {
+    try {
+      const token = await getTokenFromStorage();
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       };
-      fetchData();
-    }, [])
-  );
+
+      const requestOptions = {
+        method: "DELETE",
+        headers,
+      };
+
+      const res = await fetch(url, requestOptions);
+      if (res.ok) {
+        console.log("Player deleted successfully.");
+        navigation.navigate("ManagePlayers", { refresh: true });
+        throw new Error("Network response was not ok.");
+      }
+    } catch (error) {
+      console.log("Error deleting player:", error);
+      // Handle error
+    }
+  };
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <View style={Styles.container}>
@@ -78,6 +104,9 @@ function ViewPlayer({ navigation, message }) {
         }
       >
         <Text style={Styles.primaryButton}>Edit Player</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => handleDeletePlayerButtonPress()}>
+        <Text style={Styles.primaryButton}>Delete Player</Text>
       </TouchableOpacity>
     </View>
   );
