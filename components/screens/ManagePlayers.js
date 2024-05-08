@@ -95,7 +95,7 @@ const ManagePlayers = ({ navigation }) => {
         onPress={() => navigation.navigate("ViewPlayer", { playerId: game.id })}
       >
         <Text key={index} style={Styles.activeGames}>
-          {game.sport}
+          {game.sport} Profile
         </Text>
       </TouchableOpacity>
     ));
