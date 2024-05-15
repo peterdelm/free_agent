@@ -8,6 +8,7 @@ import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import MapComponent from "./MapComponent.js";
+import ColorToggleButton from "./ColorToggleButton.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -161,6 +162,17 @@ function PlayerHome({ navigation }) {
           style={{ width: 50, height: 50, resizeMode: "contain" }}
         />
         <Text style={{ fontSize: 35, padding: 20 }}>Player Home</Text>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+
+            flex: 1,
+          }}
+        >
+          {currentUser && <ColorToggleButton user={currentUser} />}
+        </View>
       </View>
       <View style={Styles.playerHomeContentContainer}>
         {activeGames && activeGames.length > 0 ? (
@@ -179,6 +191,7 @@ function PlayerHome({ navigation }) {
               </ScrollView>
             </View>
           </View>
+          {/* 
           <View style={Styles.goOfflineButtonContainer}>
             <TouchableOpacity
               onPress={() => console.log("goOffline Button Pressed")}
@@ -191,7 +204,7 @@ function PlayerHome({ navigation }) {
                 <Text style={Styles.goOfflineButtonText}>Go Offline</Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
       <NavigationFooter
