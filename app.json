@@ -27,7 +27,8 @@
           "apiKey": "AIzaSyDof22OsH_HsjBC9sS9NnsAC3o9IfVfqmA"
         }
       },
-      "package": "com.cabbageconundrum.free_agent"
+      "package": "com.cabbageconundrum.free_agent",
+      "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"

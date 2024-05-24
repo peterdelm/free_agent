@@ -117,7 +117,7 @@ const ManagerBrowseGames = ({ navigation }) => {
       </View>
       <View style={Styles.managerBrowseGamesContentContainer}>
         <View style={Styles.managerBrowseGamesContainerHeader}>
-          <Text style={{ fontSize: 30 }}>Upcoming Games</Text>
+          <Text style={{ fontSize: 30 }}>Games</Text>
         </View>
         <View style={Styles.pendingGamesContainer}>
           <ScrollView>

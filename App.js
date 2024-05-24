@@ -3,26 +3,39 @@ import { StyleSheet, Text } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import WelcomeScreen from "./components/screens/WelcomeScreen";
-import HomeScreen from "./components/screens/Home";
-import CreateGame from "./components/screens/CreateGame";
-import CreateUser from "./components/screens/CreateUser";
-import ViewGame from "./components/screens/ViewGame";
-import ViewPlayer from "./components/screens/ViewPlayer";
-import EditPlayer from "./components/screens/EditPlayer";
-import CreatePlayer from "./components/screens/CreatePlayer";
-import ManagePlayers from "./components/screens/ManagePlayers";
-import BrowseAvailableGames from "./components/screens/BrowseAvailableGames";
-import ManagerBrowseGames from "./components/screens/ManagerBrowseGames";
-import InboxScreen from "./components/screens/InboxScreen";
-import PlayerHome from "./components/screens/PlayerHome";
+import WelcomeScreen from "./components/screens/WelcomeScreen.js";
+import HomeScreen from "./components/screens/Home.js";
+import CreateGame from "./components/screens/CreateGame.js";
+import CreateUser from "./components/screens/CreateUser.js";
+import ViewGame from "./components/screens/ViewGame.js";
+import ViewPlayer from "./components/screens/ViewPlayer.js";
+import EditPlayer from "./components/screens/EditPlayer.js";
+import CreatePlayer from "./components/screens/CreatePlayer.js";
+import ManagePlayers from "./components/screens/ManagePlayers.js";
+import BrowseAvailableGames from "./components/screens/BrowseAvailableGames.js";
+import ManagerBrowseGames from "./components/screens/ManagerBrowseGames.js";
+import InboxScreen from "./components/screens/InboxScreen.js";
+import PlayerHome from "./components/screens/PlayerHome.js";
 import ResetPasswordScreen from "./components/screens/ResetPasswordScreen.js";
 import NewPasswordScreen from "./components/screens/NewPasswordScreen.js";
 import PlayerBrowseGames from "./components/screens/PlayerBrowseGames.js";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import UserProfile from "./components/screens/UserProfile";
+import UserProfile from "./components/screens/UserProfile.js";
 import * as Linking from "expo-linking";
+
+import { usePushNotifications } from "./components/screens/usePushNotifications";
+
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: "Here is the notification body",
+      data: { data: "goes here", test: { test1: "more data" } },
+    },
+    trigger: { seconds: 2 },
+  });
+}
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +50,9 @@ export default function App() {
       },
     },
   };
+
+  const { expoPushToken, notification } = usePushNotifications();
+  const data = JSON.stringify(notification, undefined, 2);
 
   return (
     <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
@@ -127,6 +143,30 @@ export default function App() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
+      <StatusBar style="auto" />
+      <View style={styles.container}>
+        <Text>Your expo push token: {expoPushToken}</Text>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <Text>
+            Title: {notification && notification.request.content.title}{" "}
+          </Text>
+          <Text>Body: {notification && notification.request.content.body}</Text>
+          <Text>
+            Data:{" "}
+            {notification && JSON.stringify(notification.request.content.data)}
+          </Text>
+        </View>
+      </View>
+      <View style={styles.container}>
+        <Text>Token: {expoPushToken?.data ?? ""}</Text>
+        <Text>Notification: {data}</Text>
+      </View>
+      <Button
+        title="Press to schedule a notification"
+        onPress={async () => {
+          await schedulePushNotification();
+        }}
+      />
     </NavigationContainer>
   );
 }
