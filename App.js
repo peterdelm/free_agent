@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View, Button } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -145,16 +145,14 @@ export default function App() {
       </Stack.Navigator>
       <StatusBar style="auto" />
       <View style={styles.container}>
-        <Text>Your expo push token: {expoPushToken}</Text>
+        <Text>
+          Your expo push token: {expoPushToken ? expoPushToken.data ?? "" : ""}
+        </Text>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <Text>
-            Title: {notification && notification.request.content.title}{" "}
-          </Text>
-          <Text>Body: {notification && notification.request.content.body}</Text>
-          <Text>
-            Data:{" "}
-            {notification && JSON.stringify(notification.request.content.data)}
-          </Text>
+          <Text>Text</Text>
+          <Text>Title: {notification?.request.content.title}</Text>
+          <Text>Body: {notification?.request.content.body}</Text>
+          <Text>{data}</Text>
         </View>
       </View>
       <View style={styles.container}>
