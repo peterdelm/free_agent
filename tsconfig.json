@@ -14,7 +14,7 @@
   },
   "include": [
     "src/**/*",
-    "components/**/*",
+    // "components/**/*",
     "./components/screens/usePushNotifications.tsx"
   ],
   "exclude": ["node_modules"],

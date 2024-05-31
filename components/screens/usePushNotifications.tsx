@@ -43,7 +43,8 @@ export const usePushNotifications = (): PushNotificationState => {
         finalStatus = status;
       }
       if (finalStatus !== "granted") {
-        console.log("Failed to get push token for push notification");
+        console.log("Granted is not true");
+
         return;
       }
 

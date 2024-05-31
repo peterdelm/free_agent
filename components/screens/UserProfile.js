@@ -1,92 +1,24 @@
-import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
-import getCurrentUser from "./getCurrentUser.helper";
-import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import { useAuth } from "../../contexts/authContext.js";
 
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
   const [alternateRoleText, setAlternateRoleText] = useState("");
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
+  const { user, updateUserRole, logout } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      updateAlternateRoleText(user.currentRole);
     }
-  };
+  }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchCurrentUser = async () => {
-        try {
-          const user = await getCurrentUser();
-          setCurrentUser(user);
-          setAlternateRole(user.currentRole);
-        } catch (error) {
-          console.error("Error during fetch:", error);
-        }
-      };
-      fetchCurrentUser();
-    }, [])
-  );
-
-  const sendToggleProfileRequest = () => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/users/`;
-
-    const toggleProfileRequest = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-        const body = {
-          addressFragment: "addressFragment",
-        };
-
-        const request = {
-          method: "PUT",
-          headers,
-          body: JSON.stringify(body),
-        };
-
-        const response = await fetch(url, request);
-        if (response.ok) {
-          // Parse and use the data
-          const userData = await response.json();
-          console.log("User data:", userData);
-          setAlternateRole(userData.newProfile);
-
-          return userData;
-        } else {
-          // Handle non-ok responses
-          throw new Error("Network response was not ok.");
-        }
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-      }
-    };
-    toggleProfileRequest();
-  };
-
-  const swapProfileText = () => {};
-
-  const toggleProfile = () => {
-    sendToggleProfileRequest();
-  };
-
-  const setAlternateRole = (currentRole) => {
+  const updateAlternateRoleText = (currentRole) => {
     if (currentRole === "manager") {
       setAlternateRoleText("Player");
     } else if (currentRole === "player") {
@@ -94,7 +26,27 @@ const UserProfile = ({ navigation }) => {
     }
   };
 
-  let allActiveGames = []; // Initialize as null initially
+  const toggleProfile = async () => {
+    try {
+      const newRole = user.currentRole === "manager" ? "player" : "manager";
+      await updateUserRole(newRole);
+      updateAlternateRoleText(newRole);
+      console.log("User role toggled:", user);
+    } catch (error) {
+      console.log("Error making authenticated request:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigation.navigate("WelcomeScreen");
+    } catch (error) {
+      console.log("Error during handleLogout: ", error);
+    }
+  };
+
+  let allActiveGames = [];
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
@@ -114,6 +66,7 @@ const UserProfile = ({ navigation }) => {
       </TouchableOpacity>
     ));
   }
+
   return (
     <View style={Styles.userProfileScreenContainer}>
       <View style={Styles.screenHeader}>
@@ -121,25 +74,13 @@ const UserProfile = ({ navigation }) => {
           source={require("../../assets/user-solid.png")}
           style={{ width: 50, height: 50, resizeMode: "contain" }}
         />
-        <Text
-          style={{
-            fontSize: 35,
-            padding: 20,
-          }}
-        >
-          Profile
-        </Text>
+        <Text style={{ fontSize: 35, padding: 20 }}>Profile</Text>
       </View>
       <View style={Styles.userProfileContentContainer}>
         <View style={Styles.profileLinksContainer}>
           <View style={Styles.profileLinkContainer}>
             <View style={Styles.profileLinkTextContainer}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  textAlignVertical: "center",
-                }}
-              >
+              <Text style={{ fontSize: 20, textAlignVertical: "center" }}>
                 Show Profile
               </Text>
             </View>
@@ -193,9 +134,7 @@ const UserProfile = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
-            onPress={() => {
-              toggleProfile(), swapProfileText();
-            }}
+            onPress={() => toggleProfile()}
           >
             <Text style={Styles.profileLinkTextContainer}>
               Switch to {alternateRoleText}
@@ -234,6 +173,20 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() => {
+              handleLogout();
+            }}
+          >
+            <Text style={Styles.profileLinkTextContainer}>Logout </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </TouchableOpacity>
           <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>
               Terms of Service
@@ -245,26 +198,9 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
-          <TouchableOpacity
-            style={Styles.profileLinkContainer}
-            onPress={() => {
-              navigation.navigate("WelcomeScreen");
-            }}
-          >
-            <Text style={Styles.profileLinkTextContainer}>Logout </Text>
-            <View style={Styles.profileLinkImageContainer}>
-              <Image
-                source={require("../../assets/chevron-right-solid.png")}
-                style={{ width: 20, height: 20, resizeMode: "contain" }}
-              />
-            </View>
-          </TouchableOpacity>
         </View>
       </View>
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

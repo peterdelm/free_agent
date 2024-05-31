@@ -90,7 +90,7 @@ const CreateUser = ({ navigation }) => {
 
       if (successfulStorage) {
         console.log("Storage was successful");
-        navigation.navigate("Home", {
+        navigation.navigate("ManagerHome", {
           successMessage: "User created successfully.",
         });
       }

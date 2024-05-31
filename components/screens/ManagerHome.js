@@ -9,20 +9,18 @@ import {
   Platform,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
-import Styles from "./Styles";
+import Styles from "./Styles.js";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SportsPicker from "./SportsPicker";
-import Picker from "./Picker";
-import AutoCompletePicker from "./AutocompletePicker";
+import SportsPicker from "./SportsPicker.js";
+import Picker from "./Picker.js";
 import GameTypePicker from "./GameTypePicker.js";
-import DatePicker from "./DatePicker";
-import TimePicker from "./TimePicker";
-import NavigationFooter from "./NavigationFooter";
-import getCurrentUser from "./getCurrentUser.helper";
+import DatePicker from "./DatePicker.js";
+import TimePicker from "./TimePicker.js";
+import NavigationFooter from "./NavigationFooter.js";
+import getCurrentUser from "./getCurrentUser.helper.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
-import { GooglePlacesAutoCompleteComponent } from "react-native-google-places-autocomplete";
 navigator.geolocation = require("react-native-geolocation-service");
 
 function HomeScreen({ navigation, message }) {
@@ -62,8 +60,6 @@ function HomeScreen({ navigation, message }) {
       setGameLengthList([]);
       setPositionList([]);
       setSelectedSportId(null);
-
-      console.log("Default value selected, resetting sport data");
     } else {
       setSelectedSport(selectedSport);
       setCalibreList(selectedSport.calibre);
@@ -109,13 +105,10 @@ function HomeScreen({ navigation, message }) {
 
   const route = useRoute();
   const successMessage = route.params || {};
-  console.log("Success message is...");
-  console.log(successMessage["successMessage"]);
 
   const getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
       return token;
     } catch (error) {
       console.log("Error retrieving token from AsyncStorage:", error);
@@ -135,6 +128,7 @@ function HomeScreen({ navigation, message }) {
       };
       const user = fetchUser();
       console.log(user.currentRole);
+      setCurrentUser();
 
       const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
       console.log("UsefocusEffect Fetch games called");
@@ -148,8 +142,6 @@ function HomeScreen({ navigation, message }) {
     const fetchData = async () => {
       try {
         const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
 
         const headers = {
           "Content-Type": "application/json",
@@ -168,9 +160,6 @@ function HomeScreen({ navigation, message }) {
           })
           .then((res) => {
             setSportSpecificValues(res.sports);
-
-            console.log("Results are...");
-            console.log(res.sports);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
@@ -193,7 +182,6 @@ function HomeScreen({ navigation, message }) {
     const getTokenFromStorage = async () => {
       try {
         const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
         return token;
       } catch (error) {
         console.log("Error retrieving token from AsyncStorage:", error);
@@ -228,7 +216,6 @@ function HomeScreen({ navigation, message }) {
     const postGame = async () => {
       try {
         const token = await getTokenFromStorage();
-        console.log("Token is " + token);
         console.log("URL is " + url);
         console.log("postgGame async request called at line 138");
 
@@ -501,10 +488,7 @@ function HomeScreen({ navigation, message }) {
         </ScrollView>
       </View>
 
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

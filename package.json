@@ -39,7 +39,8 @@
     "react-native-screens": "~3.29.0",
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",
-    "react-router-dom": "^6.11.2"
+    "react-router-dom": "^6.11.2",
+    "expo-secure-store": "~12.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -50,6 +51,7 @@
     "@types/react": "^18.3.3",
     "@types/react-native": "^0.73.0",
     "@types/react-test-renderer": "^18.3.0",
+    "expo-module-scripts": "^3.5.1",
     "typescript": "^5.4.5"
   },
   "private": true

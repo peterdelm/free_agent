@@ -341,10 +341,7 @@ function ViewGame({ navigation, message }) {
           {displayJoinGameButton()}
         </View>
       </ScrollView>
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      ></NavigationFooter>
+      <NavigationFooter navigation={navigation}></NavigationFooter>
     </View>
   );
 }

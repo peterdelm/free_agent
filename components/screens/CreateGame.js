@@ -13,7 +13,6 @@ import {
   FlatList,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker";
@@ -119,9 +118,6 @@ const CreateGame = ({ navigation }) => {
           })
           .then((res) => {
             setSportSpecificValues(res.sports);
-
-            console.log("Results are...");
-            console.log(res.sports);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
@@ -206,7 +202,7 @@ const CreateGame = ({ navigation }) => {
           .then((data) => {
             if (data.success === true) {
               console.log("Submit successful");
-              navigation.navigate("Home", {
+              navigation.navigate("ManagerHome", {
                 successMessage:
                   "Game created successfully. Free Agent pending.",
               });

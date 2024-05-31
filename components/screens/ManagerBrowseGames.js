@@ -7,6 +7,7 @@ import formatDate from "./formatDate";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import authFetch from "../../api/authCalls.js";
 
 const ManagerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -42,20 +43,7 @@ const ManagerBrowseGames = ({ navigation }) => {
 
     const fetchData = async () => {
       try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-
-        const requestOptions = {
-          headers,
-        };
-
-        fetch(url, requestOptions)
+        authFetch(url)
           .then((res) => {
             if (res.ok) {
               console.log("res was ok");
@@ -160,10 +148,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
       </View>
 
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

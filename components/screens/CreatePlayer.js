@@ -114,9 +114,6 @@ const CreatePlayer = ({ navigation }) => {
           })
           .then((res) => {
             setSportSpecificValues(res.sports);
-
-            console.log("Results are...");
-            console.log(res.sports);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
@@ -197,7 +194,7 @@ const CreatePlayer = ({ navigation }) => {
           .then((data) => {
             if (data.success === true) {
               console.log("Submit successful");
-              navigation.navigate("Home", {
+              navigation.navigate("ManagerHome", {
                 successMessage:
                   "Player created successfully. Free Agent pending.",
               });

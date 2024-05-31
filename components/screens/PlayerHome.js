@@ -36,8 +36,6 @@ function PlayerHome({ navigation }) {
 
   const route = useRoute();
   const successMessage = route.params || {};
-  console.log("Success message is...");
-  console.log(successMessage["successMessage"]);
 
   const getTokenFromStorage = async () => {
     try {
@@ -207,10 +205,7 @@ function PlayerHome({ navigation }) {
           </View> */}
         </View>
       </View>
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

@@ -134,10 +134,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View> */}
       </View>
 
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

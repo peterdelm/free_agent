@@ -42,10 +42,7 @@ const InboxScreen = ({ navigation }) => {
           <Text style={{ fontSize: 35, padding: 20 }}>Inbox</Text>
         </View>
       </View>
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

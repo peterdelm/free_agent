@@ -115,10 +115,7 @@ const ManagePlayers = ({ navigation }) => {
           <Text style={Styles.primaryButton}>Create a new player profile</Text>
         </TouchableOpacity>
       </View>
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>
