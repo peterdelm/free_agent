@@ -26,9 +26,10 @@ import { AuthProvider, useAuth } from "./contexts/authContext";
 import {
   registerForPushNotificationsAsync,
   sendPushTokenToBackend,
+  usePushNotifications,
 } from "./services/pushNotificationService.js";
 import { loginRequest } from "./api/authCalls.js";
-import { usePushNotifications } from "./components/screens/usePushNotifications.tsx";
+import { usePushNotificationsTx } from "./components/screens/usePushNotifications.tsx";
 const Stack = createNativeStackNavigator();
 
 const prefix = Linking.createURL("/");
@@ -177,14 +178,17 @@ function PlayerStack() {
 function MainApp() {
   const { user, loading } = useAuth();
 
+  // const { expoPushToken, notification } = usePushNotifications();
+  const { expoPushTokenTx } = usePushNotificationsTx();
+  // console.log("expoPushToken is", expoPushToken);
+  console.log("expoPushTokenTx is", expoPushTokenTx);
+
   useEffect(() => {
     const registerAndSendToken = async () => {
       console.log("registerAndSendToken called");
 
-      const token = await registerForPushNotificationsAsync();
-      // const { expoPushToken, notification } = usePushNotifications();
-      // console.log("expoPushToken is", expoPushToken);
-      if (token && user) {
+      // const token = await registerForPushNotificationsAsync();
+      if (expoPushTokenTx && user) {
         try {
           await sendPushTokenToBackend(token, user.id);
           console.log("Push token sent to backend successfully");

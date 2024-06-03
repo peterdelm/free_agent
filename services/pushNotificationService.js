@@ -1,74 +1,92 @@
-// services/pushNotificationService.js
-import * as Notifications from "expo-notifications";
+import { useState, useEffect, useRef } from "react";
 import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 import { Platform } from "react-native";
-import { EXPO_PUBLIC_BASE_URL } from "../.config.js";
 
-export async function registerForPushNotificationsAsync() {
-  console.log("registerForPushNotificationsAsync called");
-  let token;
-
-  try {
-    if (Device.isDevice) {
-      console.log("Device is Device");
-
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      console.log("existingStatus is:", existingStatus);
-
-      let finalStatus = existingStatus;
-
-      if (existingStatus !== "granted") {
-        console.log("existingStatus != granted!");
-
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-
-      if (finalStatus !== "granted") {
-        console.log("finalStatus != granted!");
-
-        alert("Failed to get push token for push notification!");
-        return;
-      }
-
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(
-        "registerForPushNotificationsAsync called. Returning Push Token: ",
-        token
-      );
-    } else {
-      alert("Must use physical device for Push Notifications");
-    }
-
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
-  } catch (error) {
-    console.error("Error in registerForPushNotificationsAsync: ", error);
-    alert("An error occurred while registering for push notifications.");
-  }
-
-  return token;
-}
-
-export async function sendPushTokenToBackend(token, userId) {
-  const response = await fetch(`${EXPO_PUBLIC_BASE_URL}/api/savePushToken`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ token, userId }),
+export const usePushNotifications = () => {
+  console.log("usePushNotificationsCalled");
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldPlaySound: false,
+      shouldShowAlert: true,
+      shouldSetBadge: false,
+    }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to send push token to backend");
-  }
+  const [expoPushToken, setExpoPushToken] = useState(undefined);
+  const [notification, setNotification] = useState(undefined);
 
-  return response.json();
-}
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  const registerForPushNotificationsAsync = async () => {
+    console.log("registerForPushNotificatisnsAsync");
+    let token;
+    try {
+      if (Device.isDevice) {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+        console.log("existingStatus is:", existingStatus);
+
+        let finalStatus = existingStatus;
+
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== "granted") {
+          console.log("Granted is not true");
+          return;
+        }
+
+        token = await Notifications.getExpoPushTokenAsync({
+          projectId: Constants.expoConfig?.extra?.eas.projectId,
+        });
+        console.log("Expo Push Token:", token);
+      } else {
+        console.log("Must be using a physical device for Push notifications");
+      }
+
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#FF231F7C",
+        });
+      }
+    } catch (error) {
+      console.error("Error in registering for push notifications:", error);
+    }
+    return token;
+  };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) => {
+      setExpoPushToken(token);
+    });
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  return {
+    expoPushToken,
+    notification,
+  };
+};

@@ -11,7 +11,8 @@ export interface PushNotificationState {
   notification?: Notifications.Notification;
 }
 
-export const usePushNotifications = (): PushNotificationState => {
+export const usePushNotificationsTx = (): PushNotificationState => {
+  console.log("usePushNotificationsTx called");
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldPlaySound: false,
@@ -20,37 +21,47 @@ export const usePushNotifications = (): PushNotificationState => {
     }),
   });
 
+  console.log("usePushNotificationsTx called");
+
   const [expoPushToken, setExpoPushToken] = useState<
     Notifications.ExpoPushToken | undefined
   >();
 
+  console.log("usePushNotificationsTx called3");
+
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
   >();
+  console.log("usePushNotificationsTx called4");
 
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
+  console.log("usePushNotificationsTx called5");
 
   async function registerForPushNotificationsAsync() {
+    console.log("registerForPushNotificationsAsync called5");
+
     let token;
     if (Device.isDevice) {
       const { status: existingStatus } =
         await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
+      console.log("finalStatus", finalStatus);
 
       if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
       if (finalStatus !== "granted") {
-        console.log("Granted is not true");
-
+        console.log("Failed to get push token for push notification");
         return;
       }
+      console.log("Token is pending");
 
       token = await Notifications.getExpoPushTokenAsync({
         projectId: Constants.expoConfig?.extra?.eas.projectId,
       });
+      console.log("Token is ", token);
     } else {
       console.log("Must be using a physical device for Push notifications");
     }
