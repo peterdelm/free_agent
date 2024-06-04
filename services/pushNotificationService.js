@@ -1,92 +1,30 @@
-import { useState, useEffect, useRef } from "react";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
-import { Platform } from "react-native";
+import { EXPO_PUBLIC_BASE_URL } from "../.config.js";
+import authFetch from "../api/authCalls.js";
 
-export const usePushNotifications = () => {
-  console.log("usePushNotificationsCalled");
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldPlaySound: false,
-      shouldShowAlert: true,
-      shouldSetBadge: false,
-    }),
-  });
+const url = `${EXPO_PUBLIC_BASE_URL}api/users/pushToken`;
 
-  const [expoPushToken, setExpoPushToken] = useState(undefined);
-  const [notification, setNotification] = useState(undefined);
-
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  const registerForPushNotificationsAsync = async () => {
-    console.log("registerForPushNotificatisnsAsync");
-    let token;
-    try {
-      if (Device.isDevice) {
-        const { status: existingStatus } =
-          await Notifications.getPermissionsAsync();
-        console.log("existingStatus is:", existingStatus);
-
-        let finalStatus = existingStatus;
-
-        if (existingStatus !== "granted") {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
-        if (finalStatus !== "granted") {
-          console.log("Granted is not true");
-          return;
-        }
-
-        token = await Notifications.getExpoPushTokenAsync({
-          projectId: Constants.expoConfig?.extra?.eas.projectId,
-        });
-        console.log("Expo Push Token:", token);
-      } else {
-        console.log("Must be using a physical device for Push notifications");
-      }
-
-      if (Platform.OS === "android") {
-        await Notifications.setNotificationChannelAsync("default", {
-          name: "default",
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: "#FF231F7C",
-        });
-      }
-    } catch (error) {
-      console.error("Error in registering for push notifications:", error);
-    }
-    return token;
-  };
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
-      setExpoPushToken(token);
+export const sendPushTokenToBackend = async (expoPushToken, user) => {
+  console.log("sendPushTokenToBackends has been called! ");
+  const { userId } = user;
+  try {
+    const response = await authFetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId, expoPushToken }),
     });
+    console.log("ExpoPushToken is", expoPushToken);
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  return {
-    expoPushToken,
-    notification,
-  };
+    if (response.status === 200) {
+      const userData = await response.json();
+      return userData;
+    } else if (response.status === 401) {
+      throw new Error("Invalid credentials");
+    } else {
+      throw new Error("Unexpected response");
+    }
+  } catch (error) {
+    console.log("sendPushNotification errored out with", error);
+  }
 };

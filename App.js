@@ -23,13 +23,9 @@ import PlayerBrowseGames from "./components/screens/PlayerBrowseGames.js";
 import UserProfile from "./components/screens/UserProfile.js";
 import * as Linking from "expo-linking";
 import { AuthProvider, useAuth } from "./contexts/authContext";
-import {
-  registerForPushNotificationsAsync,
-  sendPushTokenToBackend,
-  usePushNotifications,
-} from "./services/pushNotificationService.js";
+import { sendPushTokenToBackend } from "./services/pushNotificationService.js";
 import { loginRequest } from "./api/authCalls.js";
-import { usePushNotificationsTx } from "./components/screens/usePushNotifications.tsx";
+import { usePushNotifications } from "./components/screens/usePushNotifications.tsx";
 const Stack = createNativeStackNavigator();
 
 const prefix = Linking.createURL("/");
@@ -177,31 +173,18 @@ function PlayerStack() {
 
 function MainApp() {
   const { user, loading } = useAuth();
-
-  // const { expoPushToken, notification } = usePushNotifications();
-  const { expoPushTokenTx } = usePushNotificationsTx();
-  // console.log("expoPushToken is", expoPushToken);
-  console.log("expoPushTokenTx is", expoPushTokenTx);
-
-  useEffect(() => {
-    const registerAndSendToken = async () => {
-      console.log("registerAndSendToken called");
-
-      // const token = await registerForPushNotificationsAsync();
-      if (expoPushTokenTx && user) {
-        try {
-          await sendPushTokenToBackend(token, user.id);
-          console.log("Push token sent to backend successfully");
-        } catch (err) {
-          console.error("Failed to send push token to backend:", err);
-        }
-      }
-    };
-
-    if (!loading && user) {
-      registerAndSendToken();
+  const { expoPushToken } = usePushNotifications();
+  if (expoPushToken) {
+    console.log("expoPushToken", expoPushToken.data);
+  }
+  if (expoPushToken && user) {
+    try {
+      console.log("Attempting to send expoPushToken to backend...");
+      sendPushTokenToBackend(expoPushToken.data, user);
+    } catch (err) {
+      console.error("Failed to send push token to backend:", err);
     }
-  }, [loading, user]);
+  }
 
   if (loading) {
     return <Text>Loading...</Text>;

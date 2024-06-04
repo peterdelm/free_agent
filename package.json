@@ -40,7 +40,8 @@
     "react-native-web": "~0.19.6",
     "react-navigation": "^5.0.0",
     "react-router-dom": "^6.11.2",
-    "expo-secure-store": "~12.8.1"
+    "expo-secure-store": "~12.8.1",
+    "expo-constants": "~15.4.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Platform, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import Styles from "./Styles";
 
 class Pickering extends Component {
   constructor(props) {

@@ -11,8 +11,7 @@ export interface PushNotificationState {
   notification?: Notifications.Notification;
 }
 
-export const usePushNotificationsTx = (): PushNotificationState => {
-  console.log("usePushNotificationsTx called");
+export const usePushNotifications = (): PushNotificationState => {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldPlaySound: false,
@@ -21,26 +20,18 @@ export const usePushNotificationsTx = (): PushNotificationState => {
     }),
   });
 
-  console.log("usePushNotificationsTx called");
-
   const [expoPushToken, setExpoPushToken] = useState<
     Notifications.ExpoPushToken | undefined
   >();
 
-  console.log("usePushNotificationsTx called3");
-
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
   >();
-  console.log("usePushNotificationsTx called4");
 
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
-  console.log("usePushNotificationsTx called5");
 
   async function registerForPushNotificationsAsync() {
-    console.log("registerForPushNotificationsAsync called5");
-
     let token;
     if (Device.isDevice) {
       const { status: existingStatus } =
@@ -61,7 +52,6 @@ export const usePushNotificationsTx = (): PushNotificationState => {
       token = await Notifications.getExpoPushTokenAsync({
         projectId: Constants.expoConfig?.extra?.eas.projectId,
       });
-      console.log("Token is ", token);
     } else {
       console.log("Must be using a physical device for Push notifications");
     }

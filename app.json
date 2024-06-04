@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "free_agent",
+    "name": "Free Agent",
     "slug": "free_agent",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "freeAgentiosBundle"
