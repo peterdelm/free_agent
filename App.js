@@ -173,14 +173,27 @@ function PlayerStack() {
 
 function MainApp() {
   const { user, loading } = useAuth();
-  const { expoPushToken } = usePushNotifications();
+  const { expoPushToken, notification } = usePushNotifications();
+  console.log("User in MainApp is", user);
+
+  useEffect(() => {
+    if (notification) {
+      console.log("Received notification:", notification);
+      // Check if the deep linking URL is present in the notification payload
+      const deepLink = notification.data?.deepLink;
+      if (deepLink) {
+        console.log("Deep linking URL:", deepLink);
+      }
+    }
+  }, [notification]);
+
   if (expoPushToken) {
     console.log("expoPushToken", expoPushToken.data);
   }
   if (expoPushToken && user) {
     try {
       console.log("Attempting to send expoPushToken to backend...");
-      sendPushTokenToBackend(expoPushToken.data, user);
+      sendPushTokenToBackend({ expoPushToken: expoPushToken.data, user: user });
     } catch (err) {
       console.error("Failed to send push token to backend:", err);
     }
@@ -191,13 +204,7 @@ function MainApp() {
   }
 
   return (
-    <NavigationContainer
-      linking={{
-        prefixes: [prefix],
-        config: { screens: { NewPasswordScreen: "NewPasswordScreen" } },
-      }}
-      fallback={<Text>Loading...</Text>}
-    >
+    <>
       {user ? ( // Check if a user is logged in
         user.currentRole === "manager" ? ( // If the user is a manager
           <>
@@ -216,15 +223,23 @@ function MainApp() {
         <AuthStack /> // If no user is logged in, render the AuthStack
       )}
       <StatusBar style="auto" />
-    </NavigationContainer>
+    </>
   );
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainApp />
-    </AuthProvider>
+    <NavigationContainer
+      linking={{
+        prefixes: [prefix],
+        config: { screens: { NewPasswordScreen: "NewPasswordScreen" } },
+      }}
+      fallback={<Text>Loading...</Text>}
+    >
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
+    </NavigationContainer>
   );
 }
 

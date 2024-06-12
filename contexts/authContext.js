@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
     const loadStorageData = async () => {
       try {
         const storedUser = await AsyncStorage.getItem("user");
+        console.log("storedUser is", storedUser);
         const storedAccessToken = await AsyncStorage.getItem("accessToken");
 
         if (storedUser && storedAccessToken) {

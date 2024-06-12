@@ -3,10 +3,12 @@ import authFetch from "../api/authCalls.js";
 
 const url = `${EXPO_PUBLIC_BASE_URL}api/users/pushToken`;
 
-export const sendPushTokenToBackend = async (expoPushToken, user) => {
+export const sendPushTokenToBackend = async ({ expoPushToken, user }) => {
   console.log("sendPushTokenToBackends has been called! ");
   const { userId } = user;
   try {
+    console.log("user is", user);
+
     const response = await authFetch(url, {
       method: "POST",
       headers: {

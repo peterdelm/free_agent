@@ -10,8 +10,8 @@ function ViewPlayer({ navigation, message }) {
   const { playerId } = route.params;
   const [player, setPlayer] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log("PlayerId is " + playerId);
-  console.log("Player is " + player);
+
+  console.log("ViewPlayer has received the call!");
 
   const getTokenFromStorage = async () => {
     try {
