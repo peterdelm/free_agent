@@ -21,6 +21,7 @@ import NavigationFooter from "./NavigationFooter.js";
 import getCurrentUser from "./getCurrentUser.helper.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
+import authFetch from "../../api/authCalls.js";
 navigator.geolocation = require("react-native-geolocation-service");
 
 function HomeScreen({ navigation, message }) {
@@ -106,15 +107,17 @@ function HomeScreen({ navigation, message }) {
   const route = useRoute();
   const successMessage = route.params || {};
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
+  // const getTokenFromStorage = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("@session_token");
+  //     console.log("112 Manager Token is " + token);
+
+  //     return token;
+  //   } catch (error) {
+  //     console.log("Error retrieving token from AsyncStorage:", error);
+  //     return null;
+  //   }
+  // };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -141,18 +144,15 @@ function HomeScreen({ navigation, message }) {
 
     const fetchData = async () => {
       try {
-        const token = await getTokenFromStorage();
-
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
           headers,
         };
 
-        fetch(url, requestOptions)
+        authFetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               return res.json();
@@ -179,15 +179,15 @@ function HomeScreen({ navigation, message }) {
   };
 
   const onSubmit = async () => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
+    // const getTokenFromStorage = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem("@session_token");
+    //     return token;
+    //   } catch (error) {
+    //     console.log("Error retrieving token from AsyncStorage:", error);
+    //     return null;
+    //   }
+    // };
 
     const dateString = date.dateString;
 
@@ -215,13 +215,15 @@ function HomeScreen({ navigation, message }) {
 
     const postGame = async () => {
       try {
-        const token = await getTokenFromStorage();
+        // const token = await getTokenFromStorage();
+        // console.log("222 Manager Token is " + token);
+
         console.log("URL is " + url);
         console.log("postgGame async request called at line 138");
 
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -230,7 +232,7 @@ function HomeScreen({ navigation, message }) {
           body: JSON.stringify(body),
         };
 
-        await fetch(url, requestOptions)
+        await authFetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               return res.json();

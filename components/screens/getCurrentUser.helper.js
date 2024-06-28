@@ -9,17 +9,17 @@ const getCurrentUser = async () => {
     // Make the fetch request using async/await
     const response = await authFetch(url);
 
-    if (response.ok) {
+    if (response.success) {
       // Parse and use the data
-      const userData = await response.json();
-      return userData;
+      return response;
     } else {
       // Handle non-ok responses
+      console.log("Problem with response: ", response);
       throw new Error("Network response was not ok.");
     }
   } catch (error) {
     // Handle errors from AsyncStorage or fetch operation
-    console.log("Error:", error);
+    console.log("Error in getCurrentUser:", error);
     return null;
   }
 };

@@ -6,9 +6,8 @@ import {
 } from "../utils/storage.js";
 import { EXPO_PUBLIC_BASE_URL } from "../.config.js";
 
-const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
-
 export const loginRequest = async (emailAddress, password) => {
+  const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
   try {
     console.log("Attempting Auth Fetch");
     const response = await authFetch(url, {
@@ -62,6 +61,9 @@ export const refreshAccessToken = async () => {
 };
 
 const authFetch = async (url, options = {}) => {
+  console.log("Authfetch URL is:", url);
+  console.log("Authfetch Options are:", options);
+
   const defaultHeaders = {
     "Content-Type": "application/json",
   };
@@ -124,7 +126,8 @@ const authFetch = async (url, options = {}) => {
       throw new Error("No refresh token available");
     }
   }
-
+  response = await response.json();
+  console.log("response is", response);
   return response;
 };
 

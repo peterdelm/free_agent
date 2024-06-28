@@ -9,6 +9,7 @@ import formatDate from "./formatDate";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import MapComponent from "./MapComponent.js";
 import ColorToggleButton from "./ColorToggleButton.js";
+import authFetch from "../../api/authCalls.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -22,7 +23,7 @@ function PlayerHome({ navigation }) {
           const user = await getCurrentUser();
           setCurrentUser(user);
         } catch (error) {
-          console.error("Error during fetch:", error);
+          console.error("Error during currentUser fetch:", error);
         }
       };
       fetchCurrentUser();
@@ -37,51 +38,58 @@ function PlayerHome({ navigation }) {
   const route = useRoute();
   const successMessage = route.params || {};
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
+  // const getTokenFromStorage = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("@session_token");
+  //     console.log("Token is " + token);
+  //     return token;
+  //   } catch (error) {
+  //     console.log("Error retrieving token from AsyncStorage:", error);
+  //     return null;
+  //   }
+  // };
 
   useFocusEffect(
     React.useCallback(() => {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites/`;
       console.log("UsefocusEffect Fetch games called");
 
       const fetchData = async () => {
         try {
-          const token = await getTokenFromStorage();
-          console.log("Token is " + token);
+          // const token = await getTokenFromStorage();
+          // console.log("Token is " + token);
           console.log("URL is " + url);
 
           const headers = {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // Authorization: `Bearer ${token}`,
           };
 
           const requestOptions = {
             headers,
           };
 
-          fetch(url, requestOptions)
-            .then((res) => {
-              if (res.ok) {
-                console.log("res was ok");
-                return res.json();
-              } else throw new Error("Network response was not ok.");
-            })
-            .then((res) => setActiveGames(res.availableGames))
-            .then(console.log("Active games are: ", activeGames))
-            // .then((res) => setActiveGames(res.activeGames))
-            .catch((error) => {
-              console.log("Error during fetch:", error);
-              // Handle specific error scenarios
-            });
+          const response = await authFetch(url, requestOptions);
+          console.log(response);
+          if (response.success) {
+            console.log("res was ok");
+            setActiveGames(response.availableGames);
+            return response;
+          }
+
+          // .then((res)c => {
+          //   if (res.ok) {
+          //     console.log("res was ok");
+          //     return res.json();
+          //   } else throw new Error("Network response was not ok.");
+          // })
+          // .then((res) => setActiveGames(res.availableGames))
+          // .then(console.log("Active games are: ", activeGames))
+          // // .then((res) => setActiveGames(res.activeGames))
+          // .catch((error) => {
+          //   console.log("Error during games invites fetch:", error);
+          //   // Handle specific error scenarios
+          // });
         } catch (error) {
           console.log("Error making authenticated request:", error);
           // Handle error
@@ -91,44 +99,44 @@ function PlayerHome({ navigation }) {
     }, [])
   );
 
-  useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
+  // useEffect(() => {
+  //   const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
 
-    const fetchData = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
+  //   const fetchData = async () => {
+  //     try {
+  //       // const token = await getTokenFromStorage();
+  //       // console.log("Token is " + token);
+  //       console.log("URL is " + url);
 
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
+  //       const headers = {
+  //         "Content-Type": "application/json",
+  //         // Authorization: `Bearer ${token}`,
+  //       };
 
-        const requestOptions = {
-          headers,
-        };
+  //       const requestOptions = {
+  //         headers,
+  //       };
 
-        fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              console.log("res was ok");
-              return res.json();
-            } else throw new Error("Network response was not ok.");
-          })
-          .then((res) => setActiveGames(res.availableGames))
-          .then(console.log("Active games are: ", activeGames))
-          .catch((error) => {
-            console.log("Error during fetch:", error);
-            // Handle specific error scenarios
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    fetchData();
-  }, []);
+  //       authFetch(url, requestOptions)
+  //         .then((res) => {
+  //           if (res.ok) {
+  //             console.log("res was ok");
+  //             return res.json();
+  //           } else throw new Error("Network response was not ok.");
+  //         })
+  //         .then((res) => setActiveGames(res.availableGames))
+  //         .then(console.log("Active games are: ", activeGames))
+  //         .catch((error) => {
+  //           console.log("Error during active games fetch: ", error);
+  //           // Handle specific error scenarios
+  //         });
+  //     } catch (error) {
+  //       console.log("Error making authenticated request:", error);
+  //       // Handle error
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   let allActiveGames = []; // Initialize as empty array initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;

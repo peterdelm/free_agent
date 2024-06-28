@@ -176,17 +176,6 @@ function MainApp() {
   const { expoPushToken, notification } = usePushNotifications();
   console.log("User in MainApp is", user);
 
-  useEffect(() => {
-    if (notification) {
-      console.log("Received notification:", notification);
-      // Check if the deep linking URL is present in the notification payload
-      const deepLink = notification.data?.deepLink;
-      if (deepLink) {
-        console.log("Deep linking URL:", deepLink);
-      }
-    }
-  }, [notification]);
-
   if (expoPushToken) {
     console.log("expoPushToken", expoPushToken.data);
   }
@@ -198,6 +187,17 @@ function MainApp() {
       console.error("Failed to send push token to backend:", err);
     }
   }
+
+  useEffect(() => {
+    if (notification) {
+      console.log("Received notification:", notification);
+      // Check if the deep linking URL is present in the notification payload
+      const deepLink = notification.data?.deepLink;
+      if (deepLink) {
+        console.log("Deep linking URL:", deepLink);
+      }
+    }
+  }, [notification]);
 
   if (loading) {
     return <Text>Loading...</Text>;

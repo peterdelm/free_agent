@@ -20,6 +20,7 @@ import DatePicker from "./DatePicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TimePicker from "./TimePicker";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import authFetch from "../../api/authCalls.js";
 
 const CreateGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -41,17 +42,6 @@ const CreateGame = ({ navigation }) => {
   const [selectedSportId, setSelectedSportId] = useState();
   const [position, setPosition] = useState();
   const [positionList, setPositionList] = useState();
-
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
 
   const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
@@ -96,20 +86,17 @@ const CreateGame = ({ navigation }) => {
 
     const fetchData = async () => {
       try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
         console.log("URL is " + url);
 
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
           headers,
         };
 
-        fetch(url, requestOptions)
+        await authFetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               console.log("res was ok");
@@ -143,17 +130,6 @@ const CreateGame = ({ navigation }) => {
   const onSubmit = () => {
     console.log(calibre);
 
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-
     validateInputs();
     const body = {
       gender,
@@ -176,14 +152,11 @@ const CreateGame = ({ navigation }) => {
 
     const postGame = async () => {
       try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
         console.log("URL is " + url);
         console.log("postgGame async request called at line 138");
 
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -192,7 +165,7 @@ const CreateGame = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        await fetch(url, requestOptions)
+        await authFetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               return res.json();

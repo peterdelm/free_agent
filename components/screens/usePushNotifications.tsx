@@ -84,6 +84,7 @@ export const usePushNotifications = (): PushNotificationState => {
       setExpoPushToken(token);
     });
 
+    let isMounted = true;
     ///////
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current =
@@ -91,6 +92,34 @@ export const usePushNotifications = (): PushNotificationState => {
         setNotification(notification);
         console.log(`Attempting to addNotificationReceivedListener`);
       });
+
+    function redirect(notification: Notifications.Notification) {
+      const url = notification.request.content.data?.url;
+      if (url) {
+        router.push(url);
+      }
+    }
+
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!isMounted || !response?.notification) {
+        return;
+      }
+      redirect(response?.notification);
+    });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        redirect(response.notification);
+      });
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
     ///////
     //Previous Code
     ////////
