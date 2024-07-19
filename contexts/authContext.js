@@ -41,25 +41,40 @@ export function AuthProvider({ children }) {
   const login = async (emailAddress, password) => {
     try {
       const userData = await loginRequest(emailAddress, password);
-      setUserContext(userData);
+      if (userData.status === 200) {
+        console.log("userData.success === true");
+
+        setUserContext(userData);
+      } else if (userData.status === 401) {
+        console.log("Incorrect Login Info");
+      }
+      console.log("Userd data is:", userData);
     } catch (error) {
       console.error("Login failed:", error);
     }
   };
 
   const setUserContext = async (userData) => {
-    const accessToken = userData.token.accessToken;
-    const refreshToken = userData.token.refreshToken;
-    const user = userData.user;
+    const userContext = await userData.json();
+    console.log("userData is", userContext);
+
+    const accessToken = userContext.token.accessToken;
+    const refreshToken = userContext.token.refreshToken;
+    const user = userContext.user;
     console.log("Refresh token received. Saving to backend: ", refreshToken);
 
     setUser(user);
+    console.log("1");
+
     await saveRefreshToken(refreshToken);
+    console.log("2");
+
     await saveAccessToken(accessToken);
+    console.log("3");
+
     await saveUserToStorage(user);
+    console.log("4");
   };
-  // setUser(userData.user);
-  // console.log("UserData is : ", userData);
 
   const logout = async () => {
     try {

@@ -10,7 +10,7 @@ export const loginRequest = async (emailAddress, password) => {
   const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
   try {
     console.log("Attempting Auth Fetch");
-    const response = await authFetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,11 +18,12 @@ export const loginRequest = async (emailAddress, password) => {
       body: JSON.stringify({ emailAddress, password }),
     });
 
+    console.log("Response in loginRequest is", response);
+
     if (response.status === 200) {
-      const userData = await response.json();
-      return userData;
+      return response;
     } else if (response.status === 401) {
-      throw new Error("Invalid credentials");
+      return response;
     } else {
       throw new Error("Unexpected response");
     }

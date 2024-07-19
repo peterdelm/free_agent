@@ -11,13 +11,17 @@ function WelcomeScreen({ navigation }) {
 
   const handleLoginButtonPress = async (emailAddress, password) => {
     try {
-      const { user } = await login(emailAddress, password);
+      const user = await login(emailAddress, password);
       console.log("User is, ", user);
-      if (user.currentRole === "manager") {
-        navigation.navigate("ManagerHome");
-      } else if (user.currentRole === "player") {
-        navigation.navigate("PlayerHome");
+      if (user) {
+        console.log("User exists");
+        if (user.currentRole === "manager") {
+          navigation.navigate("ManagerHome");
+        } else if (user.currentRole === "player") {
+          navigation.navigate("PlayerHome");
+        }
       } else {
+        setErrorMessage("Login credentials are incorrect or missing");
         console.log("ERROR: User role is missing or unrecognized");
       }
     } catch (error) {
