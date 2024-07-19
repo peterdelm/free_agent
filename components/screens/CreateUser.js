@@ -3,20 +3,24 @@ import { View, TextInput, Button, TouchableOpacity, Text } from "react-native";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import { useAuth } from "../../contexts/authContext";
 
-const CreateUser = ({ navigation }) => {
+function CreateUser({ navigation }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const url = `${EXPO_PUBLIC_BASE_URL}api/users`;
 
   const storeSessionToken = async (token) => {
     try {
-      await AsyncStorage.setItem("@session_token", token);
+      const tokenString =
+        typeof token === "string" ? token : JSON.stringify(token);
+      await AsyncStorage.setItem("@session_token", tokenString);
       console.log("Session token stored successfully.");
       return true;
     } catch (error) {
@@ -89,10 +93,14 @@ const CreateUser = ({ navigation }) => {
       const successfulStorage = await storeSessionToken(data.token);
 
       if (successfulStorage) {
+        const user = await login(emailAddress, password);
+        console.log("User is, ", user);
         console.log("Storage was successful");
-        navigation.navigate("ManagerHome", {
-          successMessage: "User created successfully.",
-        });
+        if (user) {
+          navigation.navigate("ManagerHome", {
+            successMessage: "User created successfully.",
+          });
+        }
       }
     } catch (error) {
       console.error("Error making authenticated request:", error);
@@ -144,6 +152,6 @@ const CreateUser = ({ navigation }) => {
       </View>
     </View>
   );
-};
+}
 
 export default CreateUser;

@@ -64,16 +64,10 @@ export function AuthProvider({ children }) {
     console.log("Refresh token received. Saving to backend: ", refreshToken);
 
     setUser(user);
-    console.log("1");
 
     await saveRefreshToken(refreshToken);
-    console.log("2");
-
     await saveAccessToken(accessToken);
-    console.log("3");
-
     await saveUserToStorage(user);
-    console.log("4");
   };
 
   const logout = async () => {

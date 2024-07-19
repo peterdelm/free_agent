@@ -107,18 +107,6 @@ function HomeScreen({ navigation, message }) {
   const route = useRoute();
   const successMessage = route.params || {};
 
-  // const getTokenFromStorage = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("@session_token");
-  //     console.log("112 Manager Token is " + token);
-
-  //     return token;
-  //   } catch (error) {
-  //     console.log("Error retrieving token from AsyncStorage:", error);
-  //     return null;
-  //   }
-  // };
-
   useFocusEffect(
     React.useCallback(() => {
       const fetchUser = async () => {
@@ -133,7 +121,6 @@ function HomeScreen({ navigation, message }) {
       console.log(user.currentRole);
       setCurrentUser();
 
-      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
       console.log("UsefocusEffect Fetch games called");
     }, [])
   );
@@ -154,8 +141,8 @@ function HomeScreen({ navigation, message }) {
 
         authFetch(url, requestOptions)
           .then((res) => {
-            if (res.ok) {
-              return res.json();
+            if (res) {
+              return res;
             } else throw new Error("Network response was not ok.");
           })
           .then((res) => {
@@ -179,16 +166,6 @@ function HomeScreen({ navigation, message }) {
   };
 
   const onSubmit = async () => {
-    // const getTokenFromStorage = async () => {
-    //   try {
-    //     const token = await AsyncStorage.getItem("@session_token");
-    //     return token;
-    //   } catch (error) {
-    //     console.log("Error retrieving token from AsyncStorage:", error);
-    //     return null;
-    //   }
-    // };
-
     const dateString = date.dateString;
 
     validateInputs();
@@ -215,15 +192,11 @@ function HomeScreen({ navigation, message }) {
 
     const postGame = async () => {
       try {
-        // const token = await getTokenFromStorage();
-        // console.log("222 Manager Token is " + token);
-
         console.log("URL is " + url);
         console.log("postgGame async request called at line 138");
 
         const headers = {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -234,8 +207,9 @@ function HomeScreen({ navigation, message }) {
 
         await authFetch(url, requestOptions)
           .then((res) => {
-            if (res.ok) {
-              return res.json();
+            if (res) {
+              console.log("res is", res);
+              return res;
             }
             throw new Error("Network response was not ok.");
           })
