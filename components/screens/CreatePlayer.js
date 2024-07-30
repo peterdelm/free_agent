@@ -1,24 +1,21 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Button,
-  ImageBackground,
   StyleSheet,
   Text,
   View,
   Image,
   TextInput,
-  Touchable,
   TouchableOpacity,
   ScrollView,
   Platform,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import AddressInput from "./AddressInput.js";
 
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -38,6 +35,7 @@ const CreatePlayer = ({ navigation }) => {
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
+
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
@@ -72,9 +70,11 @@ const CreatePlayer = ({ navigation }) => {
   const handleTravelRangeChange = (input) => {
     setTravelRange(input);
   };
-  captureSelectedLocation = (selectedInput) => {
-    console.log("Selected Location input: " + selectedInput);
-    setPlayerAddress(selectedInput);
+
+  const handleLocationSelected = (data, details) => {
+    console.log("Handle Location Selected has been Pressed!");
+    console.log("Description is:", data.description);
+    setPlayerAddress(data.description);
   };
 
   const handleFormSubmit = () => {
@@ -271,11 +271,8 @@ const CreatePlayer = ({ navigation }) => {
             label="Position"
           />
           {/* This will be a LOCATION SELECTOR */}
-          <AutoCompletePicker
-            onInputSelected={captureSelectedLocation}
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            ref={autoCompletePickerRef}
-          />
+          <AddressInput handleLocationSelected={handleLocationSelected} />
+
           {/* Make this a sliding scale and move it to a subsequent window */}
           <TextInput
             style={[
@@ -388,5 +385,15 @@ const CreatePlayer = ({ navigation }) => {
     );
   }
 };
+
+const sketchstyles = StyleSheet.create({
+  autocompleteContainer: {
+    width: "100%",
+    height: 50, // Adjust this based on your needs
+    position: "absolute",
+    top: 0, // Adjust as needed
+    zIndex: 1000, // Ensure it's above other components
+  },
+});
 
 export default CreatePlayer;

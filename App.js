@@ -5,7 +5,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import WelcomeScreen from "./components/screens/WelcomeScreen.js";
 import ManagerHome from "./components/screens/ManagerHome.js";
-import CreateGame from "./components/screens/CreateGame.js";
 import CreateUser from "./components/screens/CreateUser.js";
 import ViewGame from "./components/screens/ViewGame.js";
 import ViewPlayer from "./components/screens/ViewPlayer.js";
@@ -63,11 +62,6 @@ function ManagerStack() {
       <Stack.Screen
         name="ManagerHome"
         component={ManagerHome}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="CreateGame"
-        component={CreateGame}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -135,6 +129,11 @@ function PlayerStack() {
       <Stack.Screen
         name="ViewGame"
         component={ViewGame}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreatePlayer"
+        component={CreatePlayer}
         options={{ headerShown: false }}
       />
       <Stack.Screen

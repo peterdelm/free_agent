@@ -1,4 +1,10 @@
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
@@ -101,20 +107,58 @@ const ManagePlayers = ({ navigation }) => {
     ));
   }
   return (
-    <View style={Styles.container}>
-      <View style={Styles.homeContainer}>
-        <View
-          style={[Styles.screenHeader, (style = { justifyContent: "center" })]}
-        >
-          <Text style={Styles.requestPlayerButton}>Manage Player Screen</Text>
+    <View
+      style={{
+        height: "100%",
+        alignItems: "center",
+      }}
+    >
+      <View
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          flex: 0,
+        }}
+      >
+        <View style={Styles.screenHeader}>
+          <Text style={{ fontSize: 35, padding: 20 }}>
+            Manage Player Screen
+          </Text>
         </View>
-        <ScrollView>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          height: "100%",
+          width: "96%",
+          flexDirection: "column",
+          justifyContent: "space-around",
+        }}
+      >
+        <ScrollView style={{ flex: 1 }}>
           {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
         </ScrollView>
         <TouchableOpacity onPress={() => navigation.navigate("CreatePlayer")}>
-          <Text style={Styles.primaryButton}>Create a new player profile</Text>
+          <Text
+            style={[
+              Styles.input,
+              (style = {
+                fontSize: 20,
+                textAlign: "center",
+                textAlignVertical: "center",
+                lineHeight: Platform.select({
+                  ios: 50,
+                }),
+                margin: 20,
+              }),
+            ]}
+          >
+            Create a new player profile
+          </Text>
         </TouchableOpacity>
       </View>
+
       <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>

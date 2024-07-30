@@ -25,6 +25,11 @@ const AddressInput = ({ handleLocationSelected }) => {
         container: {
           flex: 0,
         },
+        listView: {
+          position: "absolute",
+          top: 50,
+          zIndex: 1000,
+        },
 
         textInputContainer: [
           Styles.sportsPickerDropdown,
