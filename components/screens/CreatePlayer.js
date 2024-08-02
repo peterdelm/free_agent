@@ -16,6 +16,7 @@ import AutoCompletePicker from "./AutocompletePicker.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
+import authFetch from "../../api/authCalls.js";
 
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -42,6 +43,8 @@ const CreatePlayer = ({ navigation }) => {
   const [selectedSportId, setSelectedSportId] = useState("");
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const autoCompletePickerRef = useRef(null);
 
@@ -139,17 +142,6 @@ const CreatePlayer = ({ navigation }) => {
   const onSubmit = () => {
     console.log(calibre);
 
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-
     validateInputs();
     const body = {
       gender,
@@ -168,14 +160,11 @@ const CreatePlayer = ({ navigation }) => {
 
     const postPlayer = async () => {
       try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
         console.log("URL is " + url);
         console.log("postPlayer async request called");
 
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -184,7 +173,7 @@ const CreatePlayer = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        await fetch(url, requestOptions)
+        await authFetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               return res.json();
@@ -199,10 +188,17 @@ const CreatePlayer = ({ navigation }) => {
                   "Player created successfully. Free Agent pending.",
               });
             } else {
+              setErrorMessage(
+                "There was a problem creating your player profile. Please try again later."
+              );
+
               console.log("Submit Failed");
             }
           });
       } catch (error) {
+        setErrorMessage(
+          "There was a problem creating your player profile. Please try again later."
+        );
         console.log("Error making authenticated request:", error);
         // Handle error
       }
@@ -297,6 +293,11 @@ const CreatePlayer = ({ navigation }) => {
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
           <View>
+            {errorMessage ? (
+              <Text style={[Styles.errorText, { marginTop: 0 }]}>
+                {errorMessage}
+              </Text>
+            ) : null}
             <TouchableOpacity>
               <Button
                 title="CREATE PLAYER"
