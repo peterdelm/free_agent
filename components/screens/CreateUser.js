@@ -83,23 +83,32 @@ function CreateUser({ navigation }) {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok.");
+        if (response.status === 409) {
+          const data = await response.json();
+
+          setErrorMessage(data.message);
+        } else {
+          throw new Error("Network response was not ok.");
+        }
       }
 
-      const data = await response.json();
-      console.log("Submit successful");
-      console.log("User created with token: " + data.token);
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log("Submit successful");
+        console.log("User created with token: " + data.token);
 
-      const successfulStorage = await storeSessionToken(data.token);
+        const successfulStorage = await storeSessionToken(data.token);
 
-      if (successfulStorage) {
-        const user = await login(emailAddress, password);
-        console.log("User is, ", user);
-        console.log("Storage was successful");
-        if (user) {
-          navigation.navigate("ManagerHome", {
-            successMessage: "User created successfully.",
-          });
+        if (successfulStorage) {
+          const user = await login(emailAddress, password);
+          console.log("User is, ", user);
+          console.log("Storage was successful");
+
+          if (user) {
+            navigation.navigate("ManagerHome", {
+              successMessage: "User created successfully.",
+            });
+          }
         }
       }
     } catch (error) {
