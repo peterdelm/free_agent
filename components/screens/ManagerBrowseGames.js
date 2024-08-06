@@ -27,27 +27,23 @@ const ManagerBrowseGames = ({ navigation }) => {
     }, [])
   );
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
-
     const fetchData = async () => {
       try {
-        authFetch(url)
+        const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        const requestOptions = {
+          headers,
+        };
+        authFetch(url, requestOptions)
           .then((res) => {
-            if (res.body.ok) {
-              console.log("res was ok");
-              return res.json();
+            console.log("Res.body is", res.body);
+            if (res.status === 200) {
+              return res;
             } else throw new Error("Network response was not ok.");
           })
           .then((res) => setActiveGames(res.body.availableGames))
@@ -71,7 +67,7 @@ const ManagerBrowseGames = ({ navigation }) => {
 
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
-  if (activeGames.length > 0) {
+  if (activeGames) {
     allUpcomingGames = activeGames
       .filter(({ game }) => new Date(game.date) > currentDate)
       .map(({ game }) => (
@@ -135,7 +131,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
         <View style={Styles.pendingGamesContainer}>
           <ScrollView>
-            {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
+            {/* {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames} */}
           </ScrollView>
         </View>
         <View style={Styles.managerBrowseGamesContainerHeader}>
@@ -143,7 +139,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
         <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
           <ScrollView>
-            {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
+            {/* {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames} */}
           </ScrollView>
         </View>
       </View>

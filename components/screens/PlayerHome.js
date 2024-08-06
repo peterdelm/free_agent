@@ -70,7 +70,7 @@ function PlayerHome({ navigation }) {
           console.log(response);
           if (response.body.success) {
             console.log("res was ok");
-            setActiveGames(response.availableGames);
+            setActiveGames(response.body.availableGames);
             return response;
           }
 
