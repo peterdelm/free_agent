@@ -13,6 +13,7 @@ import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import authFetch from "../../api/authCalls.js";
 
 const ManagePlayers = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -27,14 +28,34 @@ const ManagePlayers = ({ navigation }) => {
     }
   }, [refresh]);
 
-  const getTokenFromStorage = async () => {
+  const fetchData = async () => {
+    const url = `${EXPO_PUBLIC_BASE_URL}api/players/playerRoster`;
+
     try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      const requestOptions = {
+        headers,
+      };
+
+      await authFetch(url, requestOptions)
+        .then((res) => {
+          console.log("Res in fetchPlayers is", res.players);
+          if (res.success) {
+            console.log("res was ok");
+            return res;
+          } else throw new Error("Network response was not ok.");
+        })
+        .then((res) => setActiveGames(res.players))
+        .catch((error) => {
+          console.log("Error during fetch:", error);
+          // Handle specific error scenarios
+        });
     } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
+      console.log("Error making authenticated request:", error);
+      // Handle error
     }
   };
 
@@ -44,6 +65,7 @@ const ManagePlayers = ({ navigation }) => {
         try {
           const user = await getCurrentUser();
           setCurrentUser(user);
+          fetchData();
         } catch (error) {
           console.error("Error fetching user:", error);
         }
@@ -53,43 +75,9 @@ const ManagePlayers = ({ navigation }) => {
     }, [refreshPlayers])
   );
 
-  useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/players/playerRoster`;
-
-    const fetchData = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-
-        const requestOptions = {
-          headers,
-        };
-
-        fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              console.log("res was ok");
-              return res.json();
-            } else throw new Error("Network response was not ok.");
-          })
-          .then((res) => setActiveGames(res.players))
-          .catch((error) => {
-            console.log("Error during fetch:", error);
-            // Handle specific error scenarios
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    fetchData();
-  }, [refreshPlayers]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [refreshPlayers]);
 
   let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Players yet. Why not</Text>;
@@ -100,7 +88,21 @@ const ManagePlayers = ({ navigation }) => {
         key={game.id}
         onPress={() => navigation.navigate("ViewPlayer", { playerId: game.id })}
       >
-        <Text key={index} style={Styles.activeGames}>
+        <Text
+          key={index}
+          style={[
+            Styles.input,
+            (style = {
+              fontSize: 20,
+              textAlign: "center",
+              textAlignVertical: "center",
+              lineHeight: Platform.select({
+                ios: 50,
+              }),
+              margin: 20,
+            }),
+          ]}
+        >
           {game.sport} Profile
         </Text>
       </TouchableOpacity>

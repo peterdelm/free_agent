@@ -173,28 +173,21 @@ const CreatePlayer = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        await authFetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              console.log("Submit successful");
-              navigation.navigate("ManagerHome", {
-                successMessage:
-                  "Player created successfully. Free Agent pending.",
-              });
-            } else {
-              setErrorMessage(
-                "There was a problem creating your player profile. Please try again later."
-              );
+        await authFetch(url, requestOptions).then((res) => {
+          if (res.success) {
+            console.log("Submit successful");
+            navigation.navigate("ManagePlayers", {
+              successMessage:
+                "Player created successfully. Free Agent pending.",
+            });
+          } else {
+            setErrorMessage(
+              "There was a problem creating your player profile. Please try again later."
+            );
 
-              console.log("Submit Failed");
-            }
-          });
+            console.log("Submit Failed");
+          }
+        });
       } catch (error) {
         setErrorMessage(
           "There was a problem creating your player profile. Please try again later."
@@ -386,15 +379,5 @@ const CreatePlayer = ({ navigation }) => {
     );
   }
 };
-
-const sketchstyles = StyleSheet.create({
-  autocompleteContainer: {
-    width: "100%",
-    height: 50, // Adjust this based on your needs
-    position: "absolute",
-    top: 0, // Adjust as needed
-    zIndex: 1000, // Ensure it's above other components
-  },
-});
 
 export default CreatePlayer;
