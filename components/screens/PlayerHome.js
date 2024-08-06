@@ -56,13 +56,10 @@ function PlayerHome({ navigation }) {
 
       const fetchData = async () => {
         try {
-          // const token = await getTokenFromStorage();
-          // console.log("Token is " + token);
           console.log("URL is " + url);
 
           const headers = {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
           };
 
           const requestOptions = {
@@ -71,7 +68,7 @@ function PlayerHome({ navigation }) {
 
           const response = await authFetch(url, requestOptions);
           console.log(response);
-          if (response.success) {
+          if (response.body.success) {
             console.log("res was ok");
             setActiveGames(response.availableGames);
             return response;

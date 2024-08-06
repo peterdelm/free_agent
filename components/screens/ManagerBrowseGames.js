@@ -45,12 +45,12 @@ const ManagerBrowseGames = ({ navigation }) => {
       try {
         authFetch(url)
           .then((res) => {
-            if (res.ok) {
+            if (res.body.ok) {
               console.log("res was ok");
               return res.json();
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.availableGames))
+          .then((res) => setActiveGames(res.body.availableGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios

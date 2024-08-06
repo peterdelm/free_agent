@@ -17,6 +17,7 @@ import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import authFetch from "../../api/authCalls.js";
 
 const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -42,17 +43,6 @@ const EditPlayer = ({ navigation }) => {
   const [game, setGame] = useState([]);
   console.log("PlayerId is " + playerId);
   console.log("PlayerSport is " + playerSport);
-
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
 
   const handleCalibreChange = (input) => {
     console.log("New Calibre is: ", input);
@@ -87,26 +77,24 @@ const EditPlayer = ({ navigation }) => {
     console.log("FetchplayerData called with url " + url);
 
     try {
-      const token = await getTokenFromStorage();
-      console.log("Token is " + token);
       console.log("URL is " + url);
 
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       };
 
       const requestOptions = {
         headers,
       };
 
-      const res = await fetch(url, requestOptions);
-      if (!res.ok) {
+      const res = await authFetch(url, requestOptions);
+      if (res.status === 200) {
+        console.log("Status is", res.status);
+      } else {
         throw new Error("Fetch Player Network response was not res.ok.");
       }
 
-      const data = await res.json();
-      setPlayer(data);
+      setPlayer(res.body);
       console.log("Player location is " + player.location);
     } catch (error) {
       console.log("Error fetching player data:", error);
@@ -118,13 +106,10 @@ const EditPlayer = ({ navigation }) => {
     const url = `${EXPO_PUBLIC_BASE_URL}api/sports`;
 
     try {
-      const token = await getTokenFromStorage();
-      console.log("Token is " + token);
       console.log("Fetch Sport Data called with URL " + url);
 
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       };
 
       const requestOptions = {
@@ -165,6 +150,7 @@ const EditPlayer = ({ navigation }) => {
   };
 
   const fetchSportsandPlayers = async () => {
+    console.log("Fetching Sports and Players");
     await fetchPlayerData().then;
     await fetchSportData();
   };
@@ -173,12 +159,28 @@ const EditPlayer = ({ navigation }) => {
   useEffect(() => {
     console.log("EditPlayer useEffect scalled");
 
-    fetchSportsandPlayers();
+    const fetchData = async () => {
+      try {
+        await fetchSportsandPlayers();
+      } catch (error) {
+        console.error("Error fetching sports and players:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchSportsandPlayers();
+      const fetchData = async () => {
+        try {
+          await fetchSportsandPlayers();
+        } catch (error) {
+          console.error("Error fetching sports and players on focus:", error);
+        }
+      };
+
+      fetchData();
     }, [])
   );
 
@@ -191,19 +193,6 @@ const EditPlayer = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    console.log(calibre);
-
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-
     validateInputs();
     const body = {
       gender,
@@ -214,20 +203,17 @@ const EditPlayer = ({ navigation }) => {
       sport: sport,
       position,
     };
-    console.log(body);
+    console.log("EditPlayer submission is", body);
 
     const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
 
     const postPlayer = async () => {
       try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
         console.log("URL is " + url);
         console.log("postPlayer async request called at line 138");
 
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -236,16 +222,14 @@ const EditPlayer = ({ navigation }) => {
           body: JSON.stringify(body),
         };
 
-        const res = await fetch(url, requestOptions);
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success === true) {
-            console.log("Submit successful");
-            navigation.navigate("ViewPlayer", { playerId: game.id });
-          } else {
-            console.log("Submit Failed");
-          }
+        const res = await authFetch(url, requestOptions);
+        console.log("res.body is ", res.body);
+        if (res.body.success === true) {
+          console.log("Submit successful");
+          navigation.navigate("ViewPlayer", {
+            playerId: playerId,
+            refresh: true,
+          });
         } else {
           throw new Error("Network response was not ok.");
         }

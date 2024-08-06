@@ -127,9 +127,25 @@ const authFetch = async (url, options = {}) => {
       throw new Error("No refresh token available");
     }
   }
-  response = await response.json();
-  console.log("response is", response);
-  return response;
+  // Parse response body as text to preserve original response
+  const responseText = await response.text();
+
+  // Convert text to JSON if the content type is JSON
+  let responseBody;
+  try {
+    responseBody = JSON.parse(responseText);
+  } catch (e) {
+    // Handle cases where the response is not JSON
+    responseBody = responseText;
+  }
+
+  console.log("response status is", response.status);
+  console.log("response body is", responseBody);
+
+  return {
+    status: response.status,
+    body: responseBody,
+  };
 };
 
 export default authFetch;

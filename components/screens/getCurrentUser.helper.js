@@ -9,7 +9,7 @@ const getCurrentUser = async () => {
     // Make the fetch request using async/await
     const response = await authFetch(url);
 
-    if (response.success) {
+    if (response.body.status) {
       // Parse and use the data
       return response;
     } else {

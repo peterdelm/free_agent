@@ -42,13 +42,13 @@ const ManagePlayers = ({ navigation }) => {
 
       await authFetch(url, requestOptions)
         .then((res) => {
-          console.log("Res in fetchPlayers is", res.players);
-          if (res.success) {
+          console.log("Res in fetchPlayers is", res.body.players);
+          if (res.body.success) {
             console.log("res was ok");
             return res;
           } else throw new Error("Network response was not ok.");
         })
-        .then((res) => setActiveGames(res.players))
+        .then((res) => setActiveGames(res.body.players))
         .catch((error) => {
           console.log("Error during fetch:", error);
           // Handle specific error scenarios

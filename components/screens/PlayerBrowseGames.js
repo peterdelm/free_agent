@@ -55,7 +55,7 @@ const ManagerBrowseGames = ({ navigation }) => {
 
         authFetch(url, requestOptions)
           .then((res) => {
-            if (res.success) {
+            if (res.body.success) {
               console.log("res was ok");
               return res;
             } else throw new Error("Network response was not ok.");
