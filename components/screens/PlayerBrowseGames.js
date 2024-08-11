@@ -27,17 +27,6 @@ const ManagerBrowseGames = ({ navigation }) => {
     }, [])
   );
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     const url = `${EXPO_PUBLIC_BASE_URL}api/games/acceptedplayerinvites`;
 
@@ -55,12 +44,11 @@ const ManagerBrowseGames = ({ navigation }) => {
 
         authFetch(url, requestOptions)
           .then((res) => {
-            if (res.body.success) {
-              console.log("res was ok");
+            if (res.status === 200) {
               return res;
             } else throw new Error("Network response was not ok.");
           })
-          .then((res) => setActiveGames(res.availableGames))
+          .then((res) => setActiveGames(res.body.availableGames))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -94,7 +82,7 @@ const ManagerBrowseGames = ({ navigation }) => {
     ));
   }
   return (
-    <View style={Styles.managerBrowseGamesContainer}>
+    <View style={[Styles.managerBrowseGamesContainer]}>
       <View
         style={{
           borderBottomColor: "black",
@@ -117,7 +105,9 @@ const ManagerBrowseGames = ({ navigation }) => {
         <View style={Styles.managerBrowseGamesContainerHeader}>
           <Text style={{ fontSize: 30 }}>Games</Text>
         </View>
-        <View style={Styles.pendingGamesContainer}>
+        <View
+          style={[Styles.pendingGamesContainer, (style = { marginBottom: 20 })]}
+        >
           <ScrollView>
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>

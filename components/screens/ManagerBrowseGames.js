@@ -131,7 +131,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
         <View style={Styles.pendingGamesContainer}>
           <ScrollView>
-            {/* {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames} */}
+            {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
           </ScrollView>
         </View>
         <View style={Styles.managerBrowseGamesContainerHeader}>
@@ -139,7 +139,7 @@ const ManagerBrowseGames = ({ navigation }) => {
         </View>
         <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
           <ScrollView>
-            {/* {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames} */}
+            {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
           </ScrollView>
         </View>
       </View>
