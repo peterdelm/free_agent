@@ -1,10 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Platform } from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
+import NavigationFooter from "./NavigationFooter";
+import { StyleSheet } from "react-native-web";
 
 function ViewPlayer({ navigation, message }) {
   const route = useRoute();
@@ -117,30 +119,127 @@ function ViewPlayer({ navigation, message }) {
   }
 
   return (
-    <View style={Styles.container}>
-      <Text style={Styles.primaryButton}>PLAYER PROFILE</Text>
-      <Text>Sport: {player.sport}</Text>
-      <Text>Calibre: {player.calibre}</Text>
-      <Text>Location: {player.location}</Text>
-      <Text>Travel Range: {player.travelRange}</Text>
-      <Text>Bio: {player.bio}</Text>
-      <Text>Position: {player.position}</Text>
-      <Text>{player.gender}</Text>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate("EditPlayer", {
-            playerId: player.id,
-            playerSport: player.sport,
-          })
-        }
+    <View
+      style={{
+        height: "100%",
+        alignItems: "center",
+      }}
+    >
+      <View
+        style={{
+          borderBottomColor: "black",
+          borderBottomWidth: 2,
+          borderBottomStyle: "solid",
+          flex: 0,
+          alignItems: "center",
+          width: "100%",
+        }}
       >
-        <Text style={Styles.primaryButton}>Edit Player</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleDeletePlayerButtonPress()}>
-        <Text style={Styles.primaryButton}>Delete Player</Text>
-      </TouchableOpacity>
+        <View style={Styles.screenHeader}>
+          <Text style={{ fontSize: 35, padding: 20 }}>PLAYER PROFILE</Text>
+        </View>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          height: "100%",
+          width: "96%",
+          flexDirection: "column",
+          justifyContent: "space-around",
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Sport:</Text> {player.sport}
+          </Text>
+
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Calibre: </Text>
+            {player.calibre}
+          </Text>
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Location: </Text>
+            {player.location}
+          </Text>
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Travel Range: </Text>
+            {player.travelRange} km
+          </Text>
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Bio: </Text>
+            {player.bio.length > 0 ? player.bio : "N/A"}
+          </Text>
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Position: </Text>
+            {player.position}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("EditPlayer", {
+              playerId: player.id,
+              playerSport: player.sport,
+            })
+          }
+        >
+          <Text
+            style={[
+              Styles.input,
+              (style = {
+                fontSize: 20,
+                textAlign: "center",
+                textAlignVertical: "center",
+                lineHeight: Platform.select({
+                  ios: 50,
+                }),
+                margin: 20,
+              }),
+            ]}
+          >
+            Edit Player
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleDeletePlayerButtonPress()}>
+          <Text
+            style={[
+              Styles.input,
+              (style = {
+                fontSize: 20,
+                textAlign: "center",
+                textAlignVertical: "center",
+                lineHeight: Platform.select({
+                  ios: 50,
+                }),
+                margin: 20,
+              }),
+            ]}
+          >
+            Delete Player
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <NavigationFooter navigation={navigation}>
+        <Text>FOOTER</Text>
+      </NavigationFooter>
     </View>
   );
 }
+
+const viewPlayerStyles = StyleSheet.create({
+  text: {
+    fontSize: 20,
+    textAlign: "left",
+    textAlignVertical: "center",
+    lineHeight: Platform.select({
+      ios: 50,
+    }),
+    padding: 10,
+  },
+});
 
 export default ViewPlayer;
