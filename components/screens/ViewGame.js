@@ -7,6 +7,7 @@ import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import authFetch from "../../api/authCalls.js";
 
 function ViewGame({ navigation, message }) {
   const [currentUser, setCurrentUser] = useState({});
@@ -14,18 +15,8 @@ function ViewGame({ navigation, message }) {
   const route = useRoute();
   const { gameId } = route.params;
   const [game, setGame] = useState([]);
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
-
-  const getUserPlayers = (userId) => {};
+  const [errorMessage, setErrorMessage] = useState("");
+  const [userLoading, setUserLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -33,6 +24,7 @@ function ViewGame({ navigation, message }) {
         try {
           const user = await getCurrentUser();
           setCurrentUser(user);
+          setUserLoading(false);
         } catch (error) {
           console.error("Error during fetch:", error);
         }
@@ -43,31 +35,25 @@ function ViewGame({ navigation, message }) {
 
   useEffect(() => {
     const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
-    console.log("Fetching game with id: " + gameId);
 
     const fetchData = async () => {
       try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
           headers,
         };
 
-        fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((res) => setGame(res.game));
+        const res = await authFetch(url, requestOptions);
+
+        authFetch(url, requestOptions);
+        if (res.status === 200) {
+          console.log("GameView fetch res is", res.body);
+          const gameData = res.body.game;
+          setGame(gameData);
+        } else console.log("Something in ViewGame fetch returned incorrectly");
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error
@@ -104,10 +90,6 @@ function ViewGame({ navigation, message }) {
     const url = `${EXPO_PUBLIC_BASE_URL}api/games/quitGame`;
 
     const quitGame = async () => {
-      console.log("quitGame called in ViewGame");
-      console.log("quitGame body is: ", body);
-      console.log("quitGame URL is: ", url);
-
       try {
         const token = await getTokenFromStorage();
 
@@ -166,10 +148,6 @@ function ViewGame({ navigation, message }) {
     const url = `${EXPO_PUBLIC_BASE_URL}api/games/joinGame`;
 
     const joinGame = async () => {
-      console.log("joinGame called in ViewGame");
-      console.log("joinGame body is: ", body);
-      console.log("joinGame URL is: ", url);
-
       try {
         const token = await getTokenFromStorage();
 
@@ -211,6 +189,34 @@ function ViewGame({ navigation, message }) {
   };
 
   const displayJoinGameButton = () => {
+    if (userLoading) {
+      return null;
+    }
+    if (game.userId === currentUser?.id) {
+      console.log("You created this game", game.userId);
+      return (
+        <TouchableOpacity
+          style={{ color: "#C30000" }}
+          onPress={() => handleQuitGameButtonPress()}
+        >
+          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
+            <Text
+              style={[
+                Styles.gameInfo,
+                (style = {
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: "white",
+                  borderColor: "#C30000",
+                }),
+              ]}
+            >
+              Edit Game
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
     if (!game.matchedPlayerId)
       return (
         <TouchableOpacity
@@ -327,7 +333,7 @@ function ViewGame({ navigation, message }) {
               <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
                 Gender
               </Text>
-              <Text style={Styles.gameInfo}>Gender: {game.gender}</Text>
+              <Text style={Styles.gameInfo}> {game.gender}</Text>
               <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
                 Game Type
               </Text>
@@ -335,7 +341,11 @@ function ViewGame({ navigation, message }) {
               <Text style={{ fontSize: 18, fontWeight: 500, padding: 5 }}>
                 Game Length
               </Text>
-              <Text style={Styles.gameInfo}>{game.gameLength} Minutes</Text>
+              {game.gameLength ? (
+                <Text style={Styles.gameInfo}>{game.gameLength} Minutes</Text>
+              ) : (
+                <Text style={Styles.gameInfo}>N/A</Text>
+              )}
             </View>
           </View>
           {displayJoinGameButton()}

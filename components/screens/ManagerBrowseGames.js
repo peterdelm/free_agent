@@ -1,4 +1,11 @@
-import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,6 +19,7 @@ import authFetch from "../../api/authCalls.js";
 const ManagerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,6 +55,7 @@ const ManagerBrowseGames = ({ navigation }) => {
             } else throw new Error("Network response was not ok.");
           })
           .then((res) => setActiveGames(res.body.availableGames))
+          .then(setLoading(false))
           .catch((error) => {
             console.log("Error during fetch:", error);
             // Handle specific error scenarios
@@ -70,6 +79,7 @@ const ManagerBrowseGames = ({ navigation }) => {
   if (activeGames) {
     allUpcomingGames = activeGames
       .filter(({ game }) => new Date(game.date) > currentDate)
+      .sort((a, b) => new Date(a.game.date) - new Date(b.game.date)) // Sort games by date descending
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
@@ -88,6 +98,7 @@ const ManagerBrowseGames = ({ navigation }) => {
 
     allPreviousGames = activeGames
       .filter(({ game }) => new Date(game.date) <= currentDate)
+      .sort((a, b) => new Date(a.game.date) - new Date(b.game.date)) // Sort games by date descending
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
@@ -130,17 +141,45 @@ const ManagerBrowseGames = ({ navigation }) => {
           <Text style={{ fontSize: 30 }}>Upcoming Games</Text>
         </View>
         <View style={Styles.pendingGamesContainer}>
-          <ScrollView>
-            {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
-          </ScrollView>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : allUpcomingGames.length > 0 ? (
+            <ScrollView>
+              {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          )}
         </View>
         <View style={Styles.managerBrowseGamesContainerHeader}>
           <Text style={{ fontSize: 30 }}>Previous Games</Text>
         </View>
         <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
-          <ScrollView>
-            {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
-          </ScrollView>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : allPreviousGames.length > 0 ? (
+            <ScrollView>
+              {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          )}
         </View>
       </View>
 

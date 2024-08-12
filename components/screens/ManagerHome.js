@@ -11,7 +11,6 @@ import {
 import React, { useState, useEffect, useRef } from "react";
 import Styles from "./Styles.js";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import SportsPicker from "./SportsPicker.js";
 import Picker from "./Picker.js";
 import GameTypePicker from "./GameTypePicker.js";
@@ -25,12 +24,10 @@ import authFetch from "../../api/authCalls.js";
 navigator.geolocation = require("react-native-geolocation-service");
 
 function HomeScreen({ navigation, message }) {
-  const [activeGames, setActiveGames] = useState([]);
   const [sportSpecificValues, setSportSpecificValues] = useState();
   const [selectedSport, setSelectedSport] = useState({});
   const [calibreList, setCalibreList] = useState([]);
   const [calibre, setCalibre] = useState("");
-
   const [gender, setGender] = useState("");
   const [gameType, setGameType] = useState("");
   const [location, setGameAddress] = useState("");
@@ -46,6 +43,7 @@ function HomeScreen({ navigation, message }) {
   const [position, setPosition] = useState("");
   const [positionList, setPositionList] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
   const autoCompletePickerRef = useRef(null);
   const timePickerRef = useRef(null);
@@ -117,11 +115,10 @@ function HomeScreen({ navigation, message }) {
           console.error("Error fetching user:", error);
         }
       };
+      setErrorMessage("");
       const user = fetchUser();
       console.log(user.currentRole);
       setCurrentUser();
-
-      console.log("UsefocusEffect Fetch games called");
     }, [])
   );
 
@@ -157,104 +154,137 @@ function HomeScreen({ navigation, message }) {
   }, []);
 
   const validateInputs = () => {
+    if (!location) {
+      setErrorMessage("Location is Missing");
+      return false;
+    }
     if (!calibre) {
-      console.log(calibre);
-
-      console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
+      setErrorMessage("Calibre is Missing");
+      return false;
+    }
+    if (!gameType) {
+      setErrorMessage("Game Type is Missing");
+      return false;
+    }
+    if (!gender) {
+      setErrorMessage("Gender is Missing");
+      return false;
+    }
+    if (!position) {
+      setErrorMessage("Position is Missing");
+      return false;
+    }
+    if (!date) {
+      setErrorMessage("Date is Missing");
+      return false;
+    }
+    if (!time) {
+      setErrorMessage("Time is Missing");
+      return false;
+    }
+    if (!gameLength) {
+      setErrorMessage("Game Length is Missing");
+      return false;
+    } else {
+      return true;
     }
   };
 
   const onSubmit = async () => {
     const dateString = date.dateString;
 
-    validateInputs();
-    const body = {
-      gender,
-      calibre,
-      position,
-      gameType,
-      date: dateString,
-      location: location,
-      time,
-      gameLength,
-      teamName,
-      additionalInfo,
-      isActive: true,
-      sport: selectedSport.sport,
-      sportId: selectedSportId,
-    };
+    const validation = validateInputs();
+    if (validation) {
+      const body = {
+        gender,
+        calibre,
+        position,
+        gameType,
+        date: dateString,
+        location: location,
+        time,
+        gameLength,
+        teamName,
+        additionalInfo,
+        isActive: true,
+        sport: selectedSport.sport,
+        sportId: selectedSportId,
+      };
 
-    console.log("CreateGame Request date is: " + body.date);
-    console.log("CreateGame Request location is: " + body.location);
+      console.log("CreateGame Request date is: " + body.date);
+      console.log("CreateGame Request location is: " + body.location);
 
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
-    const postGame = async () => {
-      try {
-        console.log("URL is " + url);
-        console.log("postgGame async request called at line 138");
+      const postGame = async () => {
+        try {
+          console.log("URL is " + url);
+          console.log("postgGame async request called at line 138");
 
-        const headers = {
-          "Content-Type": "application/json",
-        };
+          const headers = {
+            "Content-Type": "application/json",
+          };
 
-        const requestOptions = {
-          method: "POST",
-          headers,
-          body: JSON.stringify(body),
-        };
+          const requestOptions = {
+            method: "POST",
+            headers,
+            body: JSON.stringify(body),
+          };
 
-        await authFetch(url, requestOptions)
-          .then((res) => {
-            if (res) {
-              console.log("res is", res);
-              return res;
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              // Reset state values
-              setGender("");
-              setGameType("");
-              setGameAddress("");
-              setGameDate("");
-              setGameTime("");
-              setGameLength("");
-              setTeamName("");
-              setAdditionalInfo("");
-              setSelectedSport({});
-              setCalibreList([]);
-              setCalibre("");
-              setGameTypeList([]);
-              setGameLengthList([]);
-              setPosition("");
-              setPositionList([]);
-              if (autoCompletePickerRef.current) {
-                autoCompletePickerRef.current.resetPickerValues();
+          await authFetch(url, requestOptions)
+            .then((res) => {
+              if (res) {
+                console.log("res is", res);
+                return res;
               }
-              if (timePickerRef.current) {
-                timePickerRef.current.resetTimePickerValues();
+              throw new Error("Network response was not ok.");
+            })
+            .then((data) => {
+              if (data.status === 200) {
+                if (data.body.success) {
+                  setGender("");
+                  setGameType("");
+                  setGameAddress("");
+                  setGameDate("");
+                  setGameTime("");
+                  setGameLength("");
+                  setTeamName("");
+                  setAdditionalInfo("");
+                  setSelectedSport({});
+                  setCalibreList([]);
+                  setCalibre("");
+                  setGameTypeList([]);
+                  setGameLengthList([]);
+                  setPosition("");
+                  setPositionList([]);
+                  setErrorMessage("");
+                  if (autoCompletePickerRef.current) {
+                    autoCompletePickerRef.current.resetPickerValues();
+                  }
+                  if (timePickerRef.current) {
+                    timePickerRef.current.resetTimePickerValues();
+                  }
+                  if (datePickerRef.current) {
+                    datePickerRef.current.resetDatePickerValues();
+                  }
+                  console.log("Submit successful");
+                  navigation.navigate("ManagerBrowseGames", {
+                    successMessage:
+                      "Game created successfully. Free Agent pending.",
+                  });
+                }
+              } else {
+                console.log("Submit Failed");
+                setErrorMessage("Content Missing");
               }
-              if (datePickerRef.current) {
-                datePickerRef.current.resetDatePickerValues();
-              }
-              console.log("Submit successful");
-              navigation.navigate("ManagerBrowseGames", {
-                successMessage:
-                  "Game created successfully. Free Agent pending.",
-              });
-            } else {
-              console.log("Submit Failed");
-            }
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    postGame();
+            });
+        } catch (error) {
+          console.log("Error making authenticated request:", error);
+          // Handle error
+        }
+      };
+      postGame();
+    }
   };
 
   const handleFormSubmit = () => {
@@ -433,6 +463,11 @@ function HomeScreen({ navigation, message }) {
                       style={Styles.requestPlayerButtonImage}
                     />
                   </View>
+                  {errorMessage ? (
+                    <Text style={[Styles.errorText, { marginTop: 0 }]}>
+                      {errorMessage}
+                    </Text>
+                  ) : null}
                 </TouchableOpacity>
               </View>
             </View>
