@@ -146,7 +146,7 @@ function HomeScreen({ navigation, message }) {
             } else throw new Error("Network response was not ok.");
           })
           .then((res) => {
-            setSportSpecificValues(res.sports);
+            setSportSpecificValues(res.body.sports);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
@@ -261,24 +261,6 @@ function HomeScreen({ navigation, message }) {
     onSubmit();
   };
 
-  function Banner({ message }) {
-    const result = message["successMessage"] || "";
-    const isMessageEmpty = result === "";
-
-    if (isMessageEmpty) {
-      return null; // Don't render anything if the message is empty
-    }
-
-    //set a timer
-    //do a slide animation
-    //highlight the new game for a few seconds
-    return (
-      <View>
-        <Text style={Styles.successBanner}>{result}</Text>
-      </View>
-    );
-  }
-
   const handleLocationSelected = (data, details) => {
     console.log("Handle Location Selected has been Pressed!");
     console.log("Description is:", data.description);
@@ -311,6 +293,7 @@ function HomeScreen({ navigation, message }) {
           alignItems: "center",
         }}
       >
+        {/* LOCATION SELECTOR */}
         <AddressInput handleLocationSelected={handleLocationSelected} />
 
         <ScrollView
@@ -407,13 +390,6 @@ function HomeScreen({ navigation, message }) {
               language={positionList}
               label="Position"
             />
-            {/* LOCATION SELECTOR */}
-            {/* <AutoCompletePicker
-            onInputSelected={captureSelectedLocation}
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            ref={autoCompletePickerRef}
-          /> */}
-            {/* <AddressInput /> */}
 
             {/* DATE SELECTOR */}
             <DatePicker

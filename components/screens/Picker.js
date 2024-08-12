@@ -7,13 +7,20 @@ class Pickering extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      language: props.language,
-      label: props.label,
+      language: props.defaultValue || "", // Initialize state with defaultValue or empty string      label: props.label,
       colour: props.colour,
       style: props.style,
       defaultValue: props.defaultValue,
     };
   }
+
+  handleValueChange = (itemValue) => {
+    console.log("Selected value:", itemValue); // Log the selected value
+    this.setState({ language: itemValue });
+    if (this.props.onValueChange) {
+      this.props.onValueChange(itemValue);
+    }
+  };
 
   render() {
     return (
@@ -33,9 +40,18 @@ class Pickering extends Component {
             value=""
           />
 
-          {this.props.language.map((course, index) => (
-            <Picker.Item key={index} label={course} value={course} />
-          ))}
+          {/* Render actual options if available */}
+          {this.props.language && this.props.language.length > 0 ? (
+            this.props.language.map((course, index) => (
+              <Picker.Item key={index} label={course} value={course} />
+            ))
+          ) : (
+            // Optionally, you can add another placeholder or keep this empty
+            <Picker.Item
+              label="Please Select a Sport First"
+              value="no_options"
+            />
+          )}
         </Picker>
         {Platform.OS === "ios" && (
           <View style={styles.arrowContainer}>
@@ -49,7 +65,6 @@ class Pickering extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
