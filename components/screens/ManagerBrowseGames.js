@@ -47,22 +47,20 @@ const ManagerBrowseGames = ({ navigation }) => {
         const requestOptions = {
           headers,
         };
-        authFetch(url, requestOptions)
-          .then((res) => {
-            console.log("Res.body is", res.body);
-            if (res.status === 200) {
-              return res;
-            } else throw new Error("Network response was not ok.");
-          })
-          .then((res) => setActiveGames(res.body.availableGames))
-          .then(setLoading(false))
-          .catch((error) => {
-            console.log("Error during fetch:", error);
-            // Handle specific error scenarios
-          });
+
+        // Use async/await instead of chaining .then() for readability
+        const res = await authFetch(url, requestOptions);
+        if (res.status === 200) {
+          const data = res.body;
+          setActiveGames(data.availableGames || []);
+        } else {
+          throw new Error("Network response was not ok.");
+        }
       } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
+        console.error("Error making authenticated request:", error);
+        // Optionally set an error state to display an error message
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -140,7 +138,15 @@ const ManagerBrowseGames = ({ navigation }) => {
         <View style={Styles.managerBrowseGamesContainerHeader}>
           <Text style={{ fontSize: 30 }}>Upcoming Games</Text>
         </View>
-        <View style={Styles.pendingGamesContainer}>
+        <View
+          style={[
+            Styles.pendingGamesContainer,
+            (style = {
+              flex: 1,
+              justifyContent: "center",
+            }),
+          ]}
+        >
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : allUpcomingGames.length > 0 ? (
@@ -162,7 +168,12 @@ const ManagerBrowseGames = ({ navigation }) => {
         <View style={Styles.managerBrowseGamesContainerHeader}>
           <Text style={{ fontSize: 30 }}>Previous Games</Text>
         </View>
-        <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
+        <View
+          style={[
+            Styles.pendingGamesContainer,
+            { marginBottom: 12, flex: 1, justifyContent: "center" },
+          ]}
+        >
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : allPreviousGames.length > 0 ? (
@@ -177,7 +188,7 @@ const ManagerBrowseGames = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator size="large" color="#0000ff" />
+              <Text>No Games Yet</Text>
             </View>
           )}
         </View>
