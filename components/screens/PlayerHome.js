@@ -22,7 +22,7 @@ import authFetch from "../../api/authCalls.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
 
   useFocusEffect(
@@ -31,7 +31,8 @@ function PlayerHome({ navigation }) {
         try {
           const user = await getCurrentUser();
           setCurrentUser(user);
-          if (currentUser && currentUser.playerIds.length === 0) {
+          console.log("User is", user);
+          if (user && user.playerIds.length === 0) {
             setIsModalVisible(true);
           } else {
             console.log("No User found in playerHome fetch");
