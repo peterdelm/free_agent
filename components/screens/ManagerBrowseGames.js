@@ -21,6 +21,34 @@ const ManagerBrowseGames = ({ navigation }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const fetchData = async () => {
+    try {
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      const requestOptions = {
+        headers,
+      };
+
+      // Use async/await instead of chaining .then() for readability
+      const res = await authFetch(url, requestOptions);
+      if (res.status === 200) {
+        const data = res.body;
+        setActiveGames(data.availableGames || []);
+      } else {
+        throw new Error("Network response was not ok.");
+      }
+    } catch (error) {
+      console.error("Error making authenticated request:", error);
+      // Optionally set an error state to display an error message
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchCurrentUser = async () => {
@@ -32,37 +60,11 @@ const ManagerBrowseGames = ({ navigation }) => {
         }
       };
       fetchCurrentUser();
+      fetchData();
     }, [])
   );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
-
-        const headers = {
-          "Content-Type": "application/json",
-        };
-
-        const requestOptions = {
-          headers,
-        };
-
-        // Use async/await instead of chaining .then() for readability
-        const res = await authFetch(url, requestOptions);
-        if (res.status === 200) {
-          const data = res.body;
-          setActiveGames(data.availableGames || []);
-        } else {
-          throw new Error("Network response was not ok.");
-        }
-      } catch (error) {
-        console.error("Error making authenticated request:", error);
-        // Optionally set an error state to display an error message
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
