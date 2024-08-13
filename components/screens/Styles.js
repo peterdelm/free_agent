@@ -82,7 +82,7 @@ const Styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#EB6FBD",
     textAlign: "center",
-    textAlignVertical: "center",
+    verticalTextAlign: "center",
   },
   TextInput: {
     height: 50,

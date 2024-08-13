@@ -210,10 +210,6 @@ function HomeScreen({ navigation, message }) {
         sport: selectedSport.sport,
         sportId: selectedSportId,
       };
-
-      console.log("CreateGame Request date is: " + body.date);
-      console.log("CreateGame Request location is: " + body.location);
-
       const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
       const postGame = async () => {

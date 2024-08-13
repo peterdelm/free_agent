@@ -1,4 +1,13 @@
-import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Modal,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
@@ -13,7 +22,7 @@ import authFetch from "../../api/authCalls.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
-
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [currentUser, setCurrentUser] = useState({});
 
   useFocusEffect(
@@ -22,7 +31,13 @@ function PlayerHome({ navigation }) {
         try {
           const user = await getCurrentUser();
           setCurrentUser(user);
+          if (currentUser && currentUser.playerIds.length === 0) {
+            setIsModalVisible(true);
+          } else {
+            console.log("No User found in playerHome fetch");
+          }
         } catch (error) {
+          console.log(currentUser);
           console.error("Error during currentUser fetch:", error);
         }
       };
@@ -135,6 +150,13 @@ function PlayerHome({ navigation }) {
   //   fetchData();
   // }, []);
 
+  const handleCreateProfilePress = () => {
+    {
+      setIsModalVisible(false);
+      navigation.navigate("CreatePlayer");
+    }
+  };
+
   let allActiveGames = []; // Initialize as empty array initially
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
@@ -183,6 +205,33 @@ function PlayerHome({ navigation }) {
         ) : (
           <MapComponent activeGames={[]} />
         )}
+        {/* Modal for creating player profile */}
+        <Modal
+          visible={isModalVisible}
+          animationType="fade"
+          transparent={true}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                You don't have a player profile. Would you like to create one?
+              </Text>
+              <TouchableOpacity
+                onPress={() => handleCreateProfilePress()}
+                style={styles.modalButton}
+              >
+                <Text style={styles.modalButtonText}>Create Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setIsModalVisible(false)}
+                style={styles.modalButton}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <View style={Styles.playerHomeTextContentContainer}>
           <View style={Styles.playerHomeAvailableGamesContainer}>
             <View style={[Styles.playerHomeAvailableGamesHeader]}>
@@ -216,5 +265,47 @@ function PlayerHome({ navigation }) {
     </View>
   );
 }
+
+const viewPlayerStyles = StyleSheet.create({
+  text: {
+    fontSize: 20,
+    textAlign: "left",
+    textAlignVertical: "center",
+    lineHeight: Platform.select({ ios: 50 }),
+    padding: 10,
+  },
+});
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%", // Adjust width as needed
+    maxWidth: 400, // Set a max width to prevent it from getting too large
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  modalButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+});
 
 export default PlayerHome;

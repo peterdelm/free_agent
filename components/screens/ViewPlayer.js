@@ -1,13 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { View, Text, TouchableOpacity, Platform, Modal } from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import NavigationFooter from "./NavigationFooter";
 import { StyleSheet } from "react-native-web";
-
+import DeletePlayerPopup from "./DeletePlayerPopup"; // Adjust import path as needed
 function ViewPlayer({ navigation, message }) {
   const route = useRoute();
   const { playerId } = route.params;
@@ -15,6 +15,8 @@ function ViewPlayer({ navigation, message }) {
   const [loading, setLoading] = useState(true);
   const [refreshPlayers, setRefreshPlayers] = useState(false);
   const { refresh } = route.params || {};
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false); // State to track deletion status
 
   useEffect(() => {
     if (refresh) {
@@ -90,11 +92,23 @@ function ViewPlayer({ navigation, message }) {
 
   const handleDeletePlayerButtonPress = async () => {
     try {
-      const token = await getTokenFromStorage();
+      setIsDeleting(true);
+      await deletePlayer();
+      console.log("Player deleted successfully");
+      // Optionally navigate or update UI
+    } catch (error) {
+      console.error("Error deleting player:", error);
+    } finally {
+      setIsDeleting(false);
+      setModalVisible(false); // Close the modal after deletion
+    }
+  };
+
+  const deletePlayer = async () => {
+    try {
       const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
       const headers = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       };
 
       const requestOptions = {
@@ -102,8 +116,8 @@ function ViewPlayer({ navigation, message }) {
         headers,
       };
 
-      const res = await fetch(url, requestOptions);
-      if (res.ok) {
+      const res = await authFetch(url, requestOptions);
+      if (res.status === 200) {
         console.log("Player deleted successfully.");
         navigation.navigate("ManagePlayers", { refresh: true });
         throw new Error("Network response was not ok.");
@@ -117,7 +131,11 @@ function ViewPlayer({ navigation, message }) {
   if (loading) {
     return <Text>Loading...</Text>;
   }
+  // Function to open the modal
+  const openModal = () => setModalVisible(true);
 
+  // Function to close the modal
+  const closeModal = () => setModalVisible(false);
   return (
     <View
       style={{
@@ -204,7 +222,7 @@ function ViewPlayer({ navigation, message }) {
             Edit Player
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDeletePlayerButtonPress()}>
+        <TouchableOpacity onPress={openModal}>
           <Text
             style={[
               Styles.input,
@@ -222,6 +240,11 @@ function ViewPlayer({ navigation, message }) {
             Delete Player
           </Text>
         </TouchableOpacity>
+        <DeletePlayerPopup
+          isModalVisible={isModalVisible}
+          handleButtonPress={handleDeletePlayerButtonPress}
+          onClose={closeModal}
+        />
       </View>
       <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
@@ -234,7 +257,6 @@ const viewPlayerStyles = StyleSheet.create({
   text: {
     fontSize: 20,
     textAlign: "left",
-    textAlignVertical: "center",
     lineHeight: Platform.select({
       ios: 50,
     }),

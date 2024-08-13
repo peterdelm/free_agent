@@ -1,6 +1,5 @@
 import {
   Button,
-  StyleSheet,
   Text,
   View,
   Image,
@@ -132,71 +131,85 @@ const CreatePlayer = ({ navigation }) => {
 
   const validateInputs = () => {
     if (!calibre) {
-      console.log(calibre);
-
-      console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
+      setErrorMessage("Please Select a Calibre");
+      return false;
+    }
+    if (!gender) {
+      setErrorMessage("Please Select a Gender");
+      return false;
+    }
+    if (!position) {
+      setErrorMessage("Please Select a Position");
+      return false;
+    }
+    if (!location) {
+      setErrorMessage("Please Select a Location");
+      return false;
+    } else {
+      return true;
     }
   };
 
   const onSubmit = () => {
     console.log(calibre);
 
-    validateInputs();
-    const body = {
-      gender,
-      calibre,
-      location,
-      additionalInfo,
-      position,
-      location,
-      travelRange,
-      sport: sport,
-      sportId: sportId,
-    };
+    const validation = validateInputs();
+    if (validation) {
+      const body = {
+        gender,
+        calibre,
+        location,
+        additionalInfo,
+        position,
+        location,
+        travelRange,
+        sport: sport,
+        sportId: sportId,
+      };
 
-    console.log("CreatePlayer OnSubmit body is " + body.calibre);
-    const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
+      console.log("CreatePlayer OnSubmit body is " + body.calibre);
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
 
-    const postPlayer = async () => {
-      try {
-        console.log("URL is " + url);
-        console.log("postPlayer async request called");
+      const postPlayer = async () => {
+        try {
+          console.log("URL is " + url);
+          console.log("postPlayer async request called");
 
-        const headers = {
-          "Content-Type": "application/json",
-        };
+          const headers = {
+            "Content-Type": "application/json",
+          };
 
-        const requestOptions = {
-          method: "POST",
-          headers,
-          body: JSON.stringify(body),
-        };
+          const requestOptions = {
+            method: "POST",
+            headers,
+            body: JSON.stringify(body),
+          };
 
-        await authFetch(url, requestOptions).then((res) => {
-          if (res.success) {
-            console.log("Submit successful");
-            navigation.navigate("ManagePlayers", {
-              successMessage:
-                "Player created successfully. Free Agent pending.",
-            });
-          } else {
-            setErrorMessage(
-              "There was a problem creating your player profile. Please try again later."
-            );
+          await authFetch(url, requestOptions).then((res) => {
+            if (res.status === 200) {
+              console.log("Submit successful");
+              navigation.navigate("ManagePlayers", {
+                successMessage:
+                  "Player created successfully. Free Agent pending.",
+              });
+            } else {
+              setErrorMessage(
+                "There was a problem creating your player profile. Please try again later."
+              );
 
-            console.log("Submit Failed");
-          }
-        });
-      } catch (error) {
-        setErrorMessage(
-          "There was a problem creating your player profile. Please try again later."
-        );
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    postPlayer();
+              console.log("Submit Failed");
+            }
+          });
+        } catch (error) {
+          setErrorMessage(
+            "There was a problem creating your player profile. Please try again later."
+          );
+          console.log("Error making authenticated request:", error);
+          // Handle error
+        }
+      };
+      postPlayer();
+    }
   };
 
   if (isSportSelected === true) {
@@ -287,9 +300,11 @@ const CreatePlayer = ({ navigation }) => {
           />
           <View>
             {errorMessage ? (
-              <Text style={[Styles.errorText, { marginTop: 0 }]}>
-                {errorMessage}
-              </Text>
+              <View style={{ padding: 30 }}>
+                <Text style={[Styles.errorText, { marginTop: 0 }]}>
+                  {errorMessage}
+                </Text>
+              </View>
             ) : null}
             <TouchableOpacity>
               <Button
@@ -327,6 +342,7 @@ const CreatePlayer = ({ navigation }) => {
             key={index}
             style={[
               Styles.input,
+              Styles.align,
               (style = {
                 fontSize: 35,
                 textAlign: "center",
