@@ -161,7 +161,7 @@ const ManagerBrowseGames = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <ActivityIndicator size="large" color="#0000ff" />
+              <Text>No Games Coming Up</Text>
             </View>
           )}
         </View>
@@ -188,7 +188,7 @@ const ManagerBrowseGames = ({ navigation }) => {
                 alignItems: "center",
               }}
             >
-              <Text>No Games Yet</Text>
+              <Text>No Games Played</Text>
             </View>
           )}
         </View>
