@@ -5,7 +5,6 @@ import {
   ScrollView,
   Image,
   TextInput,
-  Keyboard,
   Platform,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
@@ -44,10 +43,13 @@ function HomeScreen({ navigation, message }) {
   const [positionList, setPositionList] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
+  const [defaultValue, setDefaultValue] = useState("");
+  const [resetTrigger, setResetTrigger] = useState(false); // State to trigger reset
 
   const autoCompletePickerRef = useRef(null);
   const timePickerRef = useRef(null);
   const datePickerRef = useRef(null);
+  const pickerRef = useRef(null);
 
   const handleSportChange = (selectedSport) => {
     // Check if the selected item is the default placeholder
@@ -60,15 +62,18 @@ function HomeScreen({ navigation, message }) {
       setPositionList([]);
       setSelectedSportId(null);
     } else {
+      console.log("selectedSport.calibre is", selectedSport.calibre);
+      console.log("Calibre is", calibre);
+
       setSelectedSport(selectedSport);
       setCalibreList(selectedSport.calibre);
       setGameTypeList(selectedSport.gameType);
       setGameLengthList(selectedSport.gameLength);
       setPositionList(selectedSport.position);
       setSelectedSportId(selectedSport.id);
-
+      handleCalibreChange("");
       console.log("Selected sport is:", selectedSport.sport);
-      console.log("Selected sport details:", selectedSport.calibre);
+      setDefaultValue("");
     }
   };
 
@@ -82,6 +87,7 @@ function HomeScreen({ navigation, message }) {
   };
 
   const handleCalibreChange = (input) => {
+    console.log("Handle Calibre Change called");
     setCalibre(input);
   };
   const handleGenderChange = (input) => {
@@ -263,6 +269,12 @@ function HomeScreen({ navigation, message }) {
                   if (datePickerRef.current) {
                     datePickerRef.current.resetDatePickerValues();
                   }
+                  // Trigger reset in Pickering component
+                  setResetTrigger(true);
+
+                  // Reset the trigger state immediately to allow further resets
+                  setTimeout(() => setResetTrigger(false), 0);
+
                   console.log("Submit successful");
                   navigation.navigate("ManagerBrowseGames", {
                     successMessage:
@@ -276,7 +288,6 @@ function HomeScreen({ navigation, message }) {
             });
         } catch (error) {
           console.log("Error making authenticated request:", error);
-          // Handle error
         }
       };
       postGame();
@@ -320,19 +331,16 @@ function HomeScreen({ navigation, message }) {
         }}
       >
         {/* LOCATION SELECTOR */}
-        <AddressInput handleLocationSelected={handleLocationSelected} />
+        <AddressInput
+          handleLocationSelected={handleLocationSelected}
+          resetTrigger={resetTrigger}
+        />
 
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           listViewDisplayed={false}
-          // horizontal={true}
-          // nestedScrollEnabled={true}
         >
-          {/* <View style={Styles.successBanner}>
-          {<Banner message={successMessage} />}
-        </View> */}
-
           <View style={{ flex: 1, alignItems: "center" }}>
             <View
               style={[
@@ -388,17 +396,19 @@ function HomeScreen({ navigation, message }) {
                     onValueChange={handleGameTypeChange}
                     language={gameTypeList}
                     label="Game Type"
+                    resetTrigger={resetTrigger}
                   />
                 </View>
               </View>
             </View>
             <Picker
               style={[Styles.sportsPickerDropdown, Styles.input]}
-              defaultValue=""
               placeholderTextColor="grey"
               language={calibreList}
               onValueChange={handleCalibreChange}
               label="Calibre"
+              defaultValue={defaultValue}
+              resetTrigger={resetTrigger}
             />
             <Picker
               style={[Styles.sportsPickerDropdown, Styles.input]}
@@ -407,6 +417,8 @@ function HomeScreen({ navigation, message }) {
               onValueChange={handleGenderChange}
               language={genderList}
               label="Gender"
+              ref={pickerRef}
+              resetTrigger={resetTrigger}
             />
             <Picker
               style={[Styles.sportsPickerDropdown, Styles.input]}
@@ -415,6 +427,8 @@ function HomeScreen({ navigation, message }) {
               onValueChange={handlePositionChange}
               language={positionList}
               label="Position"
+              ref={pickerRef}
+              resetTrigger={resetTrigger}
             />
 
             {/* DATE SELECTOR */}
@@ -437,6 +451,8 @@ function HomeScreen({ navigation, message }) {
               onValueChange={handleGameLengthChange}
               language={gameLengthList}
               label="Game Length"
+              ref={pickerRef}
+              resetTrigger={resetTrigger}
             />
             <TextInput
               style={[Styles.additionalInfo, Styles.input]}
@@ -450,6 +466,11 @@ function HomeScreen({ navigation, message }) {
             <View style={Styles.requestPlayerContainer}>
               <View style={Styles.requestPlayerButtonContainer}>
                 <TouchableOpacity onPress={() => handleFormSubmit()}>
+                  {errorMessage ? (
+                    <Text style={[Styles.errorText, { marginTop: 0 }]}>
+                      {errorMessage}
+                    </Text>
+                  ) : null}
                   <View style={Styles.requestPlayerButton}>
                     <Text style={Styles.requestPlayerButtonText}>
                       Request a Player
@@ -459,11 +480,6 @@ function HomeScreen({ navigation, message }) {
                       style={Styles.requestPlayerButtonImage}
                     />
                   </View>
-                  {errorMessage ? (
-                    <Text style={[Styles.errorText, { marginTop: 0 }]}>
-                      {errorMessage}
-                    </Text>
-                  ) : null}
                 </TouchableOpacity>
               </View>
             </View>

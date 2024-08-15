@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 navigator.geolocation = require("react-native-geolocation-service");
 import Styles from "./Styles";
 
-const AddressInput = ({ handleLocationSelected }) => {
+const AddressInput = ({ handleLocationSelected, resetTrigger }) => {
   // onPress = { handleLocationSelected };
+
+  const googlePlacesRef = useRef(null);
+
+  // Clear the input field when resetTrigger changes
+  React.useEffect(() => {
+    if (resetTrigger && googlePlacesRef.current) {
+      googlePlacesRef.current.setAddressText(""); // Clear the input text
+    }
+  }, [resetTrigger]);
 
   return (
     <GooglePlacesAutocomplete
+      ref={googlePlacesRef} // Attach ref to the component
       placeholder="Enter Location"
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true

@@ -13,6 +13,21 @@ class Pickering extends Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    // Reset values when reset prop changes
+    if (
+      prevProps.resetTrigger !== this.props.resetTrigger &&
+      this.props.resetTrigger
+    ) {
+      console.log("Reset triggered by parent");
+      this.resetValues();
+    }
+  }
+
+  resetValues = () => {
+    this.setState({ language: "" }); // Reset selectedLanguage to an empty string
+  };
+
   render() {
     return (
       <View style={[this.state.style]}>
