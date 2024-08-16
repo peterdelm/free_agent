@@ -180,10 +180,10 @@ function ViewUser({ navigation, message }) {
             </Text>
           </Text>
 
-          {/* <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Calibre: </Text>
-            {player.calibre}
+          <Text style={viewPlayerStyles.text}>
+            <Text style={{ fontWeight: "bold" }}>Email: {user.email}</Text>
           </Text>
+          {/*
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Location: </Text>
             {player.location}
