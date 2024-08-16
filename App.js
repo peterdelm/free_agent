@@ -18,6 +18,7 @@ import PlayerHome from "./components/screens/PlayerHome.js";
 import ResetPasswordScreen from "./components/screens/ResetPasswordScreen.js";
 import NewPasswordScreen from "./components/screens/NewPasswordScreen.js";
 import PlayerBrowseGames from "./components/screens/PlayerBrowseGames.js";
+import ViewUser from "./components/screens/ViewUser.js";
 
 import UserProfile from "./components/screens/UserProfile.js";
 import * as Linking from "expo-linking";
@@ -109,6 +110,11 @@ function ManagerStack() {
         component={ManagerBrowseGames}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="ViewUser"
+        component={ViewUser}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }
@@ -164,6 +170,11 @@ function PlayerStack() {
       <Stack.Screen
         name="BrowseAvailableGames"
         component={BrowseAvailableGames}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ViewUser"
+        component={ViewUser}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

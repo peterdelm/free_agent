@@ -78,19 +78,20 @@ const UserProfile = ({ navigation }) => {
       </View>
       <View style={Styles.userProfileContentContainer}>
         <View style={Styles.profileLinksContainer}>
-          <View style={Styles.profileLinkContainer}>
-            <View style={Styles.profileLinkTextContainer}>
-              <Text style={{ fontSize: 20, textAlignVertical: "center" }}>
-                Show Profile
-              </Text>
-            </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() =>
+              navigation.navigate("ViewUser", { userId: user.userId })
+            }
+          >
+            <Text style={Styles.profileLinkTextContainer}>Show Profile</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
                 source={require("../../assets/chevron-right-solid.png")}
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
             onPress={() => navigation.navigate("ManagePlayers")}
