@@ -8,13 +8,16 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import React, { useEffect, useState, useRef, Component } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
+import React, { useEffect, useState, useRef } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
+import getCurrentUser from "./getCurrentUser.helper.js";
 import authFetch from "../../api/authCalls.js";
 
 const CreatePlayer = ({ navigation }) => {
@@ -42,6 +45,8 @@ const CreatePlayer = ({ navigation }) => {
   const [selectedSportId, setSelectedSportId] = useState("");
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+  const [currentUser, setCurrentUser] = useState([]);
+  const [usersPlayerRoster, setUsersPlayerRoster] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -81,9 +86,6 @@ const CreatePlayer = ({ navigation }) => {
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'Game Created' notification
   };
 
   //Retrieve the relevant values for the selected sport
@@ -119,15 +121,57 @@ const CreatePlayer = ({ navigation }) => {
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
-        // Handle error
       }
     };
+
+    const fetchUsersPlayerRoster = async () => {
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players/playerRoster`;
+
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        const requestOptions = {
+          headers,
+        };
+
+        await authFetch(url, requestOptions)
+          .then((res) => {
+            console.log("Res in fetchPlayers is", res.body.players);
+            if (res.body.success) {
+              console.log("res was ok");
+
+              return res;
+            } else throw new Error("Network response was not ok.");
+          })
+          .then((res) => setUsersPlayerRoster(res.body.players))
+          .catch((error) => {
+            console.log("Error during fetch:", error);
+            // Handle specific error scenarios
+          });
+      } catch {
+        console.log("error in fetch player roster");
+      }
+    };
+    fetchUsersPlayerRoster();
+
     fetchData();
   }, []);
 
-  // const handleError = (errror, input) => {
-  //   setErrors((prevState) => ({ ...prevState, [input]: error }));
-  // };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
   const validateInputs = () => {
     if (!calibre) {
@@ -172,7 +216,6 @@ const CreatePlayer = ({ navigation }) => {
 
       const postPlayer = async () => {
         try {
-          console.log("URL is " + url);
           console.log("postPlayer async request called");
 
           const headers = {
@@ -321,7 +364,14 @@ const CreatePlayer = ({ navigation }) => {
     const noActiveGames = <Text>...</Text>;
 
     if (sportSpecificValues.length > 0) {
-      allActiveGames = sportSpecificValues.map((sport, index) => (
+      const activeSports = usersPlayerRoster.map((profile) => profile.sport);
+      const uniqueSports = [...new Set(activeSports)];
+      const filteredSportOptions = sportSpecificValues.filter(
+        (item) => !uniqueSports.includes(item.sport)
+      );
+      console.log("filteredSportOptions are", filteredSportOptions);
+
+      allActiveGames = filteredSportOptions.map((sport, index) => (
         <TouchableOpacity
           key={sport.id}
           onPress={() => {

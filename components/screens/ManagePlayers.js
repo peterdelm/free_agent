@@ -75,10 +75,6 @@ const ManagePlayers = ({ navigation }) => {
     }, [refreshPlayers])
   );
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, [refreshPlayers]);
-
   let allActiveGames = []; // Initialize as null initially
   const noActiveGames = <Text>No Players yet. Why not</Text>;
 

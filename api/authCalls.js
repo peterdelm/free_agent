@@ -41,16 +41,24 @@ export const refreshAccessToken = async () => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/refresh-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-
+    //attempt to refresh the Access Token
+    console.log("Calling refreshAccessToken");
+    const response = await fetch(
+      `${EXPO_PUBLIC_BASE_URL}api/users/refreshToken`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       await storeTokens(data.accessToken, data.refreshToken);
       return data.accessToken;
+    }
+    if (refreshResponse.status === 403) {
+      // Refresh token is invalid or expired, handle logout or re-authentication
+      return false;
     } else {
       console.error("Failed to refresh access token:", response.statusText);
       return null;
@@ -58,6 +66,33 @@ export const refreshAccessToken = async () => {
   } catch (error) {
     console.error("Error refreshing access token:", error);
     return null;
+  }
+};
+
+export const verifyToken = async (token) => {
+  console.log("calling checkToken validity");
+
+  try {
+    const response = await fetch(
+      `${EXPO_PUBLIC_BASE_URL}api/users/verifyToken`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response.status);
+    if (response.status === 200) {
+      return true;
+    }
+    if (response.status === 403) {
+      console.log("Token Expired");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error verifying to token:", error);
+    return false;
   }
 };
 
@@ -88,8 +123,11 @@ const authFetch = async (url, options = {}) => {
   if (response.status === 401) {
     // Try to refresh the token
     console.log("Response status is 401. Attempting to refresh token...");
+
     const refreshToken = await getRefreshToken();
+    console.log("Refresh Token is", refreshToken);
     if (refreshToken) {
+      console.log("Sending request to refresh AuthToken");
       const refreshResponse = await fetch(
         `${EXPO_PUBLIC_BASE_URL}api/users/refreshToken`,
         {
@@ -100,6 +138,8 @@ const authFetch = async (url, options = {}) => {
           },
         }
       );
+
+      // console.log("refreshResponse.status  is ", refreshResponse.status);
 
       if (refreshResponse.status === 200) {
         const refreshData = await refreshResponse.json();
@@ -113,13 +153,22 @@ const authFetch = async (url, options = {}) => {
 
         // Retry the original request with the new token
         response = await fetch(url, options);
+      } else if (refreshResponse.status === 401) {
+        console.log(
+          "Users Refresh Token is Expired With Status 401. Returning False"
+        );
+        return refreshResponse;
+      } else if (refreshResponse.status === 403) {
+        console.log(
+          "Users Refresh Token is Expired With Status 403. Returning False"
+        );
+        return refreshResponse;
       } else {
-        // Refresh token is invalid or expired, handle logout or re-authentication
         console.error(
           "Response status for refreshResponse was not 200. Response was: ",
           refreshResponse
         );
-        throw new Error("Refresh token is invalid or expired");
+        // throw new Error("Refresh token is invalid or expired");
       }
     } else {
       // No refresh token available, handle logout or re-authentication

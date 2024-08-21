@@ -2,11 +2,17 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getAccessToken,
+  getRefreshToken,
   saveAccessToken,
   saveRefreshToken,
 } from "../utils/storage";
-import { refreshAccessToken, loginRequest } from "../api/authCalls.js";
+import {
+  refreshAccessToken,
+  loginRequest,
+  verifyToken,
+} from "../api/authCalls.js";
 import * as SecureStore from "expo-secure-store";
+import { EXPO_PUBLIC_BASE_URL } from "../.config.js";
 
 // Create a Context for the Auth
 const AuthContext = createContext();
@@ -18,37 +24,54 @@ export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
-    const loadStorageData = async () => {
+    const initializeAuth = async () => {
       try {
         const storedUser = await AsyncStorage.getItem("user");
-        console.log("storedUser is", storedUser);
         const storedAccessToken = await AsyncStorage.getItem("accessToken");
+        const storedRefreshToken = await getRefreshToken();
 
         if (storedUser && storedAccessToken) {
           setUser(JSON.parse(storedUser));
           setAccessToken(storedAccessToken);
+
+          //Check Access token validity
+          const isAccessTokenValid = await verifyToken(storedAccessToken);
+          if (!isAccessTokenValid) {
+            console.log("Token is not Valid");
+            //if the access Token is invalid, check if the Refresh Token is valid
+            const isRefreshTokenValid = await verifyToken(storedRefreshToken);
+            if (!isRefreshTokenValid) {
+              //if the Refresh Token is invalid, logout the user
+              console.log("Refresh Token is invalid. Logging user out...");
+              await logout();
+            } else {
+              //if the Refresh Token is valid, generate a new Access Token
+              console.log(
+                "Refresh Token is valid. Requesting new Access Token..."
+              );
+              const newAccessToken = await refreshAccessToken();
+              console.log("New access token is", newAccessToken);
+            }
+          }
         }
       } catch (error) {
-        console.error("Error loading storage data:", error);
+        console.error("Error initializing auth:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadStorageData();
+    initializeAuth();
   }, []);
 
   const login = async (emailAddress, password) => {
     try {
       const userData = await loginRequest(emailAddress, password);
       if (userData.status === 200) {
-        console.log("userData.success === true");
-
-        setUserContext(userData);
+        await setUserContext(userData);
       } else if (userData.status === 401) {
         console.log("Incorrect Login Info");
       }
-      console.log("Userd data is:", userData);
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -56,14 +79,12 @@ export function AuthProvider({ children }) {
 
   const setUserContext = async (userData) => {
     const userContext = await userData.json();
-    console.log("userData is", userContext);
-
     const accessToken = userContext.token.accessToken;
     const refreshToken = userContext.token.refreshToken;
     const user = userContext.user;
-    console.log("Refresh token received. Saving to backend: ", refreshToken);
 
     setUser(user);
+    setAccessToken(accessToken);
 
     await saveRefreshToken(refreshToken);
     await saveAccessToken(accessToken);
@@ -73,10 +94,11 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await clearUserFromStorage();
-      deleteRefreshToken();
+      await deleteRefreshToken();
       setUser(null);
+      setAccessToken(null);
     } catch (error) {
-      console.error("Failed to log out:", error);
+      console.error("Failed to  log out:", error);
     }
   };
 
@@ -87,15 +109,18 @@ export function AuthProvider({ children }) {
   };
 
   const refreshAuthToken = async () => {
-    const newAccessToken = await refreshAccessToken();
-    if (newAccessToken) {
-      setAccessToken(newAccessToken);
-      await AsyncStorage.setItem("accessToken", newAccessToken);
-    } else {
-      setUser(null);
-      setAccessToken(null);
-      await AsyncStorage.removeItem("user");
-      await AsyncStorage.removeItem("accessToken");
+    try {
+      const newAccessToken = await refreshAccessToken();
+      console.log("newAccessToken isFinite", newAccessToken);
+      if (newAccessToken) {
+        setAccessToken(newAccessToken);
+        await AsyncStorage.setItem("accessToken", newAccessToken);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Failed to refresh access token:", error);
+      return false;
     }
   };
 
@@ -108,7 +133,6 @@ export function AuthProvider({ children }) {
         loading,
         updateUserRole,
         accessToken,
-        refreshAuthToken,
       }}
     >
       {children}
@@ -134,7 +158,6 @@ const clearUserFromStorage = async () => {
   await AsyncStorage.removeItem("user");
 };
 
-// Function to delete the refresh token (e.g., during logout)
 async function deleteRefreshToken() {
   await SecureStore.deleteItemAsync("refreshToken");
 }

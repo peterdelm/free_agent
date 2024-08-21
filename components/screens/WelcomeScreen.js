@@ -12,20 +12,29 @@ function WelcomeScreen({ navigation }) {
   const handleLoginButtonPress = async (emailAddress, password) => {
     try {
       const user = await login(emailAddress, password);
-      console.log("User is, ", user);
+
       if (user) {
-        console.log("User exists");
+        console.log("User is", user);
+
         if (user.currentRole === "manager") {
+          console.log("user.currentRole === manager");
+
           navigation.navigate("ManagerHome");
         } else if (user.currentRole === "player") {
+          console.log("user.currentRole === player");
+
           navigation.navigate("PlayerHome");
+        } else {
+          setErrorMessage("Unknown user role");
+          console.log("ERROR: Unknown user role");
         }
       } else {
         setErrorMessage("Login credentials are incorrect or missing");
-        console.log("ERROR: User role is missing or unrecognized");
+        console.log("ERROR: Login credentials are incorrect or missing");
       }
     } catch (error) {
       setErrorMessage(error.message || "An unexpected error occurred");
+      console.log("ERROR:", error.message || "An unexpected error occurred");
     }
   };
 

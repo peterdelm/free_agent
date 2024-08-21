@@ -215,6 +215,7 @@ function MainApp() {
 
   return (
     <>
+      {console.log("User:", user)}
       {user ? ( // Check if a user is logged in
         user.currentRole === "manager" ? ( // If the user is a manager
           <>

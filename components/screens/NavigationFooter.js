@@ -10,8 +10,6 @@ const Footer = ({ navigation, currentRole }) => {
 
   const selectiveDisplay = () => {
     if (user.currentRole == "manager") {
-      console.log("Current Role is MANAGER");
-
       return (
         <View
           style={{
@@ -70,7 +68,6 @@ const Footer = ({ navigation, currentRole }) => {
       );
     }
     if (user.currentRole == "player") {
-      console.log("Current Role is PLAYER");
       return (
         <View
           style={{
