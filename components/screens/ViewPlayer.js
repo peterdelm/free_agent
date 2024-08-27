@@ -1,7 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text, TouchableOpacity, Platform, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  Modal,
+  Image,
+} from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
@@ -149,14 +156,41 @@ function ViewPlayer({ navigation, message }) {
           borderBottomWidth: 2,
           borderBottomStyle: "solid",
           flex: 0,
-          alignItems: "center",
+          alignItems: "start",
           width: "100%",
         }}
       >
-        <View style={Styles.screenHeader}>
-          <Text style={{ fontSize: 35, padding: 20 }}>PLAYER PROFILE</Text>
+        <View
+          style={[
+            Styles.screenHeader,
+            (style = {
+              justifyContent: "start",
+              flex: 0,
+            }),
+          ]}
+        >
+          <View
+            style={{
+              justifyContent: "start",
+            }}
+          >
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={require("../../assets/arrow-left-solid.png")}
+                style={{
+                  width: 40,
+                  height: 40,
+                  resizeMode: "contain",
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <Text style={{ fontSize: 35, padding: 20 }}>PLAYER PROFILE</Text>
+          </View>
         </View>
       </View>
+
       <View
         style={{
           flex: 1,
@@ -222,6 +256,7 @@ function ViewPlayer({ navigation, message }) {
             Edit Player
           </Text>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={openModal}>
           <Text
             style={[

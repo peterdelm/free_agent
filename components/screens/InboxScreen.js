@@ -42,6 +42,11 @@ const InboxScreen = ({ navigation }) => {
           <Text style={{ fontSize: 35, padding: 20 }}>Inbox</Text>
         </View>
       </View>
+      <View>
+        <Text style={{ fontSize: 25, paddingBottom: 400 }}>
+          No Messages Yet...
+        </Text>
+      </View>
       <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>

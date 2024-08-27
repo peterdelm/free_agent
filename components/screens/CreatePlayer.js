@@ -394,7 +394,7 @@ const CreatePlayer = ({ navigation }) => {
               Styles.input,
               Styles.align,
               (style = {
-                fontSize: 35,
+                fontSize: 30,
                 textAlign: "center",
                 textAlignVertical: "center",
                 lineHeight: Platform.select({

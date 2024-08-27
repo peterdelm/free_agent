@@ -5,11 +5,14 @@ import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import { useAuth } from "../../contexts/authContext.js";
+import ConfirmLogoutPopup from "./ConfirmLogoutPopup.js"; // Adjust import path as needed
+import SwitchingManagerPlayerModal from "./SwitchingManagerPlayerModal.js";
 
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [alternateRoleText, setAlternateRoleText] = useState("");
-
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
   const { user, updateUserRole, logout } = useAuth();
 
   useEffect(() => {
@@ -37,6 +40,16 @@ const UserProfile = ({ navigation }) => {
     }
   };
 
+  const showLoadingWithTimeout = (switchToValue) => {
+    openLoadingScreen();
+
+    // Set a timeout to close the modal after 2 seconds
+    setTimeout(() => {
+      closeLoadingScreen();
+      toggleProfile();
+    }, 2000); // 2000 milliseconds = 2 seconds
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -45,6 +58,16 @@ const UserProfile = ({ navigation }) => {
       console.log("Error during handleLogout: ", error);
     }
   };
+
+  // Function to open the modal
+  const openModal = () => setModalVisible(true);
+
+  // Function to close the modal
+  const closeModal = () => setModalVisible(false);
+
+  const openLoadingScreen = () => setLoadingScreenVisible(true);
+
+  const closeLoadingScreen = () => setLoadingScreenVisible(false);
 
   let allActiveGames = [];
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
@@ -135,7 +158,7 @@ const UserProfile = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
-            onPress={() => toggleProfile()}
+            onPress={showLoadingWithTimeout}
           >
             <Text style={Styles.profileLinkTextContainer}>
               Switch to {alternateRoleText}
@@ -176,9 +199,7 @@ const UserProfile = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
-            onPress={() => {
-              handleLogout();
-            }}
+            onPress={openModal}
           >
             <Text style={Styles.profileLinkTextContainer}>Logout </Text>
             <View style={Styles.profileLinkImageContainer}>
@@ -199,6 +220,17 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
+          <ConfirmLogoutPopup
+            isModalVisible={isModalVisible}
+            handleButtonPress={handleLogout}
+            onClose={closeModal}
+          />
+          <SwitchingManagerPlayerModal
+            handleButtonPress={handleLogout}
+            onClose={closeLoadingScreen}
+            isVisible={isLoadingScreenVisible}
+            switchTo={alternateRoleText}
+          />
         </View>
       </View>
       <NavigationFooter navigation={navigation}>

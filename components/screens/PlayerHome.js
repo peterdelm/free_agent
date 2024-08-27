@@ -11,7 +11,6 @@ import {
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
@@ -54,17 +53,6 @@ function PlayerHome({ navigation }) {
   const route = useRoute();
   const successMessage = route.params || {};
 
-  // const getTokenFromStorage = async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("@session_token");
-  //     console.log("Token is " + token);
-  //     return token;
-  //   } catch (error) {
-  //     console.log("Error retrieving token from AsyncStorage:", error);
-  //     return null;
-  //   }
-  // };
-
   useFocusEffect(
     React.useCallback(() => {
       const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites/`;
@@ -89,20 +77,6 @@ function PlayerHome({ navigation }) {
             setActiveGames(response.body.availableGames);
             return response;
           }
-
-          // .then((res)c => {
-          //   if (res.ok) {
-          //     console.log("res was ok");
-          //     return res.json();
-          //   } else throw new Error("Network response was not ok.");
-          // })
-          // .then((res) => setActiveGames(res.availableGames))
-          // .then(console.log("Active games are: ", activeGames))
-          // // .then((res) => setActiveGames(res.activeGames))
-          // .catch((error) => {
-          //   console.log("Error during games invites fetch:", error);
-          //   // Handle specific error scenarios
-          // });
         } catch (error) {
           console.log("Error making authenticated request:", error);
           // Handle error
@@ -111,45 +85,6 @@ function PlayerHome({ navigation }) {
       fetchData();
     }, [])
   );
-
-  // useEffect(() => {
-  //   const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
-
-  //   const fetchData = async () => {
-  //     try {
-  //       // const token = await getTokenFromStorage();
-  //       // console.log("Token is " + token);
-  //       console.log("URL is " + url);
-
-  //       const headers = {
-  //         "Content-Type": "application/json",
-  //         // Authorization: `Bearer ${token}`,
-  //       };
-
-  //       const requestOptions = {
-  //         headers,
-  //       };
-
-  //       authFetch(url, requestOptions)
-  //         .then((res) => {
-  //           if (res.ok) {
-  //             console.log("res was ok");
-  //             return res.json();
-  //           } else throw new Error("Network response was not ok.");
-  //         })
-  //         .then((res) => setActiveGames(res.availableGames))
-  //         .then(console.log("Active games are: ", activeGames))
-  //         .catch((error) => {
-  //           console.log("Error during active games fetch: ", error);
-  //           // Handle specific error scenarios
-  //         });
-  //     } catch (error) {
-  //       console.log("Error making authenticated request:", error);
-  //       // Handle error
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
 
   const handleCreateProfilePress = () => {
     {
@@ -180,8 +115,8 @@ function PlayerHome({ navigation }) {
   }
 
   return (
-    <View style={Styles.playerHomeContainer}>
-      <View style={Styles.screenHeader}>
+    <View style={[Styles.playerHomeContainer]}>
+      <View style={[Styles.screenHeader]}>
         <Image
           resizeMode="cover"
           source={require("../../assets/prayingHands.png")}
@@ -193,7 +128,6 @@ function PlayerHome({ navigation }) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
-
             flex: 1,
           }}
         >

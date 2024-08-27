@@ -90,8 +90,16 @@ const ColorToggleButton = ({ user }) => {
         ios_backgroundColor="red"
         onValueChange={onToggleSwitch}
         value={isEnabled}
+        style={{ transform: [{ scale: 1.5 }] }}
       />
-      <Text style={[styles.buttonText, { color: isEnabled ? "green" : "red" }]}>
+      <Text
+        style={[
+          styles.buttonText,
+          {
+            color: isEnabled ? "green" : "red",
+          },
+        ]}
+      >
         {isEnabled ? "Active" : "Inactive"}
       </Text>
     </View>

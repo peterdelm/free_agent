@@ -1,17 +1,8 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Modal,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { Text, View, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import React from "react";
 
-const DeletePlayerPopup = ({ isModalVisible, handleButtonPress, onClose }) => {
-  console.log("DeletePlayer Popup");
+const ConfirmLogoutPopup = ({ isModalVisible, handleButtonPress, onClose }) => {
+  console.log("Confirm Logout Popup");
   return (
     <Modal
       visible={isModalVisible}
@@ -22,13 +13,13 @@ const DeletePlayerPopup = ({ isModalVisible, handleButtonPress, onClose }) => {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalText}>
-            Are you sure you want to delete this player profile?
+            Are you sure you want to log out?
           </Text>
           <TouchableOpacity
             onPress={handleButtonPress}
             style={styles.modalButton}
           >
-            <Text style={styles.modalButtonText}>Delete Player</Text>
+            <Text style={styles.modalButtonText}>Log Out</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onClose} style={styles.modalButton}>
             <Text style={styles.modalButtonText}>Cancel</Text>
@@ -71,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeletePlayerPopup;
+export default ConfirmLogoutPopup;

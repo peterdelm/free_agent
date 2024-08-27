@@ -1,5 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+// import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, StatusBar } from "react-native";
 import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -233,7 +233,7 @@ function MainApp() {
       ) : (
         <AuthStack /> // If no user is logged in, render the AuthStack
       )}
-      <StatusBar style="auto" />
+      {/* <StatusBar style="auto" /> */}
     </>
   );
 }
@@ -258,6 +258,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingTop: StatusBar.currentHeight, // Adds padding equal to the status bar height
     alignItems: "center",
     justifyContent: "center",
   },
