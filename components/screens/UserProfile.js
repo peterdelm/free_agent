@@ -7,13 +7,40 @@ import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import { useAuth } from "../../contexts/authContext.js";
 import ConfirmLogoutPopup from "./ConfirmLogoutPopup.js"; // Adjust import path as needed
 import SwitchingManagerPlayerModal from "./SwitchingManagerPlayerModal.js";
+import ColorToggleButton from "./ColorToggleButton.js";
+import CustomButton from "./CustomButton.js";
 
+import { useFocusEffect } from "@react-navigation/native";
+
+import getCurrentUser from "./getCurrentUser.helper.js";
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [alternateRoleText, setAlternateRoleText] = useState("");
   const [isModalVisible, setModalVisible] = useState(false);
   const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
   const { user, updateUserRole, logout } = useAuth();
+  const [currentUser, setCurrentUser] = useState({});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+          console.log("User is", user);
+          if (user && user.playerIds.length === 0) {
+            setIsModalVisible(true);
+          } else {
+            console.log("No User found in playerHome fetch");
+          }
+        } catch (error) {
+          console.log(currentUser);
+          console.error("Error during currentUser fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
   useEffect(() => {
     if (user) {
@@ -171,12 +198,18 @@ const UserProfile = ({ navigation }) => {
             </View>
           </TouchableOpacity>
           <View style={Styles.profileLinkContainer}>
-            <Text style={Styles.profileLinkTextContainer}>Referrals</Text>
-            <View style={Styles.profileLinkImageContainer}>
-              <Image
-                source={require("../../assets/chevron-right-solid.png")}
-                style={{ width: 20, height: 20, resizeMode: "contain" }}
-              />
+            <Text style={Styles.profileLinkTextContainer}>
+              Push Notifications
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                flex: 0,
+              }}
+            >
+              {currentUser && <CustomButton user={currentUser} />}
             </View>
           </View>
           <View style={Styles.profileLinkContainer}>

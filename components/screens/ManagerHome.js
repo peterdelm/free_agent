@@ -445,12 +445,12 @@ function HomeScreen({ navigation, message }) {
             />
             <Picker
               style={[Styles.sportsPickerDropdown, Styles.input]}
-              placeholder="Game Length (minutes)"
-              defaultValue=""
+              placeholder="60 Minutes"
+              defaultValue="60 Minutes"
               placeholderTextColor="grey"
               onValueChange={handleGameLengthChange}
               language={gameLengthList}
-              label="Game Length"
+              label="60 Minutes"
               ref={pickerRef}
               resetTrigger={resetTrigger}
             />

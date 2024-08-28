@@ -23,6 +23,7 @@ function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  const [playerLocation, setPlayerLocation] = useState({});
 
   useFocusEffect(
     React.useCallback(() => {
@@ -75,6 +76,7 @@ function PlayerHome({ navigation }) {
           if (response.body.success) {
             console.log("res was ok");
             setActiveGames(response.body.availableGames);
+            setPlayerLocation(response.body.playerLocation);
             return response;
           }
         } catch (error) {
@@ -123,20 +125,14 @@ function PlayerHome({ navigation }) {
           style={{ width: 50, height: 50, resizeMode: "contain" }}
         />
         <Text style={{ fontSize: 35, padding: 20 }}>Player Home</Text>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            flex: 1,
-          }}
-        >
-          {currentUser && <ColorToggleButton user={currentUser} />}
-        </View>
       </View>
       <View style={Styles.playerHomeContentContainer}>
         {activeGames && activeGames.length > 0 ? (
-          <MapComponent activeGames={activeGames} navigation={navigation} />
+          <MapComponent
+            activeGames={activeGames}
+            navigation={navigation}
+            playerLocation={playerLocation}
+          />
         ) : (
           <MapComponent activeGames={[]} />
         )}
