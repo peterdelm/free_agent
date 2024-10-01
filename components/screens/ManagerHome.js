@@ -15,6 +15,7 @@ import Picker from "./Picker.js";
 import GameTypePicker from "./GameTypePicker.js";
 import DatePicker from "./DatePicker.js";
 import TimePicker from "./TimePicker.js";
+import TimePickerNew from "./TimePickerNew.js";
 import NavigationFooter from "./NavigationFooter.js";
 import getCurrentUser from "./getCurrentUser.helper.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
@@ -198,6 +199,9 @@ function HomeScreen({ navigation, message }) {
 
   const onSubmit = async () => {
     const dateString = date.dateString;
+
+    const timeLog = time;
+    console.log("Submit clicked, time is ", timeLog);
 
     const validation = validateInputs();
     if (validation) {
@@ -443,6 +447,7 @@ function HomeScreen({ navigation, message }) {
               style={[Styles.datePickerButton, Styles.input]}
               ref={timePickerRef}
             />
+            {/* <TimePickerNew /> */}
             <Picker
               style={[Styles.sportsPickerDropdown, Styles.input]}
               placeholder="60 Minutes"

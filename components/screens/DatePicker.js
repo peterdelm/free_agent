@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Modal,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, Modal, TouchableOpacity } from "react-native";
 import Styles from "./Styles";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 
