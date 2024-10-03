@@ -19,12 +19,13 @@ class TimePicker extends Component {
     this.state = {
       modalVisible: false,
       inputValue: "Time",
+      pendingInputValue: "",
       selectedHour: "00",
       selectedMinute: "00",
-      hourRotation: 0,
-      minuteRotation: 0,
+      rotations: { hour: 0, minute: 0 },
       isHourSelector: true,
       clockDimensions: { x: 0, y: 0, width: 0, height: 0 },
+      isAM: true, // AM/PM state
     };
 
     this.clockRadius = Dimensions.get("window").width / 3;
@@ -40,49 +41,18 @@ class TimePicker extends Component {
   resetTimePickerValues = () => {
     this.setState({
       modalVisible: false,
-      selected: "",
       inputValue: "Time",
       selectedHour: "00",
       selectedMinute: "00",
+      isAM: true, // Reset AM/PM
     });
   };
 
   snapToNearest = (angle, isHourSelector) => {
     const totalValues = isHourSelector ? TOTAL_HOURS : TOTAL_MINUTES;
-
-    // Determine the value based on the angle
-    let value;
-
-    // Custom snapping logic for specific angles
-    if (angle > 15 && angle < 45) {
-      value = 30; // Snap to 1
-    } else if (angle > 45 && angle < 75) {
-      value = 60; // Snap to 2
-    } else if (angle > 75 && angle < 105) {
-      value = 90; // Snap to 3
-    } else if (angle > 105 && angle < 135) {
-      value = 120; // Snap to 4
-    } else if (angle > 135 && angle < 165) {
-      value = 150; // Snap to 5
-    } else if (angle > 165 && angle < 195) {
-      value = 180; // Snap to 6
-    } else if (angle > 195 && angle < 225) {
-      value = 210; // Snap to 7
-    } else if (angle > 225 && angle < 255) {
-      value = 240; // Snap to 8
-    } else if (angle > 255 && angle < 285) {
-      value = 270; // Snap to 9
-    } else if (angle > 285 && angle < 315) {
-      value = 300; // Snap to 10
-    } else if (angle > 315 && angle < 345) {
-      value = 330; // Snap to 11
-    } else if (angle > 345 && angle < -15) {
-      value = 360; // Snap to 12
-    } else {
-      value = Math.round(angle / (360 / totalValues));
-    }
-
-    return value;
+    const step = 360 / totalValues;
+    const snappedValue = Math.round(angle / step) * step;
+    return snappedValue;
   };
 
   handleLayout = (event) => {
@@ -102,55 +72,115 @@ class TimePicker extends Component {
 
   handlePanResponderMove = (e) => {
     const { pageX, pageY } = e.nativeEvent;
-    //
     const angle = this.calculateAngle(pageX, pageY);
+    const { isHourSelector } = this.state;
 
-    if (this.state.isHourSelector) {
-      const snappedAngle = this.snapToNearest(angle, true);
-      const hour = Math.round(angle / (360 / TOTAL_HOURS));
+    const snappedAngle = this.snapToNearest(angle, isHourSelector);
+    if (isHourSelector) {
+      const hour = Math.round(snappedAngle / (360 / TOTAL_HOURS));
       this.setState({
         selectedHour: hour.toString().padStart(2, "0"),
-        hourRotation: snappedAngle,
+        rotations: { ...this.state.rotations, hour: snappedAngle },
       });
     } else {
-      const minute = Math.round(angle / (360 / TOTAL_MINUTES));
-
+      const minute = Math.round(snappedAngle / (360 / TOTAL_MINUTES));
       this.setState({
         selectedMinute: minute.toString().padStart(2, "0"),
-        minuteRotation: angle,
+        rotations: { ...this.state.rotations, minute: snappedAngle },
       });
     }
   };
 
   handlePanResponderRelease = () => {
-    const { isHourSelector, hourRotation, minuteRotation } = this.state;
-    const angle = isHourSelector ? hourRotation : minuteRotation;
-
+    const { isHourSelector, rotations, isAM } = this.state;
     if (isHourSelector) {
-      const snappedAngle = this.snapToNearest(angle, true);
-      const hour = Math.round(angle / (360 / TOTAL_HOURS));
-
       this.setState({
-        selectedHour: hour,
-        hourRotation: angle, // keep the rotation for visual feedback
-        isHourSelector: false, // switch to minute selection
+        isHourSelector: false,
       });
     } else {
-      const selectedTime = `${this.state.selectedHour}:${this.state.selectedMinute}`;
+      const hour =
+        this.state.selectedHour === "12"
+          ? isAM
+            ? "00"
+            : "12"
+          : isAM
+            ? this.state.selectedHour
+            : String(Number(this.state.selectedHour) + 12).padStart(2, "0");
+      const selectedTime = `${hour}:${this.state.selectedMinute}`;
       this.setState({
-        // selectedMinute: selectedMinute,
-        inputValue: selectedTime,
-        modalVisible: false,
+        pendingInputValue: selectedTime,
       });
       this.props.onInputSelected(selectedTime);
     }
   };
 
+  handleCancelButtonPress = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  handleOkButtonPress = () => {
+    this.setState({
+      modalVisible: false,
+      inputValue: this.state.pendingInputValue,
+    });
+  };
+
   toggleDropdown = () => {
     this.setState({
       modalVisible: !this.state.modalVisible,
-      isHourSelector: true, // Start with hour selection each time
+      isHourSelector: true,
+      isAM: true, // Reset AM/PM selection
     });
+  };
+
+  toggleAMPM = () => {
+    this.setState((prevState) => ({ isAM: !prevState.isAM }));
+  };
+
+  renderAMPMToggle = () => {
+    const { isAM } = this.state;
+    return (
+      <View style={styles.amPmContainer}>
+        <TouchableOpacity
+          style={[
+            styles.amPmButton,
+            styles.amButton,
+
+            isAM && styles.amPmButtonActive, // Apply active style for AM
+          ]}
+          onPress={() => this.setState({ isAM: true })}
+        >
+          <Text
+            style={[
+              styles.amPmText,
+              isAM && styles.amPmTextActive, // Active text color for AM
+            ]}
+          >
+            AM
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.amPmButton,
+            styles.pmButton,
+            !isAM && styles.amPmButtonActive, // Apply active style for PM
+          ]}
+          onPress={() => this.setState({ isAM: false })}
+        >
+          <Text
+            style={[
+              styles.amPmText,
+              !isAM && styles.amPmTextActive, // Active text color for PM
+            ]}
+          >
+            PM
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   renderClockNumbers = () => {
@@ -172,13 +202,28 @@ class TimePicker extends Component {
     });
   };
 
+  convertToAMPM = (inputValue) => {
+    if (inputValue == "Time") {
+      return "Time";
+    } else {
+      const [hour, minute] = inputValue.split(":").map(Number);
+
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const hour12 = hour % 12 || 12; // Convert to 12-hour format and handle "0" as "12"
+
+      return `${hour12}:${minute < 10 ? `0${minute}` : minute} ${ampm}`;
+    }
+  };
+
   render() {
     const {
       selectedHour,
       selectedMinute,
-      hourRotation,
-      minuteRotation,
+      rotations,
       isHourSelector,
+      inputValue,
+      modalVisible,
+      isAM,
     } = this.state;
 
     return (
@@ -187,16 +232,42 @@ class TimePicker extends Component {
           onPress={this.toggleDropdown}
           accessibilityLabel="Select Time"
         >
-          <Text style={{ textAlign: "center" }}>{this.state.inputValue}</Text>
+          <Text style={{ textAlign: "center" }}>
+            {this.convertToAMPM(inputValue)}
+          </Text>
         </TouchableOpacity>
 
-        <Modal visible={this.state.modalVisible} animationType="slide">
+        <Modal visible={modalVisible} animationType="slide">
           <View style={styles.container}>
-            {/* Time Display */}
-            <Text style={styles.selectedTimeText}>
-              {selectedHour}:{selectedMinute}
-            </Text>
+            {/* Time Display inside the blue square */}
+            <View
+              style={{
+                // borderColor: "blue", // Blue square border
+                // borderWidth: 2,
+                justifyContent: "center", // Center vertically
+                alignItems: "center", // Center horizontally
+                flexDirection: "row",
+              }}
+            >
+              {/* Time Text */}
+              <Text
+                style={[
+                  styles.selectedTimeText,
+                  {
+                    // borderWidth: 2, // No border for the text itself
+                    textAlign: "center", // Center the text inside
+                  },
+                ]}
+              >
+                {selectedHour}:{selectedMinute}
+                {/* {isAM ? "AM" : "PM"} */}
+              </Text>
 
+              {/* Render AM/PM Toggle */}
+              {this.renderAMPMToggle()}
+            </View>
+
+            {/* Rest of the clock components */}
             <View
               style={styles.clockContainer}
               onLayout={this.handleLayout}
@@ -211,13 +282,13 @@ class TimePicker extends Component {
                   {
                     transform: [
                       { translateX: -1 },
-                      { rotate: `${hourRotation}deg` },
+                      { rotate: `${rotations.hour}deg` },
                     ],
                     height: this.clockRadius / 1,
                   },
                 ]}
               />
-              {/* Minute hand, visible only when minutes are being selected */}
+              {/* Minute hand */}
               {!isHourSelector && (
                 <View
                   style={[
@@ -226,7 +297,7 @@ class TimePicker extends Component {
                       backgroundColor: "red",
                       transform: [
                         { translateX: -1 },
-                        { rotate: `${minuteRotation}deg` },
+                        { rotate: `${rotations.minute}deg` },
                       ],
                       height: this.clockRadius,
                     },
@@ -235,15 +306,34 @@ class TimePicker extends Component {
               )}
               <View style={styles.centerDot} />
             </View>
-
-            <TouchableOpacity
-              style={styles.selectButton}
-              onPress={this.handleTimeSelect}
-            >
-              <Text style={styles.selectButtonText}>
-                {isHourSelector ? "Select Hour" : "Select Minute"}
-              </Text>
-            </TouchableOpacity>
+            <View style={{ width: "90%" }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <TouchableOpacity
+                  style={styles.selectButton}
+                  onPress={this.handleCancelButtonPress}
+                >
+                  <Text style={styles.selectButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.selectButton}
+                  onPress={this.handleOkButtonPress}
+                >
+                  <Text
+                    style={[
+                      styles.selectButtonText,
+                      { paddingLeft: 5, paddingRight: 5 },
+                    ]}
+                  >
+                    OK
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </Modal>
       </View>
@@ -258,9 +348,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedTimeText: {
-    fontSize: 40,
+    fontSize: 60,
     fontWeight: "bold",
-    marginBottom: 20,
   },
   clockContainer: {
     width: Dimensions.get("window").width / 1.5,
@@ -298,11 +387,43 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
+    marginLeft: 20,
+    marginRight: 10,
   },
   selectButtonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  amPmContainer: {
+    flexDirection: "column", // Stack buttons vertically
+    alignItems: "center", // Center the buttons horizontally
+    marginVertical: 20,
+    // borderWidth: 2,
+  },
+  amPmButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginLeft: 10,
+    // borderWidth: 1,
+    // borderColor: "#007BFF",
+    // borderRadius: 5,
+    backgroundColor: "#F0F0F0", // Default background for inactive state
+  },
+  amButton: { borderTopLeftRadius: 10, borderTopRightRadius: 10 },
+
+  pmButton: { borderBottomLeftRadius: 10, borderBottomRightRadius: 10 },
+
+  amPmButtonActive: {
+    backgroundColor: "#7D3C98", // Active background
+  },
+  amPmText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+  },
+  amPmTextActive: {
+    color: "white", // Active text color
   },
 });
 
