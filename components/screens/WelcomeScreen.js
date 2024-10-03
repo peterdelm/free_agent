@@ -1,4 +1,12 @@
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Button,
+  StyleSheet,
+} from "react-native";
 import React, { useState } from "react";
 import Styles from "./Styles";
 import { useAuth } from "../../contexts/authContext";
@@ -8,6 +16,11 @@ function WelcomeScreen({ navigation }) {
   const [emailAddress, setEmailAddress] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { login } = useAuth();
+  const [isSecure, setIsSecure] = useState(true);
+
+  const togglePasswordVisibility = () => {
+    setIsSecure(!isSecure);
+  };
 
   const handleLoginButtonPress = async (emailAddress, password) => {
     try {
@@ -57,22 +70,55 @@ function WelcomeScreen({ navigation }) {
           }}
         />
       </View>
-      <View style={Styles.welcomeScreenInputView}>
+      <View
+        style={[
+          Styles.welcomeScreenInputView,
+          { flexDirection: "row", justifyContent: "flex-start" },
+        ]}
+      >
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            {
+              height: 40,
+            },
+          ]}
           placeholder="Email"
           placeholderTextColor="#005F66"
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
-      <View style={Styles.welcomeScreenInputView}>
+      <View style={[Styles.welcomeScreenInputView, { flexDirection: "row" }]}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            {
+              flex: 1,
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              height: 40,
+            },
+          ]}
           placeholder="Password"
           placeholderTextColor="#005F66"
-          secureTextEntry={true}
+          secureTextEntry={isSecure ? true : false}
           onChangeText={(password) => setPassword(password)}
         />
+        <TouchableOpacity onPress={togglePasswordVisibility}>
+          <Image
+            source={
+              isSecure
+                ? require("../../assets/eye-slash-regular.png")
+                : require("../../assets/eye-regular.png")
+            }
+            style={{
+              width: 20,
+              height: 20,
+              resizeMode: "contain",
+              marginRight: 5,
+            }}
+          />
+        </TouchableOpacity>
       </View>
       {errorMessage ? (
         <Text style={[Styles.errorText, { marginTop: 0 }]}>{errorMessage}</Text>
@@ -96,5 +142,19 @@ function WelcomeScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  welcomeScreenInputView: {
+    // flexDirection: "row",
+    // alignItems: "center",
+    // borderColor: "#005F66", // Example border color
+    // borderRadius: 5, // Add a border radius if needed
+    // overflow: "hidden", // Ensure no overflow
+    // padding: 5, // Add padding to container for spacing
+  },
+  TextInput: {
+    // Add your styles here
+  },
+});
 
 export default WelcomeScreen;

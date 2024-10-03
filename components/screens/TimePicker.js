@@ -20,8 +20,11 @@ class TimePicker extends Component {
       modalVisible: false,
       inputValue: "Time",
       pendingInputValue: "",
+      pendingHour: "00",
+      pendingMinute: "00",
       selectedHour: "00",
       selectedMinute: "00",
+      pendingRotations: { hour: 0, minute: 0 },
       rotations: { hour: 0, minute: 0 },
       isHourSelector: true,
       clockDimensions: { x: 0, y: 0, width: 0, height: 0 },
@@ -38,15 +41,15 @@ class TimePicker extends Component {
     });
   }
 
-  resetTimePickerValues = () => {
-    this.setState({
-      modalVisible: false,
-      inputValue: "Time",
-      selectedHour: "00",
-      selectedMinute: "00",
-      isAM: true, // Reset AM/PM
-    });
-  };
+  // resetTimePickerValues = () => {
+  //   this.setState({
+  //     modalVisible: false,
+  //     inputValue: "Time",
+  //     selectedHour: "00",
+  //     selectedMinute: "00",
+  //     isAM: true, // Reset AM/PM
+  //   });
+  // };
 
   snapToNearest = (angle, isHourSelector) => {
     const totalValues = isHourSelector ? TOTAL_HOURS : TOTAL_MINUTES;
@@ -79,14 +82,14 @@ class TimePicker extends Component {
     if (isHourSelector) {
       const hour = Math.round(snappedAngle / (360 / TOTAL_HOURS));
       this.setState({
-        selectedHour: hour.toString().padStart(2, "0"),
-        rotations: { ...this.state.rotations, hour: snappedAngle },
+        pendingHour: hour.toString().padStart(2, "0"),
+        pendingRotations: { ...this.state.rotations, hour: snappedAngle },
       });
     } else {
       const minute = Math.round(snappedAngle / (360 / TOTAL_MINUTES));
       this.setState({
-        selectedMinute: minute.toString().padStart(2, "0"),
-        rotations: { ...this.state.rotations, minute: snappedAngle },
+        pendingMinute: minute.toString().padStart(2, "0"),
+        pendingRotations: { ...this.state.rotations, minute: snappedAngle },
       });
     }
   };
@@ -99,32 +102,52 @@ class TimePicker extends Component {
       });
     } else {
       const hour =
-        this.state.selectedHour === "12"
+        this.state.pendingHour === "12"
           ? isAM
             ? "00"
             : "12"
           : isAM
-            ? this.state.selectedHour
-            : String(Number(this.state.selectedHour) + 12).padStart(2, "0");
-      const selectedTime = `${hour}:${this.state.selectedMinute}`;
+            ? this.state.pendingHour
+            : String(Number(this.state.pendingHour) + 12).padStart(2, "0");
+      const pendingInputValue = `${hour}:${this.state.pendingMinute}`;
+      console.log("pendingInputValue is:", pendingInputValue);
       this.setState({
-        pendingInputValue: selectedTime,
+        pendingInputValue: pendingInputValue,
       });
-      this.props.onInputSelected(selectedTime);
     }
   };
 
   handleCancelButtonPress = () => {
     this.setState({
       modalVisible: false,
+      selectedHour: this.state.selectedHour,
+      selectedMinute: this.state.selectedHour,
+      displayHour: this.state.selectedHour,
+      displayMinute: this.state.selectedMinute,
     });
   };
 
   handleOkButtonPress = () => {
+    const { isHourSelector, rotations, isAM } = this.state;
+
+    const hour =
+      this.state.pendingHour === "12"
+        ? isAM
+          ? "00"
+          : "12"
+        : isAM
+          ? this.state.pendingHour
+          : String(Number(this.state.pendingHour) + 12).padStart(2, "0");
+    const pendingInputValue = `${hour}:${this.state.pendingMinute}`;
+    console.log("Selected time is:", pendingInputValue);
+
     this.setState({
       modalVisible: false,
-      inputValue: this.state.pendingInputValue,
+      inputValue: pendingInputValue,
+      selectedHour: this.state.pendingHour,
+      selectedMinute: this.state.pendingMinute,
     });
+    this.props.onInputSelected(pendingInputValue);
   };
 
   toggleDropdown = () => {
@@ -202,6 +225,17 @@ class TimePicker extends Component {
     });
   };
 
+  displayClockDigits = () => {
+    if (false) {
+      const { selectedHour, selectedMinute } = this.state;
+
+      return `${selectedHour}:${selectedMinute}`;
+    } else {
+      const { pendingHour, pendingMinute } = this.state;
+      return `${pendingHour}:${pendingMinute}`;
+    }
+  };
+
   convertToAMPM = (inputValue) => {
     if (inputValue == "Time") {
       return "Time";
@@ -242,8 +276,6 @@ class TimePicker extends Component {
             {/* Time Display inside the blue square */}
             <View
               style={{
-                // borderColor: "blue", // Blue square border
-                // borderWidth: 2,
                 justifyContent: "center", // Center vertically
                 alignItems: "center", // Center horizontally
                 flexDirection: "row",
@@ -254,12 +286,11 @@ class TimePicker extends Component {
                 style={[
                   styles.selectedTimeText,
                   {
-                    // borderWidth: 2, // No border for the text itself
                     textAlign: "center", // Center the text inside
                   },
                 ]}
               >
-                {selectedHour}:{selectedMinute}
+                <Text>{this.displayClockDigits()}</Text>
                 {/* {isAM ? "AM" : "PM"} */}
               </Text>
 
@@ -267,7 +298,6 @@ class TimePicker extends Component {
               {this.renderAMPMToggle()}
             </View>
 
-            {/* Rest of the clock components */}
             <View
               style={styles.clockContainer}
               onLayout={this.handleLayout}
@@ -399,15 +429,11 @@ const styles = StyleSheet.create({
     flexDirection: "column", // Stack buttons vertically
     alignItems: "center", // Center the buttons horizontally
     marginVertical: 20,
-    // borderWidth: 2,
   },
   amPmButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginLeft: 10,
-    // borderWidth: 1,
-    // borderColor: "#007BFF",
-    // borderRadius: 5,
     backgroundColor: "#F0F0F0", // Default background for inactive state
   },
   amButton: { borderTopLeftRadius: 10, borderTopRightRadius: 10 },
