@@ -447,18 +447,20 @@ function HomeScreen({ navigation, message }) {
               style={[Styles.datePickerButton, Styles.input]}
               ref={timePickerRef}
             />
-            {/* <TimePickerNew /> */}
+            {/* GAME LENGTH */}
             <Picker
               style={[Styles.sportsPickerDropdown, Styles.input]}
-              placeholder="60 Minutes"
-              defaultValue="60 Minutes"
+              placeholder="Game Length"
+              defaultValue="Game Length"
               placeholderTextColor="grey"
               onValueChange={handleGameLengthChange}
               language={gameLengthList}
-              label="60 Minutes"
+              label="Game Length"
               ref={pickerRef}
               resetTrigger={resetTrigger}
+              appendText="Minutes"
             />
+            {/* Additional Info  */}
             <TextInput
               style={[Styles.additionalInfo, Styles.input]}
               placeholder="Additional Info... (Team Name, Cash Incentive)"

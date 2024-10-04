@@ -33,7 +33,13 @@ class Pickering extends Component {
   };
 
   render() {
-    const { style, colour, label, language: languages } = this.props;
+    const {
+      style,
+      colour,
+      label,
+      language: languages,
+      appendText,
+    } = this.props;
     const { language: selectedLanguage } = this.state;
 
     return (
@@ -49,7 +55,11 @@ class Pickering extends Component {
           {/* Render actual options if available */}
           {Array.isArray(languages) && languages.length > 0 ? (
             languages.map((course, index) => (
-              <Picker.Item key={index} label={course} value={course} />
+              <Picker.Item
+                key={index}
+                label={appendText ? `${course} ${appendText}` : course} // Append text if provided
+                value={course}
+              />
             ))
           ) : (
             <Picker.Item label="No options available" value="no_options" />
