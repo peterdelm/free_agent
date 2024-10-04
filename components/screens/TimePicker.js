@@ -25,7 +25,7 @@ class TimePicker extends Component {
       selectedHour: "00",
       selectedMinute: "00",
       pendingRotations: { hour: 0, minute: 0 },
-      rotations: { hour: 0, minute: 0 },
+      savedRotations: { hour: 0, minute: 0 },
       isHourSelector: true,
       clockDimensions: { x: 0, y: 0, width: 0, height: 0 },
       isAM: true, // AM/PM state
@@ -83,19 +83,25 @@ class TimePicker extends Component {
       const hour = Math.round(snappedAngle / (360 / TOTAL_HOURS));
       this.setState({
         pendingHour: hour.toString().padStart(2, "0"),
-        pendingRotations: { ...this.state.rotations, hour: snappedAngle },
+        pendingRotations: {
+          ...this.state.pendingRotations,
+          hour: snappedAngle,
+        },
       });
     } else {
       const minute = Math.round(snappedAngle / (360 / TOTAL_MINUTES));
       this.setState({
         pendingMinute: minute.toString().padStart(2, "0"),
-        pendingRotations: { ...this.state.rotations, minute: snappedAngle },
+        pendingRotations: {
+          ...this.state.pendingRotations,
+          minute: snappedAngle,
+        },
       });
     }
   };
 
   handlePanResponderRelease = () => {
-    const { isHourSelector, rotations, isAM } = this.state;
+    const { isHourSelector, pendingRotations, isAM } = this.state;
     if (isHourSelector) {
       this.setState({
         isHourSelector: false,
@@ -124,11 +130,14 @@ class TimePicker extends Component {
       selectedMinute: this.state.selectedHour,
       displayHour: this.state.selectedHour,
       displayMinute: this.state.selectedMinute,
+      pendingRotations: this.state.savedRotations,
+      pendingHour: this.state.selectedHour,
+      pendingMinute: this.state.selectedMinute,
     });
   };
 
   handleOkButtonPress = () => {
-    const { isHourSelector, rotations, isAM } = this.state;
+    const { isHourSelector, pendingRotations, isAM } = this.state;
 
     const hour =
       this.state.pendingHour === "12"
@@ -146,6 +155,10 @@ class TimePicker extends Component {
       inputValue: pendingInputValue,
       selectedHour: this.state.pendingHour,
       selectedMinute: this.state.pendingMinute,
+      pendingRotations: this.state.pendingRotations,
+      savedRotations: this.state.pendingRotations,
+      pendingHour: this.state.pendingHour,
+      pendingMinute: this.state.pendingMinute,
     });
     this.props.onInputSelected(pendingInputValue);
   };
@@ -226,14 +239,8 @@ class TimePicker extends Component {
   };
 
   displayClockDigits = () => {
-    if (false) {
-      const { selectedHour, selectedMinute } = this.state;
-
-      return `${selectedHour}:${selectedMinute}`;
-    } else {
-      const { pendingHour, pendingMinute } = this.state;
-      return `${pendingHour}:${pendingMinute}`;
-    }
+    const { pendingHour, pendingMinute } = this.state;
+    return `${pendingHour}:${pendingMinute}`;
   };
 
   convertToAMPM = (inputValue) => {
@@ -253,7 +260,8 @@ class TimePicker extends Component {
     const {
       selectedHour,
       selectedMinute,
-      rotations,
+      pendingRotations,
+      savedRotations,
       isHourSelector,
       inputValue,
       modalVisible,
@@ -312,7 +320,7 @@ class TimePicker extends Component {
                   {
                     transform: [
                       { translateX: -1 },
-                      { rotate: `${rotations.hour}deg` },
+                      { rotate: `${pendingRotations.hour}deg` },
                     ],
                     height: this.clockRadius / 1,
                   },
@@ -327,7 +335,7 @@ class TimePicker extends Component {
                       backgroundColor: "red",
                       transform: [
                         { translateX: -1 },
-                        { rotate: `${rotations.minute}deg` },
+                        { rotate: `${pendingRotations.minute}deg` },
                       ],
                       height: this.clockRadius,
                     },
