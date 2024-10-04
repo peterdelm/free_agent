@@ -166,7 +166,6 @@ class TimePicker extends Component {
           ? this.state.pendingHour
           : String(Number(this.state.pendingHour) + 12).padStart(2, "0");
     const pendingInputValue = `${hour}:${this.state.pendingMinute}`;
-    console.log("Selected time is:", pendingInputValue);
 
     this.setState({
       modalVisible: false,

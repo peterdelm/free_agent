@@ -15,6 +15,7 @@ const CustomToggleSwitch = ({ user }) => {
     }
   }, [user]);
   console.log("User status is", user.isActive);
+
   const getTokenFromStorage = async () => {
     try {
       const token = await AsyncStorage.getItem("@session_token");

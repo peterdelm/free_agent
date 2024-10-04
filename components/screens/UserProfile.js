@@ -16,7 +16,7 @@ import getCurrentUser from "./getCurrentUser.helper.js";
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [alternateRoleText, setAlternateRoleText] = useState("");
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
   const { user, updateUserRole, logout } = useAuth();
   const [currentUser, setCurrentUser] = useState({});
@@ -28,11 +28,6 @@ const UserProfile = ({ navigation }) => {
           const user = await getCurrentUser();
           setCurrentUser(user);
           console.log("User is", user);
-          if (user && user.playerIds.length === 0) {
-            setIsModalVisible(true);
-          } else {
-            console.log("No User found in playerHome fetch");
-          }
         } catch (error) {
           console.log(currentUser);
           console.error("Error during currentUser fetch:", error);
@@ -87,10 +82,10 @@ const UserProfile = ({ navigation }) => {
   };
 
   // Function to open the modal
-  const openModal = () => setModalVisible(true);
+  const openModal = () => setIsModalVisible(true);
 
   // Function to close the modal
-  const closeModal = () => setModalVisible(false);
+  const closeModal = () => setIsModalVisible(false);
 
   const openLoadingScreen = () => setLoadingScreenVisible(true);
 
@@ -116,7 +111,6 @@ const UserProfile = ({ navigation }) => {
       </TouchableOpacity>
     ));
   }
-
   return (
     <View style={Styles.userProfileScreenContainer}>
       <View style={Styles.screenHeader}>
@@ -232,7 +226,7 @@ const UserProfile = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
-            onPress={openModal}
+            onPress={() => openModal()}
           >
             <Text style={Styles.profileLinkTextContainer}>Logout </Text>
             <View style={Styles.profileLinkImageContainer}>
