@@ -79,6 +79,13 @@ function ViewGame({ navigation, message }) {
     sendQuitGameRequest();
   };
 
+  const handleEditGameButtonPress = () => {
+    console.log("handleEditGameButtonPress called");
+    navigation.navigate("EditGame", {
+      gameId: game.id,
+    });
+  };
+
   const sendQuitGameRequest = async () => {
     const getTokenFromStorage = async () => {
       try {
@@ -251,7 +258,7 @@ function ViewGame({ navigation, message }) {
       return (
         <TouchableOpacity
           style={{ color: "#C30000" }}
-          onPress={() => handleQuitGameButtonPress()}
+          onPress={() => handleEditGameButtonPress()}
         >
           <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
             <Text

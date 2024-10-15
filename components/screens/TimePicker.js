@@ -30,6 +30,7 @@ class TimePicker extends Component {
       clockDimensions: { x: 0, y: 0, width: 0, height: 0 },
       pendingAM: true, // AM/PM state
       savedAM: true,
+      defaultValue: props.defaultValue || "",
     };
 
     this.clockRadius = Dimensions.get("window").width / 3;
@@ -138,6 +139,24 @@ class TimePicker extends Component {
         pendingInputValue: pendingInputValue,
       });
     }
+  };
+  componentDidMount() {
+    this.setDefaultValue();
+  }
+
+  setDefaultValue = () => {
+    console.log("Default value is", this.state.defaultValue);
+
+    this.setState({
+      selectedHour: this.state.pendingHour,
+      selectedMinute: this.state.pendingMinute,
+      pendingRotations: this.state.pendingRotations,
+      savedRotations: this.state.pendingRotations,
+      pendingHour: this.state.pendingHour,
+      pendingMinute: this.state.pendingMinute,
+      pendingAM: this.state.pendingAM,
+      savedAM: this.state.pendingAM,
+    });
   };
 
   handleCancelButtonPress = () => {
@@ -277,8 +296,7 @@ class TimePicker extends Component {
   };
 
   render() {
-    const { pendingRotations, isHourSelector, inputValue, modalVisible } =
-      this.state;
+    const { pendingRotations, inputValue, modalVisible } = this.state;
 
     return (
       <View style={[Styles.datePickerButton, Styles.input]}>

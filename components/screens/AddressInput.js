@@ -3,7 +3,11 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 navigator.geolocation = require("react-native-geolocation-service");
 import Styles from "./Styles";
 
-const AddressInput = ({ handleLocationSelected, resetTrigger }) => {
+const AddressInput = ({
+  handleLocationSelected,
+  resetTrigger,
+  defaultLocation,
+}) => {
   // onPress = { handleLocationSelected };
 
   const googlePlacesRef = useRef(null);
@@ -18,7 +22,7 @@ const AddressInput = ({ handleLocationSelected, resetTrigger }) => {
   return (
     <GooglePlacesAutocomplete
       ref={googlePlacesRef} // Attach ref to the component
-      placeholder="Enter Location"
+      placeholder={defaultLocation ? defaultLocation : "Enter Location"}
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true
         handleLocationSelected(data, details);

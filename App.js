@@ -9,6 +9,7 @@ import CreateUser from "./components/screens/CreateUser.js";
 import ViewGame from "./components/screens/ViewGame.js";
 import ViewPlayer from "./components/screens/ViewPlayer.js";
 import EditPlayer from "./components/screens/EditPlayer.js";
+import EditGame from "./components/screens/EditGame.js";
 import CreatePlayer from "./components/screens/CreatePlayer.js";
 import ManagePlayers from "./components/screens/ManagePlayers.js";
 import BrowseAvailableGames from "./components/screens/BrowseAvailableGames.js";
@@ -73,6 +74,11 @@ function ManagerStack() {
       <Stack.Screen
         name="ViewGame"
         component={ViewGame}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditGame"
+        component={EditGame}
         options={{ headerShown: false }}
       />
       <Stack.Screen

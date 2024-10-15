@@ -15,7 +15,6 @@ import Picker from "./Picker.js";
 import GameTypePicker from "./GameTypePicker.js";
 import DatePicker from "./DatePicker.js";
 import TimePicker from "./TimePicker.js";
-import TimePickerNew from "./TimePickerNew.js";
 import NavigationFooter from "./NavigationFooter.js";
 import getCurrentUser from "./getCurrentUser.helper.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
@@ -267,9 +266,7 @@ function HomeScreen({ navigation, message }) {
                   if (autoCompletePickerRef.current) {
                     autoCompletePickerRef.current.resetPickerValues();
                   }
-                  if (timePickerRef.current) {
-                    timePickerRef.current.resetTimePickerValues();
-                  }
+
                   if (datePickerRef.current) {
                     datePickerRef.current.resetDatePickerValues();
                   }
