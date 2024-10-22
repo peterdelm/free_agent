@@ -239,7 +239,7 @@ function MainApp() {
       ) : (
         <AuthStack /> // If no user is logged in, render the AuthStack
       )}
-      {/* <StatusBar style="auto" /> */}
+      <StatusBar hidden={false} barStyle="light-content" />
     </>
   );
 }
@@ -259,13 +259,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: StatusBar.currentHeight, // Adds padding equal to the status bar height
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

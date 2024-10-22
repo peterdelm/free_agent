@@ -183,23 +183,6 @@ function ViewUser({ navigation, message }) {
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Email: {user.email}</Text>
           </Text>
-          {/*
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Location: </Text>
-            {player.location}
-          </Text>
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Travel Range: </Text>
-            {player.travelRange} km
-          </Text>
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Bio: </Text>
-            {player.bio.length > 0 ? player.bio : "N/A"}
-          </Text>
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Position: </Text>
-            {player.position}
-          </Text> */}
         </View>
         <TouchableOpacity
         //   onPress={() =>
@@ -223,7 +206,7 @@ function ViewUser({ navigation, message }) {
               }),
             ]}
           >
-            Edit User
+            Edit User (*INACTIVE*)
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={openModal}>
@@ -241,12 +224,12 @@ function ViewUser({ navigation, message }) {
               }),
             ]}
           >
-            Delete User
+            Delete User (*INACTIVE*)
           </Text>
         </TouchableOpacity>
         <DeletePlayerPopup
           isModalVisible={isModalVisible}
-          handleButtonPress={handleDeletePlayerButtonPress}
+          // handleButtonPress={handleDeletePlayerButtonPress} **INACTIVE, NEEDS TO BE HOOKED UP TO A DELETE USER FUNCTION
           onClose={closeModal}
         />
       </View>
