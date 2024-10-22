@@ -1,42 +1,36 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Platform,
-  Modal,
-  Image,
-} from "react-native";
+import { View, Text, TouchableOpacity, Platform, Modal } from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import NavigationFooter from "./NavigationFooter";
 import { StyleSheet } from "react-native-web";
 import DeletePlayerPopup from "./DeletePlayerPopup"; // Adjust import path as needed
-function ViewPlayer({ navigation, message }) {
+function ViewUser({ navigation, message }) {
   const route = useRoute();
-  const { playerId } = route.params;
-  const [player, setPlayer] = useState([]);
+  const { userId } = route.params;
+  const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [refreshPlayers, setRefreshPlayers] = useState(false);
   const { refresh } = route.params || {};
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false); // State to track deletion status
 
-  useEffect(() => {
-    if (refresh) {
-      setRefreshPlayers(true);
-    }
-  }, [refresh]);
+  // useEffect(() => {
+  //   if (refresh) {
+  //     setRefreshPlayers(true);
+  //   }
+  // }, [refresh]);
 
-  console.log("ViewPlayer has received the call!");
+  console.log("ViewUser has received the call!");
 
   useEffect(() => {
+    console.log("ViewUser with userId", userId);
+
     const fetchData = async () => {
       try {
-        const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+        const url = `${EXPO_PUBLIC_BASE_URL}api/users/${userId}`;
         const headers = {
           "Content-Type": "application/json",
         };
@@ -49,8 +43,8 @@ function ViewPlayer({ navigation, message }) {
 
         if (res.status === 200) {
           console.log(res);
-          const playerData = res.body;
-          setPlayer(playerData);
+          const userData = res.body.user;
+          setUser(userData);
         } else {
           throw new Error("Network response was not ok.");
         }
@@ -62,13 +56,13 @@ function ViewPlayer({ navigation, message }) {
       }
     };
     fetchData();
-  }, [playerId, refreshPlayers]);
+  }, [userId, refreshPlayers]);
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+          const url = `${EXPO_PUBLIC_BASE_URL}api/users/${userId}`;
           const headers = {
             "Content-Type": "application/json",
           };
@@ -81,8 +75,8 @@ function ViewPlayer({ navigation, message }) {
 
           if (res.status === 200) {
             console.log(res);
-            const playerData = res.body;
-            setPlayer(playerData);
+            const userData = res.body.user;
+            setUser(userData);
           } else {
             throw new Error("Network response was not ok.");
           }
@@ -113,7 +107,7 @@ function ViewPlayer({ navigation, message }) {
 
   const deletePlayer = async () => {
     try {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players/${userId}`;
       const headers = {
         "Content-Type": "application/json",
       };
@@ -125,7 +119,7 @@ function ViewPlayer({ navigation, message }) {
 
       const res = await authFetch(url, requestOptions);
       if (res.status === 200) {
-        console.log("Player deleted successfully.");
+        console.log("User deleted successfully.");
         navigation.navigate("ManagePlayers", { refresh: true });
         throw new Error("Network response was not ok.");
       }
@@ -156,41 +150,14 @@ function ViewPlayer({ navigation, message }) {
           borderBottomWidth: 2,
           borderBottomStyle: "solid",
           flex: 0,
-          alignItems: "start",
+          alignItems: "center",
           width: "100%",
         }}
       >
-        <View
-          style={[
-            Styles.screenHeader,
-            (style = {
-              justifyContent: "start",
-              flex: 0,
-            }),
-          ]}
-        >
-          <View
-            style={{
-              justifyContent: "start",
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image
-                source={require("../../assets/arrow-left-solid.png")}
-                style={{
-                  width: 40,
-                  height: 40,
-                  resizeMode: "contain",
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text style={{ fontSize: 35, padding: 20 }}>PLAYER PROFILE</Text>
-          </View>
+        <View style={Styles.screenHeader}>
+          <Text style={{ fontSize: 35, padding: 20 }}>USER PROFILE</Text>
         </View>
       </View>
-
       <View
         style={{
           flex: 1,
@@ -207,13 +174,16 @@ function ViewPlayer({ navigation, message }) {
           }}
         >
           <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Sport:</Text> {player.sport}
+            <Text style={{ fontWeight: "bold" }}>
+              Name:
+              {" " + user.firstName + " " + user.lastName}
+            </Text>
           </Text>
 
           <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Calibre: </Text>
-            {player.calibre}
+            <Text style={{ fontWeight: "bold" }}>Email: {user.email}</Text>
           </Text>
+          {/*
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Location: </Text>
             {player.location}
@@ -229,15 +199,15 @@ function ViewPlayer({ navigation, message }) {
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Position: </Text>
             {player.position}
-          </Text>
+          </Text> */}
         </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("EditPlayer", {
-              playerId: player.id,
-              playerSport: player.sport,
-            })
-          }
+        //   onPress={() =>
+        //     navigation.navigate("EditPlayer", {
+        //       userId: user.id,
+        //       playerSport: player.sport,
+        //     })
+        //   }
         >
           <Text
             style={[
@@ -253,10 +223,9 @@ function ViewPlayer({ navigation, message }) {
               }),
             ]}
           >
-            Edit Player
+            Edit User
           </Text>
         </TouchableOpacity>
-
         <TouchableOpacity onPress={openModal}>
           <Text
             style={[
@@ -272,7 +241,7 @@ function ViewPlayer({ navigation, message }) {
               }),
             ]}
           >
-            Delete Player
+            Delete User
           </Text>
         </TouchableOpacity>
         <DeletePlayerPopup
@@ -299,4 +268,4 @@ const viewPlayerStyles = StyleSheet.create({
   },
 });
 
-export default ViewPlayer;
+export default ViewUser;

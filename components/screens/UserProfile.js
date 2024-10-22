@@ -1,28 +1,25 @@
-import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
-import getCurrentUser from "./getCurrentUser.helper";
-import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import { useAuth } from "../../contexts/authContext.js";
+import ConfirmLogoutPopup from "./ConfirmLogoutPopup.js"; // Adjust import path as needed
+import SwitchingManagerPlayerModal from "./SwitchingManagerPlayerModal.js";
+import ColorToggleButton from "./ColorToggleButton.js";
+import CustomButton from "./CustomButton.js";
 
+import { useFocusEffect } from "@react-navigation/native";
+
+import getCurrentUser from "./getCurrentUser.helper.js";
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
   const [alternateRoleText, setAlternateRoleText] = useState("");
-
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
+  const { user, updateUserRole, logout } = useAuth();
+  const [currentUser, setCurrentUser] = useState({});
 
   useFocusEffect(
     React.useCallback(() => {
@@ -30,63 +27,23 @@ const UserProfile = ({ navigation }) => {
         try {
           const user = await getCurrentUser();
           setCurrentUser(user);
-          setAlternateRole(user.currentRole);
+          console.log("User is", user);
         } catch (error) {
-          console.error("Error during fetch:", error);
+          console.log(currentUser);
+          console.error("Error during currentUser fetch:", error);
         }
       };
       fetchCurrentUser();
     }, [])
   );
 
-  const sendToggleProfileRequest = () => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/users/`;
+  useEffect(() => {
+    if (user) {
+      updateAlternateRoleText(user.currentRole);
+    }
+  }, []);
 
-    const toggleProfileRequest = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-        const body = {
-          addressFragment: "addressFragment",
-        };
-
-        const request = {
-          method: "PUT",
-          headers,
-          body: JSON.stringify(body),
-        };
-
-        const response = await fetch(url, request);
-        if (response.ok) {
-          // Parse and use the data
-          const userData = await response.json();
-          console.log("User data:", userData);
-          setAlternateRole(userData.newProfile);
-
-          return userData;
-        } else {
-          // Handle non-ok responses
-          throw new Error("Network response was not ok.");
-        }
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-      }
-    };
-    toggleProfileRequest();
-  };
-
-  const swapProfileText = () => {};
-
-  const toggleProfile = () => {
-    sendToggleProfileRequest();
-  };
-
-  const setAlternateRole = (currentRole) => {
+  const updateAlternateRoleText = (currentRole) => {
     if (currentRole === "manager") {
       setAlternateRoleText("Player");
     } else if (currentRole === "player") {
@@ -94,7 +51,47 @@ const UserProfile = ({ navigation }) => {
     }
   };
 
-  let allActiveGames = []; // Initialize as null initially
+  const toggleProfile = async () => {
+    try {
+      const newRole = user.currentRole === "manager" ? "player" : "manager";
+      await updateUserRole(newRole);
+      updateAlternateRoleText(newRole);
+      console.log("User role toggled:", user);
+    } catch (error) {
+      console.log("Error making authenticated request:", error);
+    }
+  };
+
+  const showLoadingWithTimeout = (switchToValue) => {
+    openLoadingScreen();
+
+    // Set a timeout to close the modal after 2 seconds
+    setTimeout(() => {
+      closeLoadingScreen();
+      toggleProfile();
+    }, 2000); // 2000 milliseconds = 2 seconds
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigation.navigate("WelcomeScreen");
+    } catch (error) {
+      console.log("Error during handleLogout: ", error);
+    }
+  };
+
+  // Function to open the modal
+  const openModal = () => setIsModalVisible(true);
+
+  // Function to close the modal
+  const closeModal = () => setIsModalVisible(false);
+
+  const openLoadingScreen = () => setLoadingScreenVisible(true);
+
+  const closeLoadingScreen = () => setLoadingScreenVisible(false);
+
+  let allActiveGames = [];
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
@@ -121,35 +118,24 @@ const UserProfile = ({ navigation }) => {
           source={require("../../assets/user-solid.png")}
           style={{ width: 50, height: 50, resizeMode: "contain" }}
         />
-        <Text
-          style={{
-            fontSize: 35,
-            padding: 20,
-          }}
-        >
-          Profile
-        </Text>
+        <Text style={{ fontSize: 35, padding: 20 }}>Profile</Text>
       </View>
       <View style={Styles.userProfileContentContainer}>
         <View style={Styles.profileLinksContainer}>
-          <View style={Styles.profileLinkContainer}>
-            <View style={Styles.profileLinkTextContainer}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  textAlignVertical: "center",
-                }}
-              >
-                Show Profile
-              </Text>
-            </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() =>
+              navigation.navigate("ViewUser", { userId: user.userId })
+            }
+          >
+            <Text style={Styles.profileLinkTextContainer}>Show Profile</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
                 source={require("../../assets/chevron-right-solid.png")}
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
             onPress={() => navigation.navigate("ManagePlayers")}
@@ -193,9 +179,7 @@ const UserProfile = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={Styles.profileLinkContainer}
-            onPress={() => {
-              toggleProfile(), swapProfileText();
-            }}
+            onPress={showLoadingWithTimeout}
           >
             <Text style={Styles.profileLinkTextContainer}>
               Switch to {alternateRoleText}
@@ -208,12 +192,18 @@ const UserProfile = ({ navigation }) => {
             </View>
           </TouchableOpacity>
           <View style={Styles.profileLinkContainer}>
-            <Text style={Styles.profileLinkTextContainer}>Referrals</Text>
-            <View style={Styles.profileLinkImageContainer}>
-              <Image
-                source={require("../../assets/chevron-right-solid.png")}
-                style={{ width: 20, height: 20, resizeMode: "contain" }}
-              />
+            <Text style={Styles.profileLinkTextContainer}>
+              Push Notifications
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                flex: 0,
+              }}
+            >
+              {currentUser && <CustomButton user={currentUser} />}
             </View>
           </View>
           <View style={Styles.profileLinkContainer}>
@@ -234,6 +224,18 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
+          <TouchableOpacity
+            style={Styles.profileLinkContainer}
+            onPress={() => openModal()}
+          >
+            <Text style={Styles.profileLinkTextContainer}>Logout </Text>
+            <View style={Styles.profileLinkImageContainer}>
+              <Image
+                source={require("../../assets/chevron-right-solid.png")}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+              />
+            </View>
+          </TouchableOpacity>
           <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>
               Terms of Service
@@ -245,26 +247,20 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </View>
-          <TouchableOpacity
-            style={Styles.profileLinkContainer}
-            onPress={() => {
-              navigation.navigate("WelcomeScreen");
-            }}
-          >
-            <Text style={Styles.profileLinkTextContainer}>Logout </Text>
-            <View style={Styles.profileLinkImageContainer}>
-              <Image
-                source={require("../../assets/chevron-right-solid.png")}
-                style={{ width: 20, height: 20, resizeMode: "contain" }}
-              />
-            </View>
-          </TouchableOpacity>
+          <ConfirmLogoutPopup
+            isModalVisible={isModalVisible}
+            handleButtonPress={handleLogout}
+            onClose={closeModal}
+          />
+          <SwitchingManagerPlayerModal
+            handleButtonPress={handleLogout}
+            onClose={closeLoadingScreen}
+            isVisible={isLoadingScreenVisible}
+            switchTo={alternateRoleText}
+          />
         </View>
       </View>
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

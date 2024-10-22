@@ -1,96 +1,61 @@
-import { Text, View, Image, TextInput, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Button,
+  StyleSheet,
+} from "react-native";
 import React, { useState } from "react";
 import Styles from "./Styles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import { useAuth } from "../../contexts/authContext";
 
 function WelcomeScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
-  const [token, setToken] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { login } = useAuth();
+  const [isSecure, setIsSecure] = useState(true);
 
-  const storeSessionToken = async (token) => {
-    try {
-      await AsyncStorage.setItem("@session_token", token);
-      console.log("Session token stored successfully.");
-      return true;
-    } catch (error) {
-      console.error("Error storing session token:", error);
-      return false;
-    }
+  const togglePasswordVisibility = () => {
+    setIsSecure(!isSecure);
   };
 
-  const handleLoginAttempt = async (emailAddress, password) => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
-
-    const credentials = { emailAddress, password };
-    console.log("handleLoginAttempt called to URL " + url);
-    console.log(credentials);
-
+  const handleLoginButtonPress = async (emailAddress, password) => {
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+      const user = await login(emailAddress, password);
 
-      if (response.status === 200) {
-        const data = await response.json();
-        return data;
-      } else if (response.status === 401) {
-        return { error: "Invalid credentials" }; // Return error message
+      if (user) {
+        console.log("User is", user);
+
+        if (user.currentRole === "manager") {
+          console.log("user.currentRole === manager");
+
+          navigation.navigate("ManagerHome");
+        } else if (user.currentRole === "player") {
+          console.log("user.currentRole === player");
+
+          navigation.navigate("PlayerHome");
+        } else {
+          setErrorMessage("Unknown user role");
+          console.log("ERROR: Unknown user role");
+        }
       } else {
-        console.log("Unexpected response:", response.status);
+        setErrorMessage("Login credentials are incorrect or missing");
+        console.log("ERROR: Login credentials are incorrect or missing");
       }
     } catch (error) {
-      console.log("Error during login attempt:", error);
-      return { error: "An unexpected error occurred" }; // Return generic error message
-    }
-  };
-
-  const authenticateUser = async (token) => {
-    console.log("Token is : " + token);
-    setToken(token);
-    const successfulStorage = await storeSessionToken(token);
-
-    if (successfulStorage) {
-      console.log("Login successful");
-      return true;
-    } else {
-      console.log("No Token!");
-      return false;
+      setErrorMessage(error.message || "An unexpected error occurred");
+      console.log("ERROR:", error.message || "An unexpected error occurred");
     }
   };
 
   const handleRegisterButtonPress = () => {
-    console.log("HandleRegisterButtonPress Called!");
     navigation.navigate("RegisterUser");
   };
 
-  const handleLoginButtonPress = async (emailAddress, password) => {
-    console.log("handleLoginButtonPress called");
-    const result = await handleLoginAttempt(emailAddress, password);
-    if (result && result.token) {
-      const token = result.token;
-      authenticateUser(token);
-      if (result.user.currentRole === "manager") {
-        navigation.navigate("Home");
-      } else if (result.user.currentRole === "player") {
-        navigation.navigate("PlayerHome");
-      } else {
-        console.log("ERROR: Result.user.current role is likely missing");
-      }
-    } else {
-      console.log("Login failed:", result.error);
-      setErrorMessage(result.error || "An unexpected error occurred");
-    }
-  };
-
   const handleResetPasswordButtonPress = () => {
-    console.log("RestPassword Button Pressed!");
     navigation.navigate("ResetPasswordScreen");
   };
 
@@ -105,27 +70,60 @@ function WelcomeScreen({ navigation }) {
           }}
         />
       </View>
-      <View style={Styles.welcomeScreenInputView}>
+      <View
+        style={[
+          Styles.welcomeScreenInputView,
+          { flexDirection: "row", justifyContent: "flex-start" },
+        ]}
+      >
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            {
+              height: 40,
+            },
+          ]}
           placeholder="Email"
           placeholderTextColor="#005F66"
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
-      <View style={Styles.welcomeScreenInputView}>
+      <View style={[Styles.welcomeScreenInputView, { flexDirection: "row" }]}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            {
+              flex: 1,
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              height: 40,
+            },
+          ]}
           placeholder="Password"
           placeholderTextColor="#005F66"
-          secureTextEntry={true}
+          secureTextEntry={isSecure ? true : false}
           onChangeText={(password) => setPassword(password)}
         />
+        <TouchableOpacity onPress={togglePasswordVisibility}>
+          <Image
+            source={
+              isSecure
+                ? require("../../assets/eye-slash-regular.png")
+                : require("../../assets/eye-regular.png")
+            }
+            style={{
+              width: 20,
+              height: 20,
+              resizeMode: "contain",
+              marginRight: 5,
+            }}
+          />
+        </TouchableOpacity>
       </View>
       {errorMessage ? (
         <Text style={[Styles.errorText, { marginTop: 0 }]}>{errorMessage}</Text>
       ) : null}
-      <TouchableOpacity onPress={() => handleResetPasswordButtonPress()}>
+      <TouchableOpacity onPress={handleResetPasswordButtonPress}>
         <Text style={Styles.forgotButton}>Forgot Password?</Text>
       </TouchableOpacity>
 
@@ -136,18 +134,27 @@ function WelcomeScreen({ navigation }) {
           <Text style={Styles.welcomeButton}>Log in</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleRegisterButtonPress}>
         <View style={Styles.welcomeButtonContainer}>
-          <Text
-            style={Styles.welcomeButton}
-            onPress={handleRegisterButtonPress}
-          >
-            Register
-          </Text>
+          <Text style={Styles.welcomeButton}>Register</Text>
         </View>
       </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  welcomeScreenInputView: {
+    // flexDirection: "row",
+    // alignItems: "center",
+    // borderColor: "#005F66", // Example border color
+    // borderRadius: 5, // Add a border radius if needed
+    // overflow: "hidden", // Ensure no overflow
+    // padding: 5, // Add padding to container for spacing
+  },
+  TextInput: {
+    // Add your styles here
+  },
+});
 
 export default WelcomeScreen;

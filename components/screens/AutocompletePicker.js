@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import Styles from "./Styles";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+navigator.geolocation = require("react-native-geolocation-service");
 
 class AutoCompletePicker extends Component {
   constructor(props) {
@@ -48,8 +50,6 @@ class AutoCompletePicker extends Component {
               suggestionList: data.addressList,
               addressInputSelected: true,
               showDropdown: true,
-              inputValue: "", // Reset the inputValue after fetching suggestions
-              selectedAddress: "",
             });
 
             console.log("The returned suggestion list is:", data.addressList);
@@ -59,6 +59,11 @@ class AutoCompletePicker extends Component {
           });
       }
     });
+  };
+
+  handleSuggestionSelected = (item) => {
+    this.props.onInputSelected(item);
+    this.setState({ inputValue: item, showDropdown: false });
   };
 
   async fetchAutocompleteSuggestions(addressFragment) {
@@ -175,6 +180,7 @@ class AutoCompletePicker extends Component {
               width: this.state.inputPosition?.width || 0,
               backgroundColor: "white",
               borderRadius: 5,
+              zIndex: 1, // Ensure modal is above the input
             }}
           >
             <FlatList

@@ -1,24 +1,24 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Button,
-  ImageBackground,
-  StyleSheet,
   Text,
   View,
   Image,
   TextInput,
-  Touchable,
   TouchableOpacity,
   ScrollView,
   Platform,
 } from "react-native";
-import React, { useEffect, useState, useRef, Component } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+
+import React, { useEffect, useState, useRef } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import AddressInput from "./AddressInput.js";
+import getCurrentUser from "./getCurrentUser.helper.js";
+import authFetch from "../../api/authCalls.js";
 
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -38,12 +38,17 @@ const CreatePlayer = ({ navigation }) => {
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
+
   const [gameLengthList, setGameLengthList] = useState([]);
   const [isSportSelected, setIsSportSelected] = useState(false);
   const [selectedSport, setSelectedSport] = useState();
   const [selectedSportId, setSelectedSportId] = useState("");
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+  const [currentUser, setCurrentUser] = useState([]);
+  const [usersPlayerRoster, setUsersPlayerRoster] = useState([]);
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const autoCompletePickerRef = useRef(null);
 
@@ -72,16 +77,15 @@ const CreatePlayer = ({ navigation }) => {
   const handleTravelRangeChange = (input) => {
     setTravelRange(input);
   };
-  captureSelectedLocation = (selectedInput) => {
-    console.log("Selected Location input: " + selectedInput);
-    setPlayerAddress(selectedInput);
+
+  const handleLocationSelected = (data, details) => {
+    console.log("Handle Location Selected has been Pressed!");
+    console.log("Description is:", data.description);
+    setPlayerAddress(data.description);
   };
 
   const handleFormSubmit = () => {
     onSubmit();
-    //if onSubmit returns successfully:
-    //return to HomeScreen
-    //Display 'Game Created' notification
   };
 
   //Retrieve the relevant values for the selected sport
@@ -114,103 +118,141 @@ const CreatePlayer = ({ navigation }) => {
           })
           .then((res) => {
             setSportSpecificValues(res.sports);
-
-            console.log("Results are...");
-            console.log(res.sports);
           });
       } catch (error) {
         console.log("Error making authenticated request:", error);
-        // Handle error
       }
     };
+
+    const fetchUsersPlayerRoster = async () => {
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players/playerRoster`;
+
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        const requestOptions = {
+          headers,
+        };
+
+        await authFetch(url, requestOptions)
+          .then((res) => {
+            console.log("Res in fetchPlayers is", res.body.players);
+            if (res.body.success) {
+              console.log("res was ok");
+
+              return res;
+            } else throw new Error("Network response was not ok.");
+          })
+          .then((res) => setUsersPlayerRoster(res.body.players))
+          .catch((error) => {
+            console.log("Error during fetch:", error);
+            // Handle specific error scenarios
+          });
+      } catch {
+        console.log("error in fetch player roster");
+      }
+    };
+    fetchUsersPlayerRoster();
+
     fetchData();
   }, []);
 
-  // const handleError = (errror, input) => {
-  //   setErrors((prevState) => ({ ...prevState, [input]: error }));
-  // };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchCurrentUser = async () => {
+        try {
+          const user = await getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      };
+      fetchCurrentUser();
+    }, [])
+  );
 
   const validateInputs = () => {
     if (!calibre) {
-      console.log(calibre);
-
-      console.log("No Calibre");
-      // handleError("Please input calibre", "calibre");
+      setErrorMessage("Please Select a Calibre");
+      return false;
+    }
+    if (!gender) {
+      setErrorMessage("Please Select a Gender");
+      return false;
+    }
+    if (!position) {
+      setErrorMessage("Please Select a Position");
+      return false;
+    }
+    if (!location) {
+      setErrorMessage("Please Select a Location");
+      return false;
+    } else {
+      return true;
     }
   };
 
   const onSubmit = () => {
     console.log(calibre);
 
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
+    const validation = validateInputs();
+    if (validation) {
+      const body = {
+        gender,
+        calibre,
+        location,
+        additionalInfo,
+        position,
+        location,
+        travelRange,
+        sport: sport,
+        sportId: sportId,
+      };
 
-    validateInputs();
-    const body = {
-      gender,
-      calibre,
-      location,
-      additionalInfo,
-      position,
-      location,
-      travelRange,
-      sport: sport,
-      sportId: sportId,
-    };
+      console.log("CreatePlayer OnSubmit body is " + body.calibre);
+      const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
 
-    console.log("CreatePlayer OnSubmit body is " + body.calibre);
-    const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
+      const postPlayer = async () => {
+        try {
+          console.log("postPlayer async request called");
 
-    const postPlayer = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-        console.log("postPlayer async request called");
+          const headers = {
+            "Content-Type": "application/json",
+          };
 
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
+          const requestOptions = {
+            method: "POST",
+            headers,
+            body: JSON.stringify(body),
+          };
 
-        const requestOptions = {
-          method: "POST",
-          headers,
-          body: JSON.stringify(body),
-        };
-
-        await fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
+          await authFetch(url, requestOptions).then((res) => {
+            if (res.status === 200) {
               console.log("Submit successful");
-              navigation.navigate("Home", {
+              navigation.navigate("ManagePlayers", {
                 successMessage:
                   "Player created successfully. Free Agent pending.",
               });
             } else {
+              setErrorMessage(
+                "There was a problem creating your player profile. Please try again later."
+              );
+
               console.log("Submit Failed");
             }
           });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    postPlayer();
+        } catch (error) {
+          setErrorMessage(
+            "There was a problem creating your player profile. Please try again later."
+          );
+          console.log("Error making authenticated request:", error);
+          // Handle error
+        }
+      };
+      postPlayer();
+    }
   };
 
   if (isSportSelected === true) {
@@ -274,11 +316,8 @@ const CreatePlayer = ({ navigation }) => {
             label="Position"
           />
           {/* This will be a LOCATION SELECTOR */}
-          <AutoCompletePicker
-            onInputSelected={captureSelectedLocation}
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            ref={autoCompletePickerRef}
-          />
+          <AddressInput handleLocationSelected={handleLocationSelected} />
+
           {/* Make this a sliding scale and move it to a subsequent window */}
           <TextInput
             style={[
@@ -303,6 +342,13 @@ const CreatePlayer = ({ navigation }) => {
             onChangeText={(additionalInfo) => setAdditionalInfo(additionalInfo)}
           />
           <View>
+            {errorMessage ? (
+              <View style={{ padding: 30 }}>
+                <Text style={[Styles.errorText, { marginTop: 0 }]}>
+                  {errorMessage}
+                </Text>
+              </View>
+            ) : null}
             <TouchableOpacity>
               <Button
                 title="CREATE PLAYER"
@@ -318,7 +364,14 @@ const CreatePlayer = ({ navigation }) => {
     const noActiveGames = <Text>...</Text>;
 
     if (sportSpecificValues.length > 0) {
-      allActiveGames = sportSpecificValues.map((sport, index) => (
+      const activeSports = usersPlayerRoster.map((profile) => profile.sport);
+      const uniqueSports = [...new Set(activeSports)];
+      const filteredSportOptions = sportSpecificValues.filter(
+        (item) => !uniqueSports.includes(item.sport)
+      );
+      console.log("filteredSportOptions are", filteredSportOptions);
+
+      allActiveGames = filteredSportOptions.map((sport, index) => (
         <TouchableOpacity
           key={sport.id}
           onPress={() => {
@@ -339,8 +392,9 @@ const CreatePlayer = ({ navigation }) => {
             key={index}
             style={[
               Styles.input,
+              Styles.align,
               (style = {
-                fontSize: 35,
+                fontSize: 30,
                 textAlign: "center",
                 textAlignVertical: "center",
                 lineHeight: Platform.select({

@@ -1,4 +1,11 @@
-import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,10 +14,40 @@ import formatDate from "./formatDate";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import authFetch from "../../api/authCalls.js";
 
 const ManagerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
+
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      const requestOptions = {
+        headers,
+      };
+
+      // Use async/await instead of chaining .then() for readability
+      const res = await authFetch(url, requestOptions);
+      if (res.status === 200) {
+        const data = res.body;
+        setActiveGames(data.availableGames || []);
+      } else {
+        throw new Error("Network response was not ok.");
+      }
+    } catch (error) {
+      console.error("Error making authenticated request:", error);
+      // Optionally set an error state to display an error message
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -23,55 +60,11 @@ const ManagerBrowseGames = ({ navigation }) => {
         }
       };
       fetchCurrentUser();
+      fetchData();
     }, [])
   );
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/active`;
-
-    const fetchData = async () => {
-      try {
-        const token = await getTokenFromStorage();
-        console.log("Token is " + token);
-        console.log("URL is " + url);
-
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-
-        const requestOptions = {
-          headers,
-        };
-
-        fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              console.log("res was ok");
-              return res.json();
-            } else throw new Error("Network response was not ok.");
-          })
-          .then((res) => setActiveGames(res.availableGames))
-          .catch((error) => {
-            console.log("Error during fetch:", error);
-            // Handle specific error scenarios
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
     fetchData();
   }, []);
 
@@ -83,9 +76,10 @@ const ManagerBrowseGames = ({ navigation }) => {
 
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
-  if (activeGames.length > 0) {
+  if (activeGames) {
     allUpcomingGames = activeGames
       .filter(({ game }) => new Date(game.date) > currentDate)
+      .sort((a, b) => new Date(a.game.date) - new Date(b.game.date)) // Sort games by date descending
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
@@ -104,6 +98,7 @@ const ManagerBrowseGames = ({ navigation }) => {
 
     allPreviousGames = activeGames
       .filter(({ game }) => new Date(game.date) <= currentDate)
+      .sort((a, b) => new Date(a.game.date) - new Date(b.game.date)) // Sort games by date descending
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
@@ -145,25 +140,63 @@ const ManagerBrowseGames = ({ navigation }) => {
         <View style={Styles.managerBrowseGamesContainerHeader}>
           <Text style={{ fontSize: 30 }}>Upcoming Games</Text>
         </View>
-        <View style={Styles.pendingGamesContainer}>
-          <ScrollView>
-            {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
-          </ScrollView>
+        <View
+          style={[
+            Styles.pendingGamesContainer,
+            (style = {
+              flex: 1,
+              justifyContent: "center",
+            }),
+          ]}
+        >
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : allUpcomingGames.length > 0 ? (
+            <ScrollView>
+              {allUpcomingGames.length > 0 ? allUpcomingGames : noActiveGames}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>No Games Coming Up</Text>
+            </View>
+          )}
         </View>
         <View style={Styles.managerBrowseGamesContainerHeader}>
           <Text style={{ fontSize: 30 }}>Previous Games</Text>
         </View>
-        <View style={[Styles.pendingGamesContainer, { marginBottom: 12 }]}>
-          <ScrollView>
-            {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
-          </ScrollView>
+        <View
+          style={[
+            Styles.pendingGamesContainer,
+            { marginBottom: 12, flex: 1, justifyContent: "center" },
+          ]}
+        >
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : allPreviousGames.length > 0 ? (
+            <ScrollView>
+              {allPreviousGames.length > 0 ? allPreviousGames : noActiveGames}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>No Games Played</Text>
+            </View>
+          )}
         </View>
       </View>
 
-      <NavigationFooter
-        currentRole={currentUser.currentRole}
-        navigation={navigation}
-      >
+      <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
     </View>

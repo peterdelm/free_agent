@@ -3,12 +3,13 @@ import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../../contexts/authContext";
 
 const Footer = ({ navigation, currentRole }) => {
-  const selectiveDisplay = () => {
-    if (currentRole == "manager") {
-      console.log("Current Role is MANAGER");
+  const { user } = useAuth();
 
+  const selectiveDisplay = () => {
+    if (user.currentRole == "manager") {
       return (
         <View
           style={{
@@ -25,7 +26,7 @@ const Footer = ({ navigation, currentRole }) => {
             flex: 0,
           }}
         >
-          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity onPress={() => navigation.navigate("ManagerHome")}>
             <View style={{ alignItems: "center" }}>
               <Image
                 source={require("../../assets/prayingHands.png")}
@@ -66,8 +67,7 @@ const Footer = ({ navigation, currentRole }) => {
         </View>
       );
     }
-    if (currentRole == "player") {
-      console.log("Current Role is PLAYER");
+    if (user.currentRole == "player") {
       return (
         <View
           style={{

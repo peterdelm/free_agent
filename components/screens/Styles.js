@@ -82,7 +82,7 @@ const Styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#EB6FBD",
     textAlign: "center",
-    textAlignVertical: "center",
+    verticalTextAlign: "center",
   },
   TextInput: {
     height: 50,
@@ -185,12 +185,6 @@ const Styles = StyleSheet.create({
   requestPlayerContainer: {
     alignItems: "flex-start",
     width: "100%",
-    // height: "15%",
-    // borderWidth: 1, // Border width
-    // borderColor: "blue", // Border color
-    // borderRadius: 5, // Border radius (optional)
-    // padding: 5, // Optional padding
-    // display: "flex",
   },
 
   requestPlayerButtonContainer: {
@@ -418,9 +412,6 @@ const Styles = StyleSheet.create({
     justifyContent: "center",
   },
   profileLinksContainer: {
-    // borderColor: "green", // Border color
-    // borderWidth: 3, // Border width
-    // borderRadius: 5, // Border radius (optional)
     width: "100%",
     alignItems: "center",
   },
@@ -436,16 +427,10 @@ const Styles = StyleSheet.create({
     paddingBottom: 15,
   },
   profileLinkTextContainer: {
-    // borderColor: "red", // Border color
-    // borderWidth: 1, // Border width
-    // borderRadius: 5, // Border radius (optional)
     textAlign: "left",
     fontSize: 20,
   },
   profileLinkImageContainer: {
-    // borderColor: "red", // Border color
-    // borderWidth: 1, // Border width
-    // borderRadius: 5, // Border radius (optional)
     textAlign: "left",
   },
   playerHomeContainer: { height: "100%", justifyContent: "space-between" },

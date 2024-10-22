@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Platform, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import Styles from "./Styles";
 
 class Pickering extends Component {
   constructor(props) {
@@ -14,18 +13,24 @@ class Pickering extends Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    // Reset values when reset prop changes
+    if (
+      prevProps.resetTrigger !== this.props.resetTrigger &&
+      this.props.resetTrigger
+    ) {
+      console.log("Reset triggered by parent");
+      this.resetValues();
+    }
+  }
+
+  resetValues = () => {
+    this.setState({ language: "" }); // Reset selectedLanguage to an empty string
+  };
+
   render() {
     return (
-      <View
-        style={[
-          this.state.style,
-          (style = {
-            // flexDirection: "row",
-            // borderColor: "red",
-            // borderWidth: 2,
-          }),
-        ]}
-      >
+      <View style={[this.state.style]}>
         <Picker
           selectedValue={this.state.language}
           onValueChange={(itemValue) => {
@@ -40,9 +45,18 @@ class Pickering extends Component {
             value=""
           />
 
-          {this.props.language.map((course, index) => (
-            <Picker.Item key={index} label={course} value={course} />
-          ))}
+          {/* Render actual options if available */}
+          {this.props.language && this.props.language.length > 0 ? (
+            this.props.language.map((course, index) => (
+              <Picker.Item key={index} label={course} value={course} />
+            ))
+          ) : (
+            // Optionally, you can add another placeholder or keep this empty
+            <Picker.Item
+              label="Please Select a Sport First"
+              value="no_options"
+            />
+          )}
         </Picker>
         {Platform.OS === "ios" && (
           <View style={styles.arrowContainer}>

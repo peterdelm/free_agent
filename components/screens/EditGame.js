@@ -15,14 +15,16 @@ import {
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AddressInput from "./AddressInput.js";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
+import DatePicker from "./DatePicker.js";
+import TimePicker from "./TimePicker.js";
 import authFetch from "../../api/authCalls.js";
 
-const EditPlayer = ({ navigation }) => {
+const EditGame = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
-
   const [calibre, setCalibre] = useState("");
   const [location, setPlayerAddress] = useState("");
   const [bio, setBio] = useState("");
@@ -35,14 +37,19 @@ const EditPlayer = ({ navigation }) => {
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
   const [player, setPlayer] = useState({});
+  const [game, setGame] = useState({});
+  const [time, setGameTime] = useState("");
+  const [date, setGameDate] = useState("");
+
+  const datePickerRef = useRef(null);
+  const timePickerRef = useRef(null);
 
   const route = useRoute();
-  const { playerId, playerSport } = route.params;
+  const { playerId, gameSport, gameId } = route.params;
   const autoCompletePickerRef = useRef(null);
 
-  const [game, setGame] = useState([]);
   console.log("PlayerId is " + playerId);
-  console.log("PlayerSport is " + playerSport);
+  console.log("PlayerSport is " + gameSport);
 
   const handleCalibreChange = (input) => {
     console.log("New Calibre is: ", input);
@@ -72,34 +79,33 @@ const EditPlayer = ({ navigation }) => {
 
   ///////////////////////////////////////////////////////
   //retrieve the player values
-  const fetchPlayerData = async () => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
-    console.log("FetchplayerData called with url " + url);
+  const fetchGameData = async () => {
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
 
-    try {
-      console.log("URL is " + url);
+    const fetchData = async () => {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+        };
 
-      const headers = {
-        "Content-Type": "application/json",
-      };
+        const requestOptions = {
+          headers,
+        };
 
-      const requestOptions = {
-        headers,
-      };
+        const res = await authFetch(url, requestOptions);
 
-      const res = await authFetch(url, requestOptions);
-      if (res.status === 200) {
-        console.log("Status is", res.status);
-      } else {
-        throw new Error("Fetch Player Network response was not res.ok.");
+        authFetch(url, requestOptions);
+        if (res.status === 200) {
+          console.log("GameView fetch res is", res.body);
+          const gameData = res.body.game;
+          setGame(gameData);
+        } else console.log("Something in ViewGame fetch returned incorrectly");
+      } catch (error) {
+        console.log("Error making authenticated request:", error);
+        // Handle error
       }
-
-      setPlayer(res.body);
-      console.log("Player location is " + player.location);
-    } catch (error) {
-      console.log("Error fetching player data:", error);
-      // Handle error
-    }
+    };
+    fetchData();
   };
 
   const fetchSportData = async () => {
@@ -128,8 +134,8 @@ const EditPlayer = ({ navigation }) => {
       console.log("Sports Results are...");
       console.log(data);
 
-      const sportToFind = playerSport;
-      console.log("PlayerSport is: " + playerSport);
+      const sportToFind = gameSport;
+      console.log("PlayerSport is: " + gameSport);
 
       const foundSport = data.sports.find(
         (sport) => sport.sport === sportToFind
@@ -149,10 +155,27 @@ const EditPlayer = ({ navigation }) => {
     }
   };
 
-  const fetchSportsandPlayers = async () => {
+  const formattedDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+
+    // Define options for the desired date format
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    // Format the date using options
+    const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
+    console.log("Formatted date is:", formattedDate);
+    return formattedDate;
+  };
+
+  const fetchSportsandGames = async () => {
     console.log("Fetching Sports and Players");
-    await fetchPlayerData().then;
+    await fetchGameData().then;
     await fetchSportData();
+    console.log("Game date is", game.date);
   };
   //////////////////////////////////////////////////////
   //Retrieve the player and sport values
@@ -161,7 +184,7 @@ const EditPlayer = ({ navigation }) => {
 
     const fetchData = async () => {
       try {
-        await fetchSportsandPlayers();
+        await fetchSportsandGames();
       } catch (error) {
         console.error("Error fetching sports and players:", error);
       }
@@ -174,7 +197,7 @@ const EditPlayer = ({ navigation }) => {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          await fetchSportsandPlayers();
+          await fetchSportsandGames();
         } catch (error) {
           console.error("Error fetching sports and players on focus:", error);
         }
@@ -207,7 +230,7 @@ const EditPlayer = ({ navigation }) => {
 
     const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
 
-    const postPlayer = async () => {
+    const postGame = async () => {
       try {
         console.log("URL is " + url);
         console.log("postPlayer async request called at line 138");
@@ -238,7 +261,26 @@ const EditPlayer = ({ navigation }) => {
         // Handle error
       }
     };
-    postPlayer();
+    postGame();
+  };
+  const handleLocationSelected = (data, details) => {
+    console.log("Handle Location Selected has been Pressed!");
+    console.log("Description is:", data.description);
+    setGameAddress(data.description);
+  };
+
+  const handleCancelButtonClick = () => {
+    console.log("Handle Cancel Button Clicked!");
+    navigation.goBack();
+  };
+
+  captureSelectedDate = (selectedInput) => {
+    console.log("Selected Date input: " + selectedInput);
+    setGameDate(selectedInput);
+  };
+  captureSelectedTime = (selectedInput) => {
+    console.log("Selected Time input: " + selectedInput);
+    setGameTime(selectedInput);
   };
 
   var calibres = calibreList;
@@ -261,7 +303,7 @@ const EditPlayer = ({ navigation }) => {
             padding: 20,
           }}
         >
-          Edit Player Profile
+          Edit Game
         </Text>
       </View>
       <View
@@ -272,70 +314,98 @@ const EditPlayer = ({ navigation }) => {
           padding: 10,
         }}
       >
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={player.calibre}
-          placeholderTextColor="grey"
-          language={calibreList}
-          onValueChange={handleCalibreChange}
-          label={player.calibre}
+        {/* LOCATION SELECTOR */}
+        <AddressInput
+          handleLocationSelected={handleLocationSelected}
+          defaultLocation={game.location}
+        />
+        {/* DATE SELECTOR */}
+        <DatePicker
+          onInputSelected={captureSelectedDate}
+          style={[Styles.datePickerButton, Styles.input]}
+          ref={datePickerRef}
+          input={game.date}
+        />
+        {/* TIME SELECTOR */}
+        <TimePicker
+          onInputSelected={captureSelectedTime}
+          style={[Styles.datePickerButton, Styles.input]}
+          ref={timePickerRef}
+          defaultValue={game.time}
+          inputValue={game.time}
         />
         <Picker
           style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={player.gender}
+          defaultValue={game.calibre}
+          placeholderTextColor="grey"
+          language={calibreList}
+          onValueChange={handleCalibreChange}
+          label={game.calibre}
+        />
+        <Picker
+          style={[Styles.sportsPickerDropdown, Styles.input]}
+          defaultValue={game.gender}
           placeholderText
           Color="#005F66"
           onValueChange={handleGenderChange}
           language={genders}
-          label={player.gender}
+          label={game.gender}
         />
+        {/* POSITION */}
         <Picker
           style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={player.position}
+          defaultValue={game.position}
           placeholderText
           Color="#005F66"
           onValueChange={handlePositionChange}
           language={positions}
-          label={player.position}
+          label={game.position}
         />
-        <AutoCompletePicker
-          onInputSelected={captureSelectedLocation}
+        {/* GAME TYPE */}
+        <Picker
           style={[Styles.sportsPickerDropdown, Styles.input]}
-          ref={autoCompletePickerRef}
-          value={player.location}
-          placeholder={player.location}
-          placeholderTextColor="#005F66"
+          defaultValue={game.gameType}
+          placeholderText
+          Color="#005F66"
+          onValueChange={handlePositionChange}
+          language={positions}
+          label={game.gameType}
         />
-        {/* Make this a sliding scale and move it to a subsequent window */}
+        {/* GAME LENGTH */}
+        <Picker
+          style={[Styles.sportsPickerDropdown, Styles.input]}
+          defaultValue={game.gameLength}
+          placeholderText
+          Color="#005F66"
+          onValueChange={handlePositionChange}
+          language={positions}
+          label={game.gameLength}
+        />
+
+        {/* BIO */}
         <TextInput
           style={[
             Styles.sportsPickerDropdown,
             Styles.input,
             (style = { textAlign: "center" }),
           ]}
-          placeholder={`Travel Range: ${player.travelRange} km`}
-          defaultValue={`${player.travelRange}`}
-          placeholderTextColor="#005F66"
-          onChangeText={(travelRange) => handleTravelRangeChange(travelRange)}
-          placeholderText={player.travelRange}
-        />
-        <TextInput
-          style={[
-            Styles.sportsPickerDropdown,
-            Styles.input,
-            (style = { textAlign: "center" }),
-          ]}
-          defaultValue={`${player.bio}`}
-          placeholder={`${player.bio}`}
+          defaultValue={`${game.additionalInfo}`}
+          placeholder={"Additional Info..."}
           placeholderTextColor="#005F66"
           onChangeText={(bio) => handleBioChange(bio)}
         />
         <TouchableOpacity>
-          <Button title="SAVE PLAYER" onPress={() => handleFormSubmit()} />
+          <Button
+            title=" *INACTIVE* SAVE GAME *INACTIVE*"
+            onPress={() => handleFormSubmit()}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Button title="CANCEL" onPress={() => handleCancelButtonClick()} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default EditPlayer;
+export default EditGame;

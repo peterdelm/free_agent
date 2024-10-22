@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["react"],
+    "allowJs": true, // This allows JavaScript files to be compiled.
+    "checkJs": true // This enables type-checking on JavaScript files.
+  },
+  "include": [
+    "src/**/*",
+    // "components/**/*",
+    "./components/screens/usePushNotifications.tsx"
+  ],
+  "exclude": ["node_modules"],
+  "extends": ["expo/tsconfig.base", "@tsconfig/react-native/tsconfig.json"]
+}

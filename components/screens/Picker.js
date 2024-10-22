@@ -1,41 +1,69 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Platform, Image } from "react-native";
+import { StyleSheet, View, Platform, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import Styles from "./Styles";
 
 class Pickering extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      language: props.language,
-      label: props.label,
-      colour: props.colour,
-      style: props.style,
-      defaultValue: props.defaultValue,
+      language: props.defaultValue || "",
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.resetTrigger !== this.props.resetTrigger &&
+      this.props.resetTrigger
+    ) {
+      console.log("Reset triggered by parent");
+      this.resetValues();
+    }
+  }
+
+  handleValueChange = (itemValue) => {
+    console.log("Item value selected:", itemValue); // Log the selected value
+    this.setState({ language: itemValue });
+    if (this.props.onValueChange) {
+      this.props.onValueChange(itemValue);
+    }
+  };
+
+  resetValues = () => {
+    this.setState({ language: "" }); // Reset selectedLanguage to an empty string
+  };
+
   render() {
+    const {
+      style,
+      colour,
+      label,
+      language: languages,
+      appendText,
+    } = this.props;
+    const { language: selectedLanguage } = this.state;
+
     return (
-      <View style={this.state.style}>
+      <View style={style}>
         <Picker
-          value={this.state.defaultValue}
-          selectedValue={this.state.language}
-          onValueChange={(itemValue) => {
-            this.setState({ language: itemValue });
-            this.props.onValueChange(itemValue);
-          }}
+          selectedValue={selectedLanguage}
+          onValueChange={this.handleValueChange}
           itemStyle={{ height: 50 }}
         >
-          <Picker.Item
-            color={this.props.colour}
-            label={this.props.label}
-            value=""
-          />
+          {/* Render label option if needed */}
+          {label && <Picker.Item color={colour} label={label} value="" />}
 
-          {this.props.language.map((course, index) => (
-            <Picker.Item key={index} label={course} value={course} />
-          ))}
+          {/* Render actual options if available */}
+          {Array.isArray(languages) && languages.length > 0 ? (
+            languages.map((course, index) => (
+              <Picker.Item
+                key={index}
+                label={appendText ? `${course} ${appendText}` : course} // Append text if provided
+                value={course}
+              />
+            ))
+          ) : (
+            <Picker.Item label="No options available" value="no_options" />
+          )}
         </Picker>
         {Platform.OS === "ios" && (
           <View style={styles.arrowContainer}>
@@ -51,22 +79,15 @@ class Pickering extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
   arrowContainer: {
-    display: "flex",
     position: "absolute",
-    transform: [{ translateX: 350 }], // Half of the arrow height
-    overflow: "visible", // Allow the arrow to overflow the container
-    height: 10,
-    width: 10,
+    right: 10,
+    top: "50%",
+    transform: [{ translateY: -10 }],
   },
   arrowImage: {
-    width: "auto",
-    height: "100%",
-    resizeMode: "contain",
+    width: 20,
+    height: 20,
   },
 });
 
