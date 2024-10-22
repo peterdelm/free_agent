@@ -206,7 +206,7 @@ const UserProfile = ({ navigation }) => {
               {currentUser && <CustomButton user={currentUser} />}
             </View>
           </View>
-          <View style={Styles.profileLinkContainer}>
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Help</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
@@ -214,8 +214,8 @@ const UserProfile = ({ navigation }) => {
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
-          <View style={Styles.profileLinkContainer}>
+          </View> */}
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>How it works</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
@@ -223,7 +223,7 @@ const UserProfile = ({ navigation }) => {
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
+          </View> */}
           <TouchableOpacity
             style={Styles.profileLinkContainer}
             onPress={() => openModal()}

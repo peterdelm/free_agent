@@ -255,7 +255,6 @@ function ViewGame({ navigation, message }) {
       return null;
     }
     if (game.userId === currentUser?.id) {
-      console.log("You created this game", game.userId);
       return (
         <TouchableOpacity
           style={{ color: "#C30000" }}
@@ -297,7 +296,7 @@ function ViewGame({ navigation, message }) {
                 }),
               ]}
             >
-              Join Game
+              Join Game (INACTIVE)
             </Text>
           </View>
         </TouchableOpacity>
@@ -364,19 +363,7 @@ function ViewGame({ navigation, message }) {
           onPress={() => handleQuitGameButtonPress()}
         >
           <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
-            <Text
-              style={[
-                Styles.gameInfo,
-                // (style = {
-                //   fontWeight: "bold",
-                //   fontSize: 20,
-                //   color: "white",
-                //   borderColor: "#C30000",
-                // }),
-              ]}
-            >
-              Quit Game
-            </Text>
+            <Text style={[Styles.gameInfo]}>Quit Game</Text>
           </View>
         </TouchableOpacity>
       );
@@ -449,6 +436,8 @@ const styles = StyleSheet.create({
     borderBottomStyle: "solid",
     paddingVertical: 10,
     alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     backgroundColor: "white",
   },
   headerImage: {
@@ -463,8 +452,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 10,
-    // Adjust this height if needed to fit content within the screen
-    maxHeight: height - 150, // Adjust based on footer height and margins
   },
   infoSection: {
     marginBottom: 15,
