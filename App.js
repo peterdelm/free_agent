@@ -239,7 +239,11 @@ function MainApp() {
       ) : (
         <AuthStack /> // If no user is logged in, render the AuthStack
       )}
-      <StatusBar hidden={false} barStyle="light-content" />
+      <StatusBar
+        hidden={false}
+        barStyle="light-content"
+        backgroundColor="#000000"
+      />
     </>
   );
 }
