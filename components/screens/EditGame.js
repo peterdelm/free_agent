@@ -38,15 +38,18 @@ const EditGame = ({ navigation }) => {
   const [positionList, setPositionList] = useState([]);
   const [player, setPlayer] = useState({});
   const [game, setGame] = useState({});
+  const [time, setGameTime] = useState("");
+  const [date, setGameDate] = useState("");
+
   const datePickerRef = useRef(null);
   const timePickerRef = useRef(null);
 
   const route = useRoute();
-  const { playerId, playerSport, gameId } = route.params;
+  const { playerId, gameSport, gameId } = route.params;
   const autoCompletePickerRef = useRef(null);
 
   console.log("PlayerId is " + playerId);
-  console.log("PlayerSport is " + playerSport);
+  console.log("PlayerSport is " + gameSport);
 
   const handleCalibreChange = (input) => {
     console.log("New Calibre is: ", input);
@@ -131,8 +134,8 @@ const EditGame = ({ navigation }) => {
       console.log("Sports Results are...");
       console.log(data);
 
-      const sportToFind = playerSport;
-      console.log("PlayerSport is: " + playerSport);
+      const sportToFind = gameSport;
+      console.log("PlayerSport is: " + gameSport);
 
       const foundSport = data.sports.find(
         (sport) => sport.sport === sportToFind
@@ -152,10 +155,27 @@ const EditGame = ({ navigation }) => {
     }
   };
 
+  const formattedDate = (isoDateString) => {
+    const date = new Date(isoDateString);
+
+    // Define options for the desired date format
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    // Format the date using options
+    const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
+    console.log("Formatted date is:", formattedDate);
+    return formattedDate;
+  };
+
   const fetchSportsandGames = async () => {
     console.log("Fetching Sports and Players");
     await fetchGameData().then;
     await fetchSportData();
+    console.log("Game date is", game.date);
   };
   //////////////////////////////////////////////////////
   //Retrieve the player and sport values
@@ -210,7 +230,7 @@ const EditGame = ({ navigation }) => {
 
     const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
 
-    const postPlayer = async () => {
+    const postGame = async () => {
       try {
         console.log("URL is " + url);
         console.log("postPlayer async request called at line 138");
@@ -241,12 +261,17 @@ const EditGame = ({ navigation }) => {
         // Handle error
       }
     };
-    postPlayer();
+    postGame();
   };
   const handleLocationSelected = (data, details) => {
     console.log("Handle Location Selected has been Pressed!");
     console.log("Description is:", data.description);
     setGameAddress(data.description);
+  };
+
+  const handleCancelButtonClick = () => {
+    console.log("Handle Cancel Button Clicked!");
+    navigation.goBack();
   };
 
   captureSelectedDate = (selectedInput) => {
@@ -279,7 +304,6 @@ const EditGame = ({ navigation }) => {
           }}
         >
           Edit Game
-          {game.time}
         </Text>
       </View>
       <View
@@ -295,12 +319,12 @@ const EditGame = ({ navigation }) => {
           handleLocationSelected={handleLocationSelected}
           defaultLocation={game.location}
         />
-
         {/* DATE SELECTOR */}
         <DatePicker
           onInputSelected={captureSelectedDate}
           style={[Styles.datePickerButton, Styles.input]}
           ref={datePickerRef}
+          input={game.date}
         />
         {/* TIME SELECTOR */}
         <TimePicker
@@ -308,6 +332,7 @@ const EditGame = ({ navigation }) => {
           style={[Styles.datePickerButton, Styles.input]}
           ref={timePickerRef}
           defaultValue={game.time}
+          inputValue={game.time}
         />
         <Picker
           style={[Styles.sportsPickerDropdown, Styles.input]}
@@ -326,6 +351,7 @@ const EditGame = ({ navigation }) => {
           language={genders}
           label={game.gender}
         />
+        {/* POSITION */}
         <Picker
           style={[Styles.sportsPickerDropdown, Styles.input]}
           defaultValue={game.position}
@@ -335,43 +361,47 @@ const EditGame = ({ navigation }) => {
           language={positions}
           label={game.position}
         />
-        <AutoCompletePicker
-          onInputSelected={captureSelectedLocation}
+        {/* GAME TYPE */}
+        <Picker
           style={[Styles.sportsPickerDropdown, Styles.input]}
-          ref={autoCompletePickerRef}
-          value={player.location}
-          placeholder={player.location}
-          placeholderTextColor="#005F66"
+          defaultValue={game.gameType}
+          placeholderText
+          Color="#005F66"
+          onValueChange={handlePositionChange}
+          language={positions}
+          label={game.gameType}
         />
-        {/* Make this a sliding scale and move it to a subsequent window */}
+        {/* GAME LENGTH */}
+        <Picker
+          style={[Styles.sportsPickerDropdown, Styles.input]}
+          defaultValue={game.gameLength}
+          placeholderText
+          Color="#005F66"
+          onValueChange={handlePositionChange}
+          language={positions}
+          label={game.gameLength}
+        />
+
+        {/* BIO */}
         <TextInput
           style={[
             Styles.sportsPickerDropdown,
             Styles.input,
             (style = { textAlign: "center" }),
           ]}
-          placeholder={`Travel Range: ${player.travelRange} km`}
-          defaultValue={`${player.travelRange}`}
-          placeholderTextColor="#005F66"
-          onChangeText={(travelRange) => handleTravelRangeChange(travelRange)}
-          placeholderText={player.travelRange}
-        />
-        <TextInput
-          style={[
-            Styles.sportsPickerDropdown,
-            Styles.input,
-            (style = { textAlign: "center" }),
-          ]}
-          defaultValue={`${player.bio}`}
-          placeholder={`${player.bio}`}
+          defaultValue={`${game.additionalInfo}`}
+          placeholder={"Additional Info..."}
           placeholderTextColor="#005F66"
           onChangeText={(bio) => handleBioChange(bio)}
         />
         <TouchableOpacity>
-          <Button title="SAVE GAME" onPress={() => handleFormSubmit()} />
+          <Button
+            title=" *INACTIVE* SAVE GAME *INACTIVE*"
+            onPress={() => handleFormSubmit()}
+          />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Button title="CANCEL" onPress={() => handleFormSubmit()} />
+          <Button title="CANCEL" onPress={() => handleCancelButtonClick()} />
         </TouchableOpacity>
       </View>
     </View>

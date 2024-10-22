@@ -6,14 +6,35 @@ import { Calendar, LocaleConfig } from "react-native-calendars";
 class DatePicker extends Component {
   constructor(props) {
     super(props);
+    console.log("Initial date prop:", props.input); // Log the date prop
     this.state = {
       modalVisible: false,
       selected: "",
       availableDates: generateAvailableDates(),
-      inputValue: "Date",
+      inputValue: props.input || "Date",
       style: props.style,
     };
   }
+
+  formattedDate = () => {
+    if (this.state.inputValue == "Date") {
+      return "Date";
+    } else {
+      const date = new Date(this.state.inputValue);
+
+      // Define options for the desired date format
+      const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      };
+
+      // Format the date using options
+      const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
+      console.log("Formatted date is:", formattedDate);
+      return formattedDate;
+    }
+  };
 
   resetDatePickerValues = () => {
     this.setState({
@@ -23,6 +44,15 @@ class DatePicker extends Component {
       inputValue: "Date",
     });
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.input !== this.props.input) {
+      this.setState({
+        selected: this.props.input || "",
+        inputValue: this.props.input || "Date",
+      });
+    }
+  }
 
   openDatePicker = () => {
     this.setState({ modalVisible: true });
@@ -41,7 +71,7 @@ class DatePicker extends Component {
     return (
       <View style={this.state.style}>
         <TouchableOpacity onPress={this.openDatePicker}>
-          <Text style={{ textAlign: "center" }}>{this.state.inputValue}</Text>
+          <Text style={{ textAlign: "center" }}>{this.formattedDate()}</Text>
         </TouchableOpacity>
 
         {/* Date Picker Modal */}

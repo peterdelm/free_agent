@@ -83,6 +83,7 @@ function ViewGame({ navigation, message }) {
     console.log("handleEditGameButtonPress called");
     navigation.navigate("EditGame", {
       gameId: game.id,
+      gameSport: game.sport,
     });
   };
 

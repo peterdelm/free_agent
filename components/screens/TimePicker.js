@@ -144,18 +144,62 @@ class TimePicker extends Component {
     this.setDefaultValue();
   }
 
-  setDefaultValue = () => {
-    console.log("Default value is", this.state.defaultValue);
+  componentDidUpdate(prevProps) {
+    // Check if the defaultValue prop has changed
+    if (prevProps.defaultValue !== this.props.defaultValue) {
+      this.setDefaultValue(this.props.defaultValue);
+    }
+  }
 
+  calculateAngleFromTime = (hour, minute) => {
+    console.log(
+      `Calculating Angle from Time with hour ${hour} and minute ${minute}`
+    );
+    if (hour >= 12) {
+      hour = hour - 12;
+    }
+    const hourAngle = hour * 30;
+    const minuteAngle = minute * 6;
+    console.log("hourAngle is :", hourAngle);
+    const angles = { hourAngle: hourAngle, minuteAngle: minuteAngle };
+    return angles;
+  };
+  setDefaultValue = (newDefaultValue) => {
+    const defaultValue = newDefaultValue || this.state.defaultValue;
+
+    if (defaultValue) {
+      const [hour, minute] = defaultValue.split(":").map(Number);
+      const pendingHour = hour % 12 === 0 ? 12 : hour; // Convert to 12-hour format
+      const pendingMinute = minute;
+      const isAm = hour >= 12 ? false : true;
+
+      // Get angles for hour and minute hands
+      const { hourAngle, minuteAngle } = this.calculateAngleFromTime(
+        pendingHour,
+        pendingMinute
+      );
+
+      this.setState({
+        pendingHour: pendingHour.toString().padStart(2, "0"),
+        pendingMinute: pendingMinute.toString().padStart(2, "0"),
+        selectedHour: pendingHour.toString().padStart(2, "0"),
+        selectedMinute: pendingMinute.toString().padStart(2, "0"),
+        pendingRotations: { hour: hourAngle, minute: minuteAngle },
+        savedRotations: { hour: hourAngle, minute: minuteAngle },
+        pendingAM: isAm,
+      });
+    }
+  };
+
+  updateRotations = (hour, minute) => {
+    const { hourAngle, minuteAngle } = this.calculateAngleFromTime(
+      hour,
+      minute
+    );
+    console.log("Hour angle is ", hourAngle);
     this.setState({
-      selectedHour: this.state.pendingHour,
-      selectedMinute: this.state.pendingMinute,
-      pendingRotations: this.state.pendingRotations,
-      savedRotations: this.state.pendingRotations,
-      pendingHour: this.state.pendingHour,
-      pendingMinute: this.state.pendingMinute,
-      pendingAM: this.state.pendingAM,
-      savedAM: this.state.pendingAM,
+      pendingRotations: { hour: hourAngle, minute: minuteAngle },
+      savedRotations: { hour: hourAngle, minute: minuteAngle },
     });
   };
 
@@ -283,6 +327,7 @@ class TimePicker extends Component {
   };
 
   convertToAMPM = (inputValue) => {
+    console.log("Input Value is", inputValue);
     if (inputValue == "Time") {
       return "Time";
     } else {
@@ -296,7 +341,8 @@ class TimePicker extends Component {
   };
 
   render() {
-    const { pendingRotations, inputValue, modalVisible } = this.state;
+    const { pendingRotations, inputValue, defaultValue, modalVisible } =
+      this.state;
 
     return (
       <View style={[Styles.datePickerButton, Styles.input]}>
@@ -305,7 +351,11 @@ class TimePicker extends Component {
           accessibilityLabel="Select Time"
         >
           <Text style={{ textAlign: "center" }}>
-            {this.convertToAMPM(inputValue)}
+            {this.convertToAMPM(
+              inputValue !== "Time"
+                ? inputValue
+                : this.props.defaultValue || inputValue
+            )}
           </Text>
         </TouchableOpacity>
 
@@ -327,7 +377,6 @@ class TimePicker extends Component {
                 ]}
               >
                 <Text>{this.displayClockDigits()}</Text>
-                {/* {isAM ? "AM" : "PM"} */}
               </Text>
 
               {this.renderAMPMToggle()}
