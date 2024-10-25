@@ -5,7 +5,6 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
   TouchableOpacity,
   Dimensions,
   StyleSheet,
@@ -21,10 +20,18 @@ function ViewGame({ navigation, message }) {
   const [currentUser, setCurrentUser] = useState({});
 
   const route = useRoute();
-  const { gameId } = route.params;
+  const { gameId, refresh } = route.params;
   const [game, setGame] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [userLoading, setUserLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [refreshGame, setRefreshGame] = useState(false);
+
+  useEffect(() => {
+    if (refresh) {
+      setRefreshGame(true);
+    }
+  }, [refresh]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,34 +48,34 @@ function ViewGame({ navigation, message }) {
     }, [])
   );
 
-  useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        setLoading(true); // Start loading state
+        try {
+          const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
+          const headers = { "Content-Type": "application/json" };
+          const requestOptions = { headers };
 
-    const fetchData = async () => {
-      try {
-        const headers = {
-          "Content-Type": "application/json",
-        };
+          const res = await authFetch(url, requestOptions);
 
-        const requestOptions = {
-          headers,
-        };
+          if (res.status === 200) {
+            const gameData = res.body.game;
+            setGame(gameData);
+          } else {
+            throw new Error("Network response was not ok.");
+          }
+        } catch (error) {
+          console.error("Error fetching game data:", error);
+          setErrorMessage("Failed to load game data."); // Display error to user if needed
+        } finally {
+          setLoading(false);
+        }
+      };
 
-        const res = await authFetch(url, requestOptions);
-
-        authFetch(url, requestOptions);
-        if (res.status === 200) {
-          console.log("GameView fetch res is", res.body);
-          const gameData = res.body.game;
-          setGame(gameData);
-        } else console.log("Something in ViewGame fetch returned incorrectly");
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    fetchData();
-  }, []);
+      fetchData();
+    }, [gameId, refreshGame])
+  );
 
   const handleFormSubmit = () => {
     onSubmit();
@@ -146,30 +153,16 @@ function ViewGame({ navigation, message }) {
   };
 
   const onSubmit = async () => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-
     const body = {
       gameId: gameId,
     };
 
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/joinGame`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/joinGame/${gameId}`;
 
     const joinGame = async () => {
       try {
-        const token = await getTokenFromStorage();
-
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -178,7 +171,7 @@ function ViewGame({ navigation, message }) {
           body: JSON.stringify(body),
         };
 
-        await fetch(url, requestOptions)
+        await authFetch(url, requestOptions)
           .then((res) => {
             if (res.ok) {
               return res.json();
@@ -186,7 +179,7 @@ function ViewGame({ navigation, message }) {
             throw new Error("Network response was not ok.");
           })
           .then((data) => {
-            if (data.success === true) {
+            if (data.status === 200) {
               console.log("Submit successful");
               navigation.navigate("PlayerBrowseGames", {
                 successMessage:
@@ -205,7 +198,13 @@ function ViewGame({ navigation, message }) {
   };
 
   const formattedDate = (isoDateString) => {
+    console.log("isoDateString is", isoDateString);
     const date = new Date(isoDateString);
+    console.log("date is", date);
+
+    if (isNaN(date)) {
+      console.error("Invalid dsate:", isoDateString);
+    }
 
     // Define options for the desired date format
     const options = {
@@ -216,7 +215,7 @@ function ViewGame({ navigation, message }) {
 
     // Format the date using options
     const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
-    console.log("Formatted date is:", formattedDate);
+    console.log("Formatted ViewGame date is:", formattedDate);
     return formattedDate;
   };
   const parse24HourTime = (timeString) => {
@@ -248,6 +247,9 @@ function ViewGame({ navigation, message }) {
     return `${hours12}:${String(minutes).padStart(2, "0")} ${amPm}`;
   };
 
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
   // Example usage
 
   const displayJoinGameButton = () => {
@@ -296,7 +298,7 @@ function ViewGame({ navigation, message }) {
                 }),
               ]}
             >
-              Join Game (INACTIVE)
+              Join Game (EDITING)
             </Text>
           </View>
         </TouchableOpacity>
@@ -414,6 +416,10 @@ function ViewGame({ navigation, message }) {
           <Text style={styles.gameInfo}>
             {game.gameLength ? `${game.gameLength} Minutes` : "N/A"}
           </Text>
+        </View>
+        <View style={styles.infoSection}>
+          <Text style={styles.label}>Additional Info</Text>
+          <Text style={styles.gameInfo}>{game.additionalInfo || "None"}</Text>
         </View>
         {displayJoinGameButton()}
       </View>

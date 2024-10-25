@@ -5,6 +5,10 @@ import {
   TouchableOpacity,
   Image,
   Text,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState, useRef, Component } from "react";
 import {
@@ -23,37 +27,47 @@ import TimePicker from "./TimePicker.js";
 import authFetch from "../../api/authCalls.js";
 
 const EditGame = ({ navigation }) => {
-  const [gender, setGender] = useState("");
-  const [position, setPosition] = useState("");
-  const [calibre, setCalibre] = useState("");
-  const [location, setPlayerAddress] = useState("");
-  const [bio, setBio] = useState("");
-  const [errors, setErrors] = useState("");
-  const [sportSpecificValues, setSportSpecificValues] = useState("");
+  const [location, setGameAddress] = useState("");
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [selectedSport, setSelectedSport] = useState();
-  const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
+  const [gameLengthsList, setGameLengthsList] = useState([]);
+
   const [player, setPlayer] = useState({});
   const [game, setGame] = useState({});
-  const [time, setGameTime] = useState("");
+  const [time, setTime] = useState("");
   const [date, setGameDate] = useState("");
+  const [calibre, setCalibre] = useState("");
+  const [gender, setGender] = useState("");
+  const [position, setPosition] = useState("");
+  const [gameType, setGameType] = useState("");
+  const [gameLength, setGameLength] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isInputFocused, setInputFocused] = useState(false);
 
   const datePickerRef = useRef(null);
   const timePickerRef = useRef(null);
 
+  const screenWidth = Dimensions.get("window").width;
+
+  const { height } = Dimensions.get("window");
+  const inputHeight = height * 0.07; // Adjust the multiplier as needed
   const route = useRoute();
   const { playerId, gameSport, gameId } = route.params;
   const autoCompletePickerRef = useRef(null);
 
-  console.log("PlayerId is " + playerId);
-  console.log("PlayerSport is " + gameSport);
-
   const handleCalibreChange = (input) => {
-    console.log("New Calibre is: ", input);
     setCalibre(input);
+  };
+
+  const handleGameTypeChange = (input) => {
+    setGameType(input);
+  };
+  const handleGameLengthChange = (input) => {
+    setGameLength(input);
   };
   const handleGenderChange = (input) => {
     setGender(input);
@@ -63,11 +77,10 @@ const EditGame = ({ navigation }) => {
   };
   const captureSelectedLocation = (input) => {
     console.log(input);
-    setPlayerAddress(input);
+    setGameAddress(input);
   };
-  const handleBioChange = (input) => {
-    console.log("New Calibre is: ", input);
-    setBio(input);
+  const handleAdditionalInfoChange = (input) => {
+    setAdditionalInfo(input);
   };
   const handleTravelRangeChange = (input) => {
     setTravelRange(input);
@@ -145,6 +158,8 @@ const EditGame = ({ navigation }) => {
         console.log("Found sport:", foundSport);
         setCalibreList(foundSport.calibre);
         setPositionList(foundSport.position);
+        setGameLengthsList(foundSport.gameLength);
+        setGameTypeList(foundSport.gameType);
       } else {
         console.log("Sport not found");
       }
@@ -155,21 +170,26 @@ const EditGame = ({ navigation }) => {
     }
   };
 
-  const formattedDate = (isoDateString) => {
-    const date = new Date(isoDateString);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+        setInputFocused(false); // Reset focus state when keyboard hides
+      }
+    );
 
-    // Define options for the desired date format
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
     };
-
-    // Format the date using options
-    const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
-    console.log("Formatted date is:", formattedDate);
-    return formattedDate;
-  };
+  }, []);
 
   const fetchSportsandGames = async () => {
     console.log("Fetching Sports and Players");
@@ -218,17 +238,20 @@ const EditGame = ({ navigation }) => {
   const onSubmit = () => {
     validateInputs();
     const body = {
-      gender,
-      calibre,
       location,
-      bio,
-      travelRange,
-      sport: sport,
+      date,
+      time,
+      calibre,
+      gender,
       position,
+      gameType,
+      gameLength,
+      additionalInfo,
+      sport: sport,
     };
     console.log("EditPlayer submission is", body);
 
-    const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
 
     const postGame = async () => {
       try {
@@ -249,8 +272,8 @@ const EditGame = ({ navigation }) => {
         console.log("res.body is ", res.body);
         if (res.body.success === true) {
           console.log("Submit successful");
-          navigation.navigate("ViewPlayer", {
-            playerId: playerId,
+          navigation.navigate("ViewGame", {
+            gameId: gameId,
             refresh: true,
           });
         } else {
@@ -280,7 +303,10 @@ const EditGame = ({ navigation }) => {
   };
   captureSelectedTime = (selectedInput) => {
     console.log("Selected Time input: " + selectedInput);
-    setGameTime(selectedInput);
+    setTime(selectedInput);
+  };
+  handleInfoSaveClick = () => {
+    setInputFocused(false);
   };
 
   var calibres = calibreList;
@@ -288,123 +314,189 @@ const EditGame = ({ navigation }) => {
   var genders = genderList;
   var sport = selectedSport;
   var positions = positionList;
-  console.log("Player is " + player);
+  var gameLengths = gameLengthsList;
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={Styles.screenHeader}>
-        <Image
-          source={require("../../assets/user-solid.png")}
-          style={{ width: 50, height: 50, resizeMode: "contain" }}
-        />
-        <Text
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={{ flex: 1 }}>
+        <View style={Styles.screenHeader}>
+          <Image
+            source={require("../../assets/user-solid.png")}
+            style={{ width: 50, height: 50, resizeMode: "contain" }}
+          />
+          <Text
+            style={{
+              fontSize: 35,
+              padding: 20,
+            }}
+          >
+            Edit Game
+          </Text>
+        </View>
+
+        <View
           style={{
-            fontSize: 35,
-            padding: 20,
+            flex: 1,
+            height: "100%",
+            justifyContent: "space-around",
+            padding: 10,
           }}
         >
-          Edit Game
-        </Text>
+          {/* LOCATION SELECTOR */}
+          {!isKeyboardVisible && (
+            <AddressInput
+              handleLocationSelected={handleLocationSelected}
+              defaultLocation={game.location}
+            />
+          )}
+          {/* DATE SELECTOR */}
+          {!isKeyboardVisible && (
+            <DatePicker
+              onInputSelected={captureSelectedDate}
+              style={[Styles.datePickerButton, Styles.input]}
+              ref={datePickerRef}
+              input={game.date}
+            />
+          )}
+          {/* TIME SELECTOR */}
+          {!isKeyboardVisible && (
+            <TimePicker
+              onInputSelected={captureSelectedTime}
+              style={[Styles.datePickerButton, Styles.input]}
+              ref={timePickerRef}
+              defaultValue={game.time}
+              inputValue={game.time}
+            />
+          )}
+          {!isKeyboardVisible && (
+            <Picker
+              style={[Styles.sportsPickerDropdown, Styles.input]}
+              defaultValue={game.calibre}
+              placeholderTextColor="grey"
+              language={calibres}
+              onValueChange={handleCalibreChange}
+              label={game.calibre}
+            />
+          )}
+          {!isKeyboardVisible && (
+            <Picker
+              style={[Styles.sportsPickerDropdown, Styles.input]}
+              defaultValue={game.gender}
+              placeholderText
+              Color="#005F66"
+              onValueChange={handleGenderChange}
+              language={genders}
+              label={game.gender}
+            />
+          )}
+          {/* POSITION */}
+          {!isKeyboardVisible && (
+            <Picker
+              style={[Styles.sportsPickerDropdown, Styles.input]}
+              defaultValue={game.position}
+              placeholderText
+              Color="#005F66"
+              onValueChange={handlePositionChange}
+              language={positions}
+              label={game.position}
+            />
+          )}
+          {/* GAME TYPE */}
+          {!isKeyboardVisible && (
+            <Picker
+              style={[Styles.sportsPickerDropdown, Styles.input]}
+              defaultValue={game.gameType}
+              placeholderText
+              Color="#005F66"
+              onValueChange={handleGameTypeChange}
+              language={gameTypes}
+              label={game.gameType}
+            />
+          )}
+          {/* GAME LENGTH */}
+          {!isKeyboardVisible && (
+            <Picker
+              style={[Styles.sportsPickerDropdown, Styles.input]}
+              defaultValue={game.gameLength}
+              placeholderText
+              Color="#005F66"
+              onValueChange={handleGameLengthChange}
+              language={gameLengths}
+              label={game.gameLength}
+            />
+          )}
+          {/* Additional Info input */}
+          <View
+            style={[
+              {
+                flex: isKeyboardVisible ? 2 : 0,
+                height: isKeyboardVisible ? "100%" : 100,
+                paddingBottom: isKeyboardVisible ? 100 : 0,
+              },
+            ]}
+          >
+            <View
+              style={[
+                isKeyboardVisible
+                  ? {
+                      borderWidth: 2,
+                      borderColor: "red",
+                      flex: isKeyboardVisible ? 2 : 0,
+                      borderWidth: 2,
+                      borderColor: "#154734",
+                      flex: 2,
+                      backgroundColor: "#FFFFFF",
+                    }
+                  : {
+                      height: Platform.select({
+                        ios: inputHeight,
+                        android: inputHeight,
+                      }),
+                      borderColor: "#154734",
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      overflow: "hidden",
+                      justifyContent: "center",
+                      flex: 0,
+                      backgroundColor: "#FFFFFF",
+                    },
+              ]}
+            >
+              <TextInput
+                style={[
+                  isKeyboardVisible
+                    ? { padding: 10 }
+                    : {
+                        textAlign: "center",
+                      },
+                ]}
+                placeholder="Additional Info... (Team Name, Dress Code, etc...)"
+                onChangeText={setAdditionalInfo}
+                value={additionalInfo || game.additionalInfo}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
+              />
+            </View>
+          </View>
+          {!isKeyboardVisible && (
+            <TouchableOpacity>
+              <Button title="SAVE GAME" onPress={() => handleFormSubmit()} />
+            </TouchableOpacity>
+          )}
+          {!isKeyboardVisible && (
+            <TouchableOpacity>
+              <Button
+                title="CANCEL"
+                onPress={() => handleCancelButtonClick()}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-      <View
-        style={{
-          flex: 1,
-          height: "100%",
-          justifyContent: "space-around",
-          padding: 10,
-        }}
-      >
-        {/* LOCATION SELECTOR */}
-        <AddressInput
-          handleLocationSelected={handleLocationSelected}
-          defaultLocation={game.location}
-        />
-        {/* DATE SELECTOR */}
-        <DatePicker
-          onInputSelected={captureSelectedDate}
-          style={[Styles.datePickerButton, Styles.input]}
-          ref={datePickerRef}
-          input={game.date}
-        />
-        {/* TIME SELECTOR */}
-        <TimePicker
-          onInputSelected={captureSelectedTime}
-          style={[Styles.datePickerButton, Styles.input]}
-          ref={timePickerRef}
-          defaultValue={game.time}
-          inputValue={game.time}
-        />
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={game.calibre}
-          placeholderTextColor="grey"
-          language={calibreList}
-          onValueChange={handleCalibreChange}
-          label={game.calibre}
-        />
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={game.gender}
-          placeholderText
-          Color="#005F66"
-          onValueChange={handleGenderChange}
-          language={genders}
-          label={game.gender}
-        />
-        {/* POSITION */}
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={game.position}
-          placeholderText
-          Color="#005F66"
-          onValueChange={handlePositionChange}
-          language={positions}
-          label={game.position}
-        />
-        {/* GAME TYPE */}
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={game.gameType}
-          placeholderText
-          Color="#005F66"
-          onValueChange={handlePositionChange}
-          language={positions}
-          label={game.gameType}
-        />
-        {/* GAME LENGTH */}
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={game.gameLength}
-          placeholderText
-          Color="#005F66"
-          onValueChange={handlePositionChange}
-          language={positions}
-          label={game.gameLength}
-        />
-
-        {/* BIO */}
-        <TextInput
-          style={[
-            Styles.sportsPickerDropdown,
-            Styles.input,
-            (style = { textAlign: "center" }),
-          ]}
-          defaultValue={`${game.additionalInfo}`}
-          placeholder={"Additional Info..."}
-          placeholderTextColor="#005F66"
-          onChangeText={(bio) => handleBioChange(bio)}
-        />
-        <TouchableOpacity>
-          <Button
-            title=" *INACTIVE* SAVE GAME *INACTIVE*"
-            onPress={() => handleFormSubmit()}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Button title="CANCEL" onPress={() => handleCancelButtonClick()} />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

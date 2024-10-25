@@ -238,7 +238,7 @@ const Styles = StyleSheet.create({
   sportsPickerDropdown: {
     width: "100%",
     borderWidth: 1, // Border width
-    borderColor: "dark green", // Border color
+    borderColor: "#154734", // Border color
     borderRadius: 5, // Border radius (optional)
     margin: 2,
     backgroundColor: "#FFFFFF",
@@ -246,7 +246,7 @@ const Styles = StyleSheet.create({
   gameTypePickerDropdown: {
     width: "100%",
     borderWidth: 1, // Border width
-    borderColor: "dark green", // Border color
+    borderColor: "#154734", // Border color
     borderRadius: 5, // Border radius (optional)
     margin: 2,
     backgroundColor: "#FFFFFF",

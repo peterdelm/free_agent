@@ -31,8 +31,6 @@ function ViewPlayer({ navigation, message }) {
     }
   }, [refresh]);
 
-  console.log("ViewPlayer has received the call!");
-
   useEffect(() => {
     const fetchData = async () => {
       try {

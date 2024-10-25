@@ -199,9 +199,6 @@ function HomeScreen({ navigation, message }) {
   const onSubmit = async () => {
     const dateString = date.dateString;
 
-    const timeLog = time;
-    console.log("Submit clicked, time is ", timeLog);
-
     const validation = validateInputs();
     if (validation) {
       const body = {
@@ -224,7 +221,6 @@ function HomeScreen({ navigation, message }) {
       const postGame = async () => {
         try {
           console.log("URL is " + url);
-          console.log("postgGame async request called at line 138");
 
           const headers = {
             "Content-Type": "application/json",
