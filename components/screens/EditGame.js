@@ -50,11 +50,9 @@ const EditGame = ({ navigation }) => {
 
   const datePickerRef = useRef(null);
   const timePickerRef = useRef(null);
-
-  const screenWidth = Dimensions.get("window").width;
-
   const { height } = Dimensions.get("window");
-  const inputHeight = height * 0.07; // Adjust the multiplier as needed
+  const inputHeight = height * 0.07;
+
   const route = useRoute();
   const { playerId, gameSport, gameId } = route.params;
   const autoCompletePickerRef = useRef(null);

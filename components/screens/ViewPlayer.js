@@ -222,7 +222,7 @@ function ViewPlayer({ navigation, message }) {
           </Text>
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Bio: </Text>
-            {player.bio.length > 0 ? player.bio : "N/A"}
+            {player.bio ? player.bio : "N/A"}{" "}
           </Text>
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Position: </Text>
