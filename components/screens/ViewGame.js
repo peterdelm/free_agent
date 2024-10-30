@@ -8,9 +8,11 @@ import {
   TouchableOpacity,
   Dimensions,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import NavigationFooter from "./NavigationFooter";
+import ButtonFooter from "./ButtonFooter.js";
 import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
@@ -82,12 +84,10 @@ function ViewGame({ navigation, message }) {
   };
 
   const handleQuitGameButtonPress = () => {
-    console.log("handleQuitGameButtonPress called");
     sendQuitGameRequest();
   };
 
   const handleEditGameButtonPress = () => {
-    console.log("handleEditGameButtonPress called");
     navigation.navigate("EditGame", {
       gameId: game.id,
       gameSport: game.sport,
@@ -98,7 +98,6 @@ function ViewGame({ navigation, message }) {
     const getTokenFromStorage = async () => {
       try {
         const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
         return token;
       } catch (error) {
         console.log("Error retrieving token from AsyncStorage:", error);
@@ -198,12 +197,10 @@ function ViewGame({ navigation, message }) {
   };
 
   const formattedDate = (isoDateString) => {
-    console.log("isoDateString is", isoDateString);
     const date = new Date(isoDateString);
-    console.log("date is", date);
 
     if (isNaN(date)) {
-      console.error("Invalid dsate:", isoDateString);
+      console.error("Invalid date:", isoDateString);
     }
 
     // Define options for the desired date format
@@ -215,7 +212,6 @@ function ViewGame({ navigation, message }) {
 
     // Format the date using options
     const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
-    console.log("Formatted ViewGame date is:", formattedDate);
     return formattedDate;
   };
   const parse24HourTime = (timeString) => {
@@ -232,79 +228,79 @@ function ViewGame({ navigation, message }) {
 
   // Main function to format time string
   const formatTime = (timeString) => {
-    // Validate and parse the 24-hour time string
     if (!/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(timeString)) {
       return "Invalid time"; // Return a fallback message or value
     }
-
-    // Parse the 24-hour time
     const { hours, minutes } = parse24HourTime(timeString);
-
-    // Convert hours to 12-hour format
     const { hours12, amPm } = convertTo12HourFormat(hours);
-
-    // Format the time string
     return `${hours12}:${String(minutes).padStart(2, "0")} ${amPm}`;
   };
 
   if (loading) {
     return <Text>Loading...</Text>;
   }
-  // Example usage
+
+  const isGameCreator = game.userId === currentUser?.id;
+  const hasPlayer = Boolean(game.matchedPlayerId);
+
+  const displayGameStatus = () => {
+    //Check if the game has a player
+    if (hasPlayer) {
+      return (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("ViewPlayer", {
+              playerId: game.matchedPlayerId,
+              userId: currentUser?.id,
+            })
+          }
+        >
+          <View
+            style={{
+              backgroundColor: "green",
+              borderRadius: 5,
+              width: "98%",
+              height: 50,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
+              marginBottom: 10,
+            }}
+          >
+            <Text
+              style={[
+                (style = {
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: "white",
+                  borderWidth: 0,
+                  textAlign: "center",
+                  marginLeft: 20,
+                }),
+              ]}
+            >
+              Player Found
+            </Text>
+            <Image
+              source={require("../../assets/user-solid.png")}
+              style={{
+                width: 25,
+                height: 25,
+                resizeMode: "contain",
+                marginRight: 20,
+                tintColor: "white",
+              }}
+            />
+          </View>
+        </TouchableOpacity>
+      );
+    }
+  };
 
   const displayJoinGameButton = () => {
     if (userLoading) {
       return null;
-    }
-    if (game.userId === currentUser?.id) {
-      return (
-        <TouchableOpacity
-          style={{ color: "#C30000" }}
-          onPress={() => handleEditGameButtonPress()}
-        >
-          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
-            <Text
-              style={[
-                Styles.gameInfo,
-                (style = {
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: "white",
-                  borderColor: "#C30000",
-                }),
-              ]}
-            >
-              Edit Game
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    }
-    if (!game.matchedPlayerId)
-      return (
-        <TouchableOpacity
-          style={{ color: "#C30000" }}
-          onPress={() => handleFormSubmit()}
-        >
-          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }}>
-            <Text
-              style={[
-                Styles.gameInfo,
-                (style = {
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: "white",
-                  borderColor: "#C30000",
-                }),
-              ]}
-            >
-              Join Game (EDITING)
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    if (currentUser?.playerIds?.includes(game.matchedPlayerId)) {
-      console.log(currentUser.playerIds + " includes " + game.matchedPlayerId);
+    } else if (currentUser?.playerIds?.includes(game.matchedPlayerId)) {
       return (
         <TouchableOpacity
           style={{ color: "#C30000" }}
@@ -358,7 +354,6 @@ function ViewGame({ navigation, message }) {
     }
     if (!game.matchedPlayerId) return null;
     if (currentUser?.playerIds?.includes(game.matchedPlayerId)) {
-      console.log(currentUser.playerIds + " includes " + game.matchedPlayerId);
       return (
         <TouchableOpacity
           style={{ color: "#C30000" }}
@@ -377,54 +372,74 @@ function ViewGame({ navigation, message }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <View style={{ paddingRight: 40 }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require("../../assets/arrow-left-solid.png")}
+              style={{
+                width: 40,
+                height: 40,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+        </View>
         <Image
           source={require("../../assets/prayingHands.png")}
           style={styles.headerImage}
         />
         <Text style={styles.headerText}>View Game</Text>
       </View>
-
-      <View style={styles.content}>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.gameInfo}>{game.location}</Text>
+      <ScrollView>
+        <View style={[styles.content]}>
+          {displayGameStatus()}
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Address</Text>
+            <Text style={styles.gameInfo}>{game.location}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Date/Time</Text>
+            <Text style={styles.gameInfo}>
+              {formattedDate(game.date)} @ {formatTime(game.time)}
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Position</Text>
+            <Text style={styles.gameInfo}>{game.position}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Calibre</Text>
+            <Text style={styles.gameInfo}>{game.calibre}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.gameInfo}>{game.gender}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Game Type</Text>
+            <Text style={styles.gameInfo}>{game.gameType}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Game Length</Text>
+            <Text style={styles.gameInfo}>
+              {game.gameLength ? `${game.gameLength} Minutes` : "N/A"}
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Additional Info</Text>
+            <Text style={styles.gameInfo}>{game.additionalInfo || "None"}</Text>
+          </View>
         </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Date/Time</Text>
-          <Text style={styles.gameInfo}>
-            {formattedDate(game.date)} @ {formatTime(game.time)}
-          </Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Position</Text>
-          <Text style={styles.gameInfo}>{game.position}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Calibre</Text>
-          <Text style={styles.gameInfo}>{game.calibre}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Gender</Text>
-          <Text style={styles.gameInfo}>{game.gender}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Game Type</Text>
-          <Text style={styles.gameInfo}>{game.gameType}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Game Length</Text>
-          <Text style={styles.gameInfo}>
-            {game.gameLength ? `${game.gameLength} Minutes` : "N/A"}
-          </Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Additional Info</Text>
-          <Text style={styles.gameInfo}>{game.additionalInfo || "None"}</Text>
-        </View>
-        {displayJoinGameButton()}
-      </View>
-
-      <NavigationFooter navigation={navigation} />
+      </ScrollView>
+      {isGameCreator ? (
+        <ButtonFooter navigation={navigation} game={game} />
+      ) : (
+        <ButtonFooter
+          navigation={navigation}
+          game={game}
+          handleFormSubmit={handleFormSubmit}
+        />
+      )}
     </View>
   );
 }
@@ -440,7 +455,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "black",
     borderBottomWidth: 2,
     borderBottomStyle: "solid",
-    paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
@@ -458,9 +472,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 10,
+    alignItems: "center",
   },
   infoSection: {
+    width: "100%",
     marginBottom: 15,
+    paddingLeft: 10,
   },
   label: {
     fontSize: 18,
@@ -469,6 +486,7 @@ const styles = StyleSheet.create({
   },
   gameInfo: {
     fontSize: 16,
+    textAlign: "left",
   },
 });
 

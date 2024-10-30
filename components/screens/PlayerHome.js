@@ -197,16 +197,6 @@ function PlayerHome({ navigation }) {
   );
 }
 
-const viewPlayerStyles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    textAlign: "left",
-    textAlignVertical: "center",
-    lineHeight: Platform.select({ ios: 50 }),
-    padding: 10,
-  },
-});
-
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,

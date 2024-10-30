@@ -18,13 +18,13 @@ import {
 } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import AddressInput from "./AddressInput.js";
-import AutoCompletePicker from "./AutocompletePicker.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import DatePicker from "./DatePicker.js";
 import TimePicker from "./TimePicker.js";
 import authFetch from "../../api/authCalls.js";
+import DeleteGamePopup from "./DeleteGamePopup.js";
+import { deleteGameRequest } from "../../api/apiCalls.js";
 
 const EditGame = ({ navigation }) => {
   const [location, setGameAddress] = useState("");
@@ -47,7 +47,9 @@ const EditGame = ({ navigation }) => {
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isInputFocused, setInputFocused] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const [isDeleting, setIsDeleting] = useState(false); // State to track deletion status
   const datePickerRef = useRef(null);
   const timePickerRef = useRef(null);
   const { height } = Dimensions.get("window");
@@ -72,16 +74,6 @@ const EditGame = ({ navigation }) => {
   };
   const handlePositionChange = (input) => {
     setPosition(input);
-  };
-  const captureSelectedLocation = (input) => {
-    console.log(input);
-    setGameAddress(input);
-  };
-  const handleAdditionalInfoChange = (input) => {
-    setAdditionalInfo(input);
-  };
-  const handleTravelRangeChange = (input) => {
-    setTravelRange(input);
   };
 
   const handleFormSubmit = () => {
@@ -233,6 +225,12 @@ const EditGame = ({ navigation }) => {
     }
   };
 
+  // Function to open the modal
+  const openModal = () => setIsModalVisible(true);
+
+  // Function to close the modal
+  const closeModal = () => setIsModalVisible(false);
+
   const onSubmit = () => {
     validateInputs();
     const body = {
@@ -294,6 +292,22 @@ const EditGame = ({ navigation }) => {
     console.log("Handle Cancel Button Clicked!");
     navigation.goBack();
   };
+  const handleDeleteGameButtonPress = async () => {
+    console.log("handleDeleteGameButtonPress pressed");
+
+    try {
+      const response = await deleteGameRequest(gameId);
+      console.log("response is", response);
+
+      if (response.status === 200) {
+        console.log("Game deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting Game:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   captureSelectedDate = (selectedInput) => {
     console.log("Selected Date input: " + selectedInput);
@@ -320,7 +334,12 @@ const EditGame = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={{ flex: 1 }}>
-        <View style={Styles.screenHeader}>
+        <View
+          style={[
+            Styles.screenHeader,
+            (style = { justifyContent: "space-between" }),
+          ]}
+        >
           <Image
             source={require("../../assets/user-solid.png")}
             style={{ width: 50, height: 50, resizeMode: "contain" }}
@@ -333,6 +352,18 @@ const EditGame = ({ navigation }) => {
           >
             Edit Game
           </Text>
+          <View style={{ paddingRight: 20 }}>
+            <TouchableOpacity onPress={() => openModal()}>
+              <Image
+                source={require("../../assets/trash-can.png")}
+                style={{
+                  width: 25,
+                  height: 25,
+                  resizeMode: "contain",
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View
@@ -493,6 +524,11 @@ const EditGame = ({ navigation }) => {
             </TouchableOpacity>
           )}
         </View>
+        <DeleteGamePopup
+          isModalVisible={isModalVisible}
+          handleButtonPress={handleDeleteGameButtonPress}
+          onClose={closeModal}
+        />
       </View>
     </KeyboardAvoidingView>
   );

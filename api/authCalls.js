@@ -9,7 +9,6 @@ import { EXPO_PUBLIC_BASE_URL } from "../.config.js";
 export const loginRequest = async (emailAddress, password) => {
   const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
   try {
-    console.log("Attempting Auth Fetch");
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -17,8 +16,6 @@ export const loginRequest = async (emailAddress, password) => {
       },
       body: JSON.stringify({ emailAddress, password }),
     });
-
-    console.log("Response in loginRequest is", response);
 
     if (response.status === 200) {
       return response;

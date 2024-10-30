@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
-import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import { useAuth } from "../../contexts/authContext.js";
 import ConfirmLogoutPopup from "./ConfirmLogoutPopup.js"; // Adjust import path as needed
 import SwitchingManagerPlayerModal from "./SwitchingManagerPlayerModal.js";
-import ColorToggleButton from "./ColorToggleButton.js";
 import CustomButton from "./CustomButton.js";
 
 import { useFocusEffect } from "@react-navigation/native";
@@ -92,7 +90,6 @@ const UserProfile = ({ navigation }) => {
   const closeLoadingScreen = () => setLoadingScreenVisible(false);
 
   let allActiveGames = [];
-  const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
     allActiveGames = activeGames.map((game, index) => (

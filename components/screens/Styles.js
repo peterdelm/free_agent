@@ -210,7 +210,7 @@ const Styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start", // Left-align children
     paddingLeft: "5%", // Optional padding
-    paddingTop: "5%",
+    paddingTop: "0%",
   },
 
   managerBrowseGamesContainerHeader: {
