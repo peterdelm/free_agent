@@ -218,6 +218,8 @@ function HomeScreen({ navigation, message }) {
       };
       const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
+      console.log("Game Request Body is", body);
+
       const postGame = async () => {
         try {
           console.log("URL is " + url);

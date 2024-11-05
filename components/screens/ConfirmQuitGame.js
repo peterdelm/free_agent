@@ -1,13 +1,14 @@
 import { Text, View, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import React from "react";
 
-const DeleteGamePopup = ({
+const ConfirmQuitGame = ({
   isModalVisible,
   handleButtonPress,
   onClose,
   navigation,
 }) => {
-  console.log("DeleteGame Popup");
+  console.log("Quit Game Popup");
+
   return (
     <Modal
       visible={isModalVisible}
@@ -18,13 +19,13 @@ const DeleteGamePopup = ({
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalText}>
-            Are you sure you want to cancel this game?
+            Are you sure you want to quit this game?
           </Text>
           <TouchableOpacity
             onPress={() => handleButtonPress()}
             style={styles.modalButton}
           >
-            <Text style={styles.modalButtonText}>Cancel Game</Text>
+            <Text style={styles.modalButtonText}>Quit Game</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onClose} style={styles.modalButton}>
             <Text style={styles.modalButtonText}>Cancel</Text>
@@ -67,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeleteGamePopup;
+export default ConfirmQuitGame;

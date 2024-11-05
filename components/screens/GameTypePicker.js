@@ -19,7 +19,6 @@ class Pickering extends Component {
       prevProps.resetTrigger !== this.props.resetTrigger &&
       this.props.resetTrigger
     ) {
-      console.log("Reset triggered by parent");
       this.resetValues();
     }
   }

@@ -49,7 +49,6 @@ const EditGame = ({ navigation }) => {
   const [isInputFocused, setInputFocused] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const [isDeleting, setIsDeleting] = useState(false); // State to track deletion status
   const datePickerRef = useRef(null);
   const timePickerRef = useRef(null);
   const { height } = Dimensions.get("window");
@@ -301,11 +300,11 @@ const EditGame = ({ navigation }) => {
 
       if (response.status === 200) {
         console.log("Game deleted successfully");
+        navigation.navigate("PlayerBrowseGames");
       }
     } catch (error) {
       console.error("Error deleting Game:", error);
     } finally {
-      setIsDeleting(false);
     }
   };
 

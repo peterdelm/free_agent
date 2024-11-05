@@ -1,7 +1,6 @@
 import { Text, View, TouchableOpacity, ScrollView, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles.js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationFooter from "./NavigationFooter.js";
 import formatDate from "./formatDate.js";
 import getCurrentUser from "./getCurrentUser.helper.js";
@@ -9,21 +8,40 @@ import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 
-const ManagerBrowseGames = ({ navigation }) => {
+const PlayerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
+  const [loading, setLoading] = useState(true); // For loading state
+  const [error, setError] = useState(null); // For error handling
 
   useFocusEffect(
     React.useCallback(() => {
-      const fetchCurrentUser = async () => {
+      const fetchData = async () => {
         try {
+          setLoading(true);
+          // Fetch current user
           const user = await getCurrentUser();
           setCurrentUser(user);
+          const url = `${EXPO_PUBLIC_BASE_URL}api/games/acceptedplayerinvites`;
+          const headers = {
+            "Content-Type": "application/json",
+          };
+          const requestOptions = { headers };
+          const response = await authFetch(url, requestOptions);
+          if (response.status === 200 && response.body.availableGames) {
+            setActiveGames(response.body.availableGames);
+          } else {
+            setError("Failed to load games.");
+          }
         } catch (error) {
-          console.error("Error during fetch:", error);
+          console.error("Error fetching data:", error);
+          setError("An error occurred while fetching the games.");
+        } finally {
+          setLoading(false);
         }
       };
-      fetchCurrentUser();
+
+      fetchData();
     }, [])
   );
 
@@ -65,7 +83,7 @@ const ManagerBrowseGames = ({ navigation }) => {
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
 
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map(({ game }) => (
+    allActiveGames = activeGames.map((game) => (
       <TouchableOpacity
         key={game.id}
         onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
@@ -121,4 +139,4 @@ const ManagerBrowseGames = ({ navigation }) => {
   );
 };
 
-export default ManagerBrowseGames;
+export default PlayerBrowseGames;
