@@ -123,8 +123,9 @@ function ViewGame({ navigation, message }) {
 
       if (response.status === 200) {
         console.log("Game deleted successfully");
-        navigation.navigate("PlayerBrowseGames", {
+        navigation.navigate("ManagerBrowseGames", {
           successMessage: "Game deleted successfully.",
+          feedbackPopup: true,
         });
       }
     } catch (error) {
@@ -294,7 +295,13 @@ function ViewGame({ navigation, message }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ paddingRight: 40 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("ManagerBrowseGames", {
+                feedbackPopup: false,
+              })
+            }
+          >
             <Image
               source={require("../../assets/arrow-left-solid.png")}
               style={{
@@ -366,7 +373,6 @@ function ViewGame({ navigation, message }) {
         isModalVisible={isModalVisible}
         handleButtonPress={handleQuitGameButtonPress}
         onClose={closeModal}
-        navigation={navigation}
       />
       <DeleteGamePopup
         isModalVisible={isTrashModalVisible}

@@ -67,3 +67,39 @@ export const quitGameRequest = async (gameId) => {
     throw error;
   }
 };
+
+export const submitUserReview = async (text) => {
+  console.log("Sending submitUserReview request");
+  const url = `${EXPO_PUBLIC_BASE_URL}api/reviews`;
+  const body = {
+    review: text,
+  };
+
+  try {
+    console.log("Body is", body);
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    };
+    const response = await authFetch(url, requestOptions);
+
+    console.log(response);
+
+    if (response.status === 200) {
+      return response;
+    } else if (response.status === 401) {
+      alert("Unauthorized: Invalid email or password.");
+    } else if (response.status === 400) {
+      alert(response.body.message);
+    } else {
+      throw new Error(`Unexpected response`);
+    }
+  } catch (error) {
+    console.error("Failed to submit review:", error);
+    alert("An unexpected error occurred. Please try again."); // Generic error message
+    throw error;
+  }
+};
