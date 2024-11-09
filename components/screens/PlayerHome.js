@@ -71,7 +71,7 @@ function PlayerHome({ navigation }) {
 
       fetchCurrentUser();
       fetchGames();
-    }, []) // Empty dependency array ensures the effect runs once when the screen is focused
+    }, [])
   );
 
   const handleCreateProfilePress = () => {
@@ -129,9 +129,12 @@ function PlayerHome({ navigation }) {
             playerLocation={playerLocation}
           />
         ) : (
-          <MapComponent activeGames={[]} />
+          <MapComponent
+            activeGames={[]}
+            navigation={navigation}
+            playerLocation={playerLocation}
+          />
         )}
-        {/* Modal for creating player profile */}
         <Modal
           visible={isModalVisible}
           animationType="fade"

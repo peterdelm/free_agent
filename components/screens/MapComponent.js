@@ -10,7 +10,6 @@ export default function MapComponent({
 }) {
   const startingLongitude = playerLocation.longitude || 0;
   const startingLatitude = playerLocation.latitude || 0;
-
   const initialRegion = {
     latitude: startingLatitude,
     longitude: startingLongitude,

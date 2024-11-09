@@ -1,12 +1,7 @@
 import { Text, View, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import React from "react";
 
-const ConfirmQuitGame = ({
-  isModalVisible,
-  handleButtonPress,
-  onClose,
-  navigation,
-}) => {
+const ConfirmQuitGame = ({ isModalVisible, handleButtonPress, onClose }) => {
   console.log("Quit Game Popup");
 
   return (
