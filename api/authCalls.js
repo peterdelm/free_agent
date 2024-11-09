@@ -185,9 +185,6 @@ const authFetch = async (url, options = {}) => {
     responseBody = responseText;
   }
 
-  console.log("response status is", response.status);
-  console.log("response body is", responseBody);
-
   return {
     status: response.status,
     body: responseBody,

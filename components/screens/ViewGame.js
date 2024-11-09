@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
-import Styles from "./Styles";
 import {
   View,
   Text,
@@ -23,7 +22,6 @@ import DeleteGamePopup from "./DeleteGamePopup.js";
 
 function ViewGame({ navigation, message }) {
   const [currentUser, setCurrentUser] = useState({});
-
   const route = useRoute();
   const { gameId, refresh } = route.params;
   const [game, setGame] = useState([]);
@@ -76,6 +74,8 @@ function ViewGame({ navigation, message }) {
 
           if (res.status === 200) {
             const gameData = res.body.game;
+            console.log(gameData);
+            console.log(currentUser.id);
             setGame(gameData);
           } else {
             throw new Error("Network response was not ok.");
@@ -115,11 +115,8 @@ function ViewGame({ navigation, message }) {
   };
 
   const handleDeleteGameButtonPress = async () => {
-    console.log("handleDeleteGameButtonPress pressed");
-
     try {
       const response = await deleteGameRequest(gameId);
-      console.log("response is", response);
 
       if (response.status === 200) {
         console.log("Game deleted successfully");
@@ -295,13 +292,7 @@ function ViewGame({ navigation, message }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ paddingRight: 40 }}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("ManagerBrowseGames", {
-                feedbackPopup: false,
-              })
-            }
-          >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
               source={require("../../assets/arrow-left-solid.png")}
               style={{

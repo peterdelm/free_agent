@@ -25,8 +25,10 @@ function PlayerHome({ navigation }) {
   const [currentUser, setCurrentUser] = useState({});
   const [playerLocation, setPlayerLocation] = useState({});
 
+  // Fetch current user and game invites
   useFocusEffect(
     React.useCallback(() => {
+      // Fetch current user data
       const fetchCurrentUser = async () => {
         try {
           const user = await getCurrentUser();
@@ -34,37 +36,22 @@ function PlayerHome({ navigation }) {
           console.log("User is", user);
           if (user && user.playerIds.length === 0) {
             setIsModalVisible(true);
-          } else {
-            console.log("No User found in playerHome fetch");
           }
         } catch (error) {
-          console.log(currentUser);
           console.error("Error during currentUser fetch:", error);
         }
       };
-      fetchCurrentUser();
-    }, [])
-  );
 
-  captureSelectedLocation = (selectedInput) => {
-    console.log("Selected Location input: " + selectedInput);
-    setGameAddress(selectedInput);
-  };
+      // Fetch active games and player location
+      const fetchGames = async () => {
+        const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
+        console.log("Fetching active games");
 
-  const route = useRoute();
-  const successMessage = route.params || {};
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites/`;
-      console.log("UsefocusEffect Fetch games called");
-
-      const fetchData = async () => {
         try {
-          console.log("URL is " + url);
-
           const headers = {
             "Content-Type": "application/json",
+            futureFlag: "true",
+            noCreations: "true",
           };
 
           const requestOptions = {
@@ -72,20 +59,19 @@ function PlayerHome({ navigation }) {
           };
 
           const response = await authFetch(url, requestOptions);
-          console.log(response);
           if (response.body.success) {
-            console.log("res was ok");
+            console.log("Games fetched successfully");
             setActiveGames(response.body.availableGames);
             setPlayerLocation(response.body.playerLocation);
-            return response;
           }
         } catch (error) {
-          console.log("Error making authenticated request:", error);
-          // Handle error
+          console.log("Error fetching active games:", error);
         }
       };
-      fetchData();
-    }, [])
+
+      fetchCurrentUser();
+      fetchGames();
+    }, []) // Empty dependency array ensures the effect runs once when the screen is focused
   );
 
   const handleCreateProfilePress = () => {
@@ -95,25 +81,34 @@ function PlayerHome({ navigation }) {
     }
   };
 
-  let allActiveGames = []; // Initialize as empty array initially
+  let allActiveGames = [];
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
+  const currentDate = new Date();
 
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map(({ game }) => (
-      <TouchableOpacity
-        key={game.id}
-        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
-      >
-        <View style={Styles.upcomingGameContainer}>
-          <View style={Styles.upcomingGameDateContainer}>
-            <Text>{formatDate(game.date)}</Text>
+    allActiveGames = activeGames
+      .filter(({ game }) => new Date(game.date) > currentDate)
+      .sort((a, b) => new Date(a.game.date) - new Date(b.game.date))
+      .map(({ game }) => (
+        <TouchableOpacity
+          key={game.id}
+          onPress={() =>
+            navigation.navigate("ViewGame", {
+              gameId: game.id,
+              previousScreen: "PlayerHome",
+            })
+          }
+        >
+          <View style={Styles.upcomingGameContainer}>
+            <View style={Styles.upcomingGameDateContainer}>
+              <Text>{formatDate(game.date)}</Text>
+            </View>
+            <View style={Styles.upcomingGameAddressContainer}>
+              <Text>{game.location}</Text>
+            </View>
           </View>
-          <View style={Styles.upcomingGameAddressContainer}>
-            <Text>{game.location}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    ));
+        </TouchableOpacity>
+      ));
   }
 
   return (

@@ -12,8 +12,6 @@ export const deleteGameRequest = async (gameId) => {
       },
     });
 
-    console.log(response);
-
     if (response.status === 200) {
       return response;
     } else if (response.status === 401) {
@@ -48,8 +46,6 @@ export const quitGameRequest = async (gameId) => {
     };
     const response = await authFetch(url, requestOptions);
 
-    console.log(response);
-
     if (response.status === 200) {
       return response;
     } else if (response.status === 401) {
@@ -76,7 +72,6 @@ export const submitUserReview = async (text) => {
   };
 
   try {
-    console.log("Body is", body);
     const requestOptions = {
       method: "POST",
       headers: {
@@ -85,8 +80,6 @@ export const submitUserReview = async (text) => {
       body: JSON.stringify(body),
     };
     const response = await authFetch(url, requestOptions);
-
-    console.log(response);
 
     if (response.status === 200) {
       return response;

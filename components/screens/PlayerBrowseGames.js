@@ -25,8 +25,10 @@ const PlayerBrowseGames = ({ navigation }) => {
           const url = `${EXPO_PUBLIC_BASE_URL}api/games/acceptedplayerinvites`;
           const headers = {
             "Content-Type": "application/json",
+            futureflag: "true",
           };
           const requestOptions = { headers };
+          console.log("FocusEffect headers are", requestOptions);
           const response = await authFetch(url, requestOptions);
           if (response.status === 200 && response.body.availableGames) {
             setActiveGames(response.body.availableGames);
@@ -54,13 +56,18 @@ const PlayerBrowseGames = ({ navigation }) => {
 
         const headers = {
           "Content-Type": "application/json",
+          futureflag: "true",
         };
 
         const requestOptions = {
           headers,
         };
 
-        authFetch(url, requestOptions)
+        console.log("UseEffect headers are", requestOptions);
+
+        response = await authFetch(url, requestOptions);
+        console
+          .log("Response is ", response)
           .then((res) => {
             if (res.status === 200) {
               return res;
@@ -86,7 +93,12 @@ const PlayerBrowseGames = ({ navigation }) => {
     allActiveGames = activeGames.map((game) => (
       <TouchableOpacity
         key={game.id}
-        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+        onPress={() =>
+          navigation.navigate("ViewGame", {
+            gameId: game.id,
+            previousScreen: "PlayerBrowseGames",
+          })
+        }
       >
         <View style={Styles.upcomingGameContainer}>
           <View style={Styles.upcomingGameDateContainer}>

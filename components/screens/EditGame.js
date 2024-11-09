@@ -300,7 +300,7 @@ const EditGame = ({ navigation }) => {
 
       if (response.status === 200) {
         console.log("Game deleted successfully");
-        navigation.navigate("PlayerBrowseGames");
+        navigation.navigate("ManagerBrowseGames");
       }
     } catch (error) {
       console.error("Error deleting Game:", error);

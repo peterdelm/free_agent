@@ -110,7 +110,10 @@ const ManagerBrowseGames = ({ navigation, route }) => {
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
-          onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+          onPress={() => {
+            navigation.setParams({ feedbackPopup: false }),
+              navigation.navigate("ViewGame", { gameId: game.id });
+          }}
         >
           <View style={Styles.upcomingGameContainer}>
             <View style={Styles.upcomingGameDateContainer}>
@@ -129,7 +132,11 @@ const ManagerBrowseGames = ({ navigation, route }) => {
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
-          onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+          onPress={() => {
+            navigation.navigate("ViewGame", {
+              gameId: game.id,
+            });
+          }}
         >
           <View style={Styles.upcomingGameContainer}>
             <View style={Styles.upcomingGameDateContainer}>
