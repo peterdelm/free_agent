@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Styles from "./Styles";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+
 navigator.geolocation = require("react-native-geolocation-service");
 
 class AutoCompletePicker extends Component {
