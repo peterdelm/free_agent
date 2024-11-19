@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
@@ -8,7 +7,6 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import Styles from "./Styles";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 
 navigator.geolocation = require("react-native-geolocation-service");

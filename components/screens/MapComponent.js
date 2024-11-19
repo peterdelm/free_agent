@@ -8,8 +8,8 @@ export default function MapComponent({
   activeGames = [],
   playerLocation = {},
 }) {
-  const startingLongitude = playerLocation.longitude || 0;
-  const startingLatitude = playerLocation.latitude || 0;
+  const startingLongitude = playerLocation?.longitude || -79.347015;
+  const startingLatitude = playerLocation?.latitude || 43.65107;
   const initialRegion = {
     latitude: startingLatitude,
     longitude: startingLongitude,
