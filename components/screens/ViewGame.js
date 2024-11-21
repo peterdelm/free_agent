@@ -10,7 +10,6 @@ import {
   ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import NavigationFooter from "./NavigationFooter";
 import ButtonFooter from "./ButtonFooter.js";
 import getCurrentUser from "./getCurrentUser.helper";
 import ConfirmQuitGame from "./ConfirmQuitGame.js";

@@ -14,6 +14,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker.js";
+import NavigationFooter from "./NavigationFooter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
@@ -259,6 +260,7 @@ const CreatePlayer = ({ navigation }) => {
     console.log("sportSelected is " + isSportSelected);
     console.log("selectedSport is " + selectedSport);
     var calibres = calibreList;
+    const filteredCalibreList = calibreList.filter((value) => value != "Any");
     var gameTypes = gameTypeList;
     var genders = genderList;
     var sport = selectedSport;
@@ -293,7 +295,7 @@ const CreatePlayer = ({ navigation }) => {
             style={[Styles.sportsPickerDropdown, Styles.input]}
             defaultValue=""
             placeholderTextColor="grey"
-            language={calibreList}
+            language={filteredCalibreList}
             onValueChange={handleCalibreChange}
             label="Calibre"
           />
@@ -441,6 +443,7 @@ const CreatePlayer = ({ navigation }) => {
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
+        <NavigationFooter />
       </View>
     );
   }
