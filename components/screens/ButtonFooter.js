@@ -10,6 +10,7 @@ const Footer = ({
   isGameCreator,
   hasPlayer,
   isMatchedPlayer,
+  isGamePast,
 }) => {
   const { user } = useAuth();
 
@@ -21,7 +22,26 @@ const Footer = ({
   };
 
   const selectiveDisplay = () => {
-    if (isGameCreator && !hasPlayer) {
+    if (isGamePast) {
+      return (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={{ color: "#C30000", width: "100%" }}
+            onPress={() => handleEditGameButtonPress()}
+          >
+            <View
+              style={{
+                backgroundColor: "grey",
+                borderRadius: 5,
+                width: "100%",
+              }}
+            >
+              <Text style={styles.buttonText}>Game Has Occurred</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (isGameCreator && !hasPlayer) {
       return (
         <View style={styles.buttonContainer}>
           <TouchableOpacity
