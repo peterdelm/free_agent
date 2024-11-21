@@ -7,7 +7,7 @@ import authFetch from "../../api/authCalls.js";
 import NavigationFooter from "./NavigationFooter";
 import { StyleSheet } from "react-native-web";
 import DeletePlayerPopup from "./DeletePlayerPopup"; // Adjust import path as needed
-function ViewUser({ navigation, message }) {
+function ViewUser({ navigation }) {
   const route = useRoute();
   const { userId } = route.params;
   const [user, setUser] = useState();
