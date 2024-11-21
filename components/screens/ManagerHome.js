@@ -441,6 +441,7 @@ function HomeScreen({ navigation, message }) {
               onInputSelected={captureSelectedTime}
               style={[Styles.datePickerButton, Styles.input]}
               ref={timePickerRef}
+              resetTrigger={resetTrigger}
             />
             {/* GAME LENGTH */}
             <Picker
