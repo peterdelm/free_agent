@@ -31,6 +31,7 @@ class TimePicker extends Component {
       pendingAM: true, // AM/PM state
       savedAM: true,
       defaultValue: props.defaultValue || "",
+      resetTrigger: props.resetTrigger,
     };
 
     this.clockRadius = Dimensions.get("window").width / 3;
@@ -140,6 +141,24 @@ class TimePicker extends Component {
       });
     }
   };
+
+  resetTimePicker() {
+    console.log("Resetting time picker");
+    this.setState({
+      inputValue: "Time",
+      pendingInputValue: "",
+      pendingHour: "00",
+      pendingMinute: "00",
+      selectedHour: "00",
+      selectedMinute: "00",
+      pendingRotations: { hour: 0, minute: 0 },
+      savedRotations: { hour: 0, minute: 0 },
+      isHourSelector: true,
+      clockDimensions: { x: 0, y: 0, width: 0, height: 0 },
+      pendingAM: true, // AM/PM state
+      savedAM: true,
+    });
+  }
   componentDidMount() {
     this.setDefaultValue();
   }
@@ -148,6 +167,17 @@ class TimePicker extends Component {
     // Check if the defaultValue prop has changed
     if (prevProps.defaultValue !== this.props.defaultValue) {
       this.setDefaultValue(this.props.defaultValue);
+    }
+    if (prevProps.resetTrigger !== this.props.resetTrigger) {
+      // When resetTrigger prop changes, update local state
+      this.setState({
+        resetTrigger: this.props.resetTrigger,
+      });
+
+      // Optionally, perform reset logic here
+      if (this.props.resetTrigger) {
+        this.resetTimePicker();
+      }
     }
   }
 
@@ -327,7 +357,6 @@ class TimePicker extends Component {
   };
 
   convertToAMPM = (inputValue) => {
-    console.log("Input Value is", inputValue);
     if (inputValue == "Time") {
       return "Time";
     } else {
@@ -341,8 +370,7 @@ class TimePicker extends Component {
   };
 
   render() {
-    const { pendingRotations, inputValue, defaultValue, modalVisible } =
-      this.state;
+    const { pendingRotations, inputValue, modalVisible } = this.state;
 
     return (
       <View style={[Styles.datePickerButton, Styles.input]}>
