@@ -164,6 +164,19 @@ function ViewGame({ navigation, message }) {
     };
     joinGame();
   };
+  const isGamePast = (isoDateString) => {
+    console.log("Is Game Past?");
+    const date = new Date(isoDateString);
+
+    if (isNaN(date)) {
+      console.error("Invalid date:", isoDateString);
+      return false;
+    }
+
+    const currentDate = new Date();
+
+    return date < currentDate;
+  };
 
   const formattedDate = (isoDateString) => {
     const date = new Date(isoDateString);
@@ -357,6 +370,7 @@ function ViewGame({ navigation, message }) {
         isGameCreator={isGameCreator}
         hasPlayer={hasPlayer}
         isMatchedPlayer={isMatchedPlayer}
+        isGamePast={isGamePast(game.date)}
         handleQuitGameButtonPress={openModal}
         handleFormSubmit={handleFormSubmit}
       />
