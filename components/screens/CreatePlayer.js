@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-
+import Slider from "@react-native-community/slider";
 import React, { useEffect, useState, useRef } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
@@ -321,16 +321,12 @@ const CreatePlayer = ({ navigation }) => {
           <AddressInput handleLocationSelected={handleLocationSelected} />
 
           {/* Make this a sliding scale and move it to a subsequent window */}
-          <TextInput
-            style={[
-              Styles.sportsPickerDropdown,
-              Styles.input,
-              (styles = { textAlign: "center" }),
-            ]}
-            placeholder="Travel Range (km)"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={handleTravelRangeChange}
+          <Slider
+            style={{ width: 200, height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
           />
           <TextInput
             style={[
