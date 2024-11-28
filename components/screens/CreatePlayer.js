@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import Slider from "@react-native-community/slider";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker.js";
@@ -50,6 +50,7 @@ const CreatePlayer = ({ navigation }) => {
   const [usersPlayerRoster, setUsersPlayerRoster] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [sliderValue, setSliderValue] = useState(0);
 
   const autoCompletePickerRef = useRef(null);
 
@@ -79,12 +80,11 @@ const CreatePlayer = ({ navigation }) => {
     setTravelRange(input);
   };
 
-  const handleLocationSelected = (data, details) => {
+  const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
-    console.log("Description is:", data.description);
-    setPlayerAddress(data.description);
-  };
-
+    console.log("Description is:", data);
+    setPlayerAddress(data);
+  }, []);
   const handleFormSubmit = () => {
     onSubmit();
   };
@@ -207,12 +207,12 @@ const CreatePlayer = ({ navigation }) => {
         additionalInfo,
         position,
         location,
-        travelRange,
+        travelRange: formatSliderValue(sliderValue),
         sport: sport,
         sportId: sportId,
       };
 
-      console.log("CreatePlayer OnSubmit body is " + body.calibre);
+      console.log("CreatePlayer travelRange body is " + body.travelRange);
       const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
 
       const postPlayer = async () => {
@@ -256,9 +256,14 @@ const CreatePlayer = ({ navigation }) => {
     }
   };
 
+  const formatSliderValue = (sliderValue) => {
+    const formattedSliderValue = Math.round(sliderValue * 4) / 4;
+    return formattedSliderValue;
+  };
+
   if (isSportSelected === true) {
-    console.log("sportSelected is " + isSportSelected);
-    console.log("selectedSport is " + selectedSport);
+    // console.log("sportSelected is " + isSportSelected);
+    // console.log("selectedSport is " + selectedSport);
     var calibres = calibreList;
     const filteredCalibreList = calibreList.filter((value) => value != "Any");
     var gameTypes = gameTypeList;
@@ -320,14 +325,35 @@ const CreatePlayer = ({ navigation }) => {
           {/* This will be a LOCATION SELECTOR */}
           <AddressInput handleLocationSelected={handleLocationSelected} />
 
-          {/* Make this a sliding scale and move it to a subsequent window */}
-          <Slider
-            style={{ width: 200, height: 40 }}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
-          />
+          {/* Sliding Scale */}
+          <View
+            style={{
+              width: "100%",
+              height: 100,
+              borderWidth: 1,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 10,
+              backgroundColor: "white",
+            }}
+          >
+            <View>
+              <Text>Travel Range</Text>
+            </View>
+            <View>
+              <Text>{formatSliderValue(sliderValue)} km</Text>
+            </View>
+            <Slider
+              style={{ width: "100%", border: 2, paddingTop: 10 }}
+              minimumValue={0.25}
+              maximumValue={35}
+              minimumTrackTintColor="#000000"
+              maximumTrackTintColor="#000000"
+              value={sliderValue}
+              onValueChange={setSliderValue} // Update state as the value changes
+            />
+          </View>
           <TextInput
             style={[
               Styles.sportsPickerDropdown,
