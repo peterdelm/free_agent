@@ -7,7 +7,7 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Styles from "./Styles.js";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import SportsPicker from "./SportsPicker.js";
@@ -297,11 +297,11 @@ function HomeScreen({ navigation, message }) {
     onSubmit();
   };
 
-  const handleLocationSelected = (data, details) => {
+  const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
-    console.log("Description is:", data.description);
+    console.log("Description is:", data);
     setGameAddress(data.description);
-  };
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
