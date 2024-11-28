@@ -24,18 +24,11 @@ import authFetch from "../../api/authCalls.js";
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
-
   const [calibre, setCalibre] = useState("");
-  const [gameType, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
-  const [date, setGameDate] = useState("");
-  const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [teamName, setTeamName] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
@@ -75,9 +68,6 @@ const CreatePlayer = ({ navigation }) => {
   };
   const handlePositionChange = (input) => {
     setPosition(input);
-  };
-  const handleTravelRangeChange = (input) => {
-    setTravelRange(input);
   };
 
   const handleLocationSelected = useCallback((data) => {
@@ -262,8 +252,6 @@ const CreatePlayer = ({ navigation }) => {
   };
 
   if (isSportSelected === true) {
-    // console.log("sportSelected is " + isSportSelected);
-    // console.log("selectedSport is " + selectedSport);
     var calibres = calibreList;
     const filteredCalibreList = calibreList.filter((value) => value != "Any");
     var gameTypes = gameTypeList;
