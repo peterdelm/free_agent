@@ -300,7 +300,7 @@ function HomeScreen({ navigation, message }) {
   const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
     console.log("Description is:", data);
-    setGameAddress(data.description);
+    setGameAddress(data);
   }, []);
 
   return (

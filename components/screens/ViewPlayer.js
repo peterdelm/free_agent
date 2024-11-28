@@ -230,10 +230,6 @@ function ViewPlayer({ navigation, message }) {
             {player.calibre}
           </Text>
           <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Location: </Text>
-            {player.location} {user.id}
-          </Text>
-          <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Travel Range: </Text>
             {player.travelRange} km
           </Text>
