@@ -6,11 +6,11 @@ import {
   Image,
   Modal,
   StyleSheet,
-  Platform,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Styles from "./Styles";
-import { useRoute, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
@@ -18,12 +18,14 @@ import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import MapComponent from "./MapComponent.js";
 import ColorToggleButton from "./ColorToggleButton.js";
 import authFetch from "../../api/authCalls.js";
+import LoadingModal from "./LoadingModal.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [playerLocation, setPlayerLocation] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // Fetch current user and game invites
   useFocusEffect(
@@ -44,6 +46,8 @@ function PlayerHome({ navigation }) {
 
       // Fetch active games and player location
       const fetchGames = async () => {
+        setLoading(true);
+
         const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
         console.log("Fetching active games");
 
@@ -63,12 +67,12 @@ function PlayerHome({ navigation }) {
             console.log("Games fetched successfully");
             setActiveGames(response.body.availableGames);
             setPlayerLocation(response.body.playerLocation);
+            setLoading(false);
           }
         } catch (error) {
           console.log("Error fetching active games:", error);
         }
       };
-
       fetchCurrentUser();
       fetchGames();
     }, [])
@@ -167,9 +171,28 @@ function PlayerHome({ navigation }) {
               <Text style={{ fontSize: 20 }}>Available Games</Text>
             </View>
             <View style={Styles.availableGamesScroller}>
-              <ScrollView>
+              {loading ? (
+                <View style={{ flex: 1, justifyContent: "center" }}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+              ) : allActiveGames.length > 0 ? (
+                <ScrollView>
+                  {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+                </ScrollView>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>No Games Coming Up</Text>
+                </View>
+              )}
+              {/* <ScrollView>
                 {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-              </ScrollView>
+              </ScrollView> */}
             </View>
           </View>
           {/* 

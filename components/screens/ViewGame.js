@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -341,7 +340,9 @@ function ViewGame({ navigation, message }) {
           </View>
           <View style={styles.infoSection}>
             <Text style={styles.label}>Calibre</Text>
-            <Text style={styles.gameInfo}>{game.calibre}</Text>
+            <Text style={styles.gameInfo}>
+              {game.calibre === "Any" ? "Open" : game.calibre}
+            </Text>
           </View>
           <View style={styles.infoSection}>
             <Text style={styles.label}>Gender</Text>

@@ -27,6 +27,7 @@ import { AuthProvider, useAuth } from "./contexts/authContext";
 import { sendPushTokenToBackend } from "./services/pushNotificationService.js";
 import { loginRequest } from "./api/authCalls.js";
 import { usePushNotifications } from "./components/screens/usePushNotifications.tsx";
+import LoadingModal from "./components/screens/LoadingModal.js";
 const Stack = createNativeStackNavigator();
 
 const prefix = Linking.createURL("/");
@@ -216,7 +217,7 @@ function MainApp() {
   }, [notification]);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingModal isLoading={loading} loadingText="Loading..." />;
   }
 
   return (

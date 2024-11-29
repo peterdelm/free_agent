@@ -21,6 +21,7 @@ import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
 import authFetch from "../../api/authCalls.js";
 navigator.geolocation = require("react-native-geolocation-service");
+import LoadingModal from "./LoadingModal.js";
 
 function HomeScreen({ navigation, message }) {
   const [sportSpecificValues, setSportSpecificValues] = useState();
@@ -45,6 +46,11 @@ function HomeScreen({ navigation, message }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [defaultValue, setDefaultValue] = useState("");
   const [resetTrigger, setResetTrigger] = useState(false); // State to trigger reset
+  const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
+
+  const openLoadingScreen = () => setLoadingScreenVisible(true);
+
+  const closeLoadingScreen = () => setLoadingScreenVisible(false);
 
   const autoCompletePickerRef = useRef(null);
   const timePickerRef = useRef(null);
@@ -219,6 +225,7 @@ function HomeScreen({ navigation, message }) {
       const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
       console.log("Game Request Body is", body);
+      openLoadingScreen();
 
       const postGame = async () => {
         try {
@@ -274,7 +281,7 @@ function HomeScreen({ navigation, message }) {
                   // Reset the trigger state immediately to allow further resets
                   setTimeout(() => setResetTrigger(false), 0);
 
-                  console.log("Submit successful");
+                  closeLoadingScreen();
                   navigation.navigate("ManagerBrowseGames", {
                     successMessage:
                       "Game created successfully. Free Agent pending.",
@@ -486,6 +493,12 @@ function HomeScreen({ navigation, message }) {
                 </TouchableOpacity>
               </View>
             </View>
+
+            <LoadingModal
+              onClose={closeLoadingScreen}
+              isLoading={isLoadingScreenVisible}
+              loadingText="Posting Game..."
+            />
           </View>
         </ScrollView>
       </View>

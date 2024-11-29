@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text, TouchableOpacity, Platform, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  Modal,
+  Image,
+} from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
@@ -144,18 +151,50 @@ function ViewUser({ navigation }) {
         alignItems: "center",
       }}
     >
+      {/* Header */}
       <View
         style={{
           borderBottomColor: "black",
           borderBottomWidth: 2,
           borderBottomStyle: "solid",
-          flex: 0,
           alignItems: "center",
           width: "100%",
+          flexDirection: "row",
+          justifyContent: "center",
+          borderWidth: 2,
         }}
       >
-        <View style={Styles.screenHeader}>
-          <Text style={{ fontSize: 35, padding: 20 }}>USER PROFILE</Text>
+        <View
+          style={{
+            paddingLeft: 20,
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require("../../assets/arrow-left-solid.png")}
+              style={{
+                width: 40,
+                height: 40,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: "80%",
+            }}
+          >
+            <Text style={{ fontSize: 35, paddingTop: 20, paddingBottom: 20 }}>
+              USER PROFILE
+            </Text>
+          </View>
         </View>
       </View>
       <View
