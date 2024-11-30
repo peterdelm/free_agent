@@ -5,23 +5,18 @@ import {
   TouchableOpacity,
   Image,
   Text,
-  isKeyboardVisible,
   Keyboard,
   Platform,
   Dimensions,
 } from "react-native";
-import React, { useEffect, useState, useRef, Component } from "react";
-import {
-  useNavigation,
-  useRoute,
-  useFocusEffect,
-} from "@react-navigation/native";
+import React, { useEffect, useState, useRef } from "react";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
+import Slider from "@react-native-community/slider";
 
 const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -38,6 +33,7 @@ const EditPlayer = ({ navigation }) => {
   const [player, setPlayer] = useState({});
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isInputFocused, setInputFocused] = useState(false);
+  const [sliderValue, setSliderValue] = useState(0);
 
   const { height } = Dimensions.get("window");
   const inputHeight = height * 0.07;
@@ -97,6 +93,11 @@ const EditPlayer = ({ navigation }) => {
     onSubmit();
   };
 
+  const formatSliderValue = (sliderValue) => {
+    const formattedSliderValue = Math.round(sliderValue * 4) / 4;
+    return formattedSliderValue;
+  };
+
   ///////////////////////////////////////////////////////
   //retrieve the player values
   const fetchPlayerData = async () => {
@@ -122,6 +123,7 @@ const EditPlayer = ({ navigation }) => {
       }
 
       setPlayer(res.body);
+      setSliderValue(res.body.travelRange);
       console.log("Player location is " + player.location);
     } catch (error) {
       console.log("Error fetching player data:", error);
@@ -226,7 +228,7 @@ const EditPlayer = ({ navigation }) => {
       calibre,
       location,
       bio,
-      travelRange,
+      travelRange: formatSliderValue(sliderValue),
       sport: sport,
       position,
     };
@@ -342,18 +344,34 @@ const EditPlayer = ({ navigation }) => {
           />
         )}
         {!isKeyboardVisible && (
-          <TextInput
-            style={[
-              Styles.sportsPickerDropdown,
-              Styles.input,
-              (style = { textAlign: "center" }),
-            ]}
-            placeholder={`Travel Range: ${player.travelRange} km`}
-            defaultValue={`${player.travelRange}`}
-            placeholderTextColor="#005F66"
-            onChangeText={(travelRange) => handleTravelRangeChange(travelRange)}
-            placeholderText={player.travelRange}
-          />
+          <View
+            style={{
+              width: "100%",
+              height: 100,
+              borderWidth: 1,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 10,
+              backgroundColor: "white",
+            }}
+          >
+            <View>
+              <Text>Travel Range</Text>
+            </View>
+            <View>
+              <Text>{formatSliderValue(sliderValue)} km</Text>
+            </View>
+            <Slider
+              style={{ width: "100%", border: 2, paddingTop: 10 }}
+              minimumValue={0.25}
+              maximumValue={35}
+              minimumTrackTintColor="#000000"
+              maximumTrackTintColor="#000000"
+              value={sliderValue}
+              onValueChange={setSliderValue}
+            />
+          </View>
         )}
         <View
           style={[

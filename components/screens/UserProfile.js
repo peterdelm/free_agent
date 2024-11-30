@@ -4,13 +4,12 @@ import Styles from "./Styles";
 import NavigationFooter from "./NavigationFooter";
 import formatDate from "./formatDate";
 import { useAuth } from "../../contexts/authContext.js";
-import ConfirmLogoutPopup from "./ConfirmLogoutPopup.js"; // Adjust import path as needed
+import ConfirmLogoutPopup from "./ConfirmLogoutPopup.js";
 import SwitchingManagerPlayerModal from "./SwitchingManagerPlayerModal.js";
 import CustomButton from "./CustomButton.js";
-
 import { useFocusEffect } from "@react-navigation/native";
-
 import getCurrentUser from "./getCurrentUser.helper.js";
+
 const UserProfile = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [alternateRoleText, setAlternateRoleText] = useState("");
@@ -63,11 +62,10 @@ const UserProfile = ({ navigation }) => {
   const showLoadingWithTimeout = (switchToValue) => {
     openLoadingScreen();
 
-    // Set a timeout to close the modal after 2 seconds
     setTimeout(() => {
       closeLoadingScreen();
       toggleProfile();
-    }, 2000); // 2000 milliseconds = 2 seconds
+    }, 2000);
   };
 
   const handleLogout = async () => {
@@ -115,7 +113,11 @@ const UserProfile = ({ navigation }) => {
           source={require("../../assets/user-solid.png")}
           style={{ width: 50, height: 50, resizeMode: "contain" }}
         />
-        <Text style={{ fontSize: 35, padding: 20 }}>Profile</Text>
+        <Text style={{ fontSize: 35, padding: 20 }}>
+          {alternateRoleText === "Manager"
+            ? "Player Profile"
+            : "Manager Profile"}
+        </Text>
       </View>
       <View style={Styles.userProfileContentContainer}>
         <View style={Styles.profileLinksContainer}>
@@ -147,7 +149,10 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
-          <View style={Styles.profileLinkContainer}>
+
+          {/* *** TODO: HOOK UP THIS BUTTON AND IMPLEMENT IT *** */}
+
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Personal Info</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
@@ -155,8 +160,11 @@ const UserProfile = ({ navigation }) => {
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
-          <View style={Styles.profileLinkContainer}>
+          </View> */}
+
+          {/* *** TODO: HOOK UP THIS BUTTON AND IMPLEMENT IT *** */}
+
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Login/Security</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
@@ -164,8 +172,11 @@ const UserProfile = ({ navigation }) => {
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
-          <View style={Styles.profileLinkContainer}>
+          </View> */}
+
+          {/* *** TODO: HOOK UP THIS BUTTON AND IMPLEMENT IT *** */}
+
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Settings/Text</Text>
             <View style={Styles.profileLinkImageContainer}>
               <Image
@@ -173,7 +184,7 @@ const UserProfile = ({ navigation }) => {
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
+          </View> */}
           <TouchableOpacity
             style={Styles.profileLinkContainer}
             onPress={showLoadingWithTimeout}
@@ -188,7 +199,10 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
-          <View style={Styles.profileLinkContainer}>
+
+          {/* *** TODO: HOOK UP THIS BUTTON AND IMPLEMENT IT *** */}
+
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>
               Push Notifications
             </Text>
@@ -202,7 +216,7 @@ const UserProfile = ({ navigation }) => {
             >
               {currentUser && <CustomButton user={currentUser} />}
             </View>
-          </View>
+          </View> */}
           {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>Help</Text>
             <View style={Styles.profileLinkImageContainer}>
@@ -233,7 +247,10 @@ const UserProfile = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
-          <View style={Styles.profileLinkContainer}>
+
+          {/* *** TODO: HOOK UP THIS BUTTON AND IMPLEMENT IT *** */}
+
+          {/* <View style={Styles.profileLinkContainer}>
             <Text style={Styles.profileLinkTextContainer}>
               Terms of Service
             </Text>
@@ -243,14 +260,13 @@ const UserProfile = ({ navigation }) => {
                 style={{ width: 20, height: 20, resizeMode: "contain" }}
               />
             </View>
-          </View>
+          </View> */}
           <ConfirmLogoutPopup
             isModalVisible={isModalVisible}
             handleButtonPress={handleLogout}
             onClose={closeModal}
           />
           <SwitchingManagerPlayerModal
-            handleButtonPress={handleLogout}
             onClose={closeLoadingScreen}
             isVisible={isLoadingScreenVisible}
             switchTo={alternateRoleText}
