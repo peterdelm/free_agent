@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Styles from "./Styles";
-import { View, Text, TouchableOpacity, Platform, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  Modal,
+  Image,
+} from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import NavigationFooter from "./NavigationFooter";
 import { StyleSheet } from "react-native-web";
 import DeletePlayerPopup from "./DeletePlayerPopup"; // Adjust import path as needed
-function ViewUser({ navigation, message }) {
+function ViewUser({ navigation }) {
   const route = useRoute();
   const { userId } = route.params;
   const [user, setUser] = useState();
@@ -144,18 +151,50 @@ function ViewUser({ navigation, message }) {
         alignItems: "center",
       }}
     >
+      {/* Header */}
       <View
         style={{
           borderBottomColor: "black",
           borderBottomWidth: 2,
           borderBottomStyle: "solid",
-          flex: 0,
           alignItems: "center",
           width: "100%",
+          flexDirection: "row",
+          justifyContent: "center",
+          borderWidth: 2,
         }}
       >
-        <View style={Styles.screenHeader}>
-          <Text style={{ fontSize: 35, padding: 20 }}>USER PROFILE</Text>
+        <View
+          style={{
+            paddingLeft: 20,
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require("../../assets/arrow-left-solid.png")}
+              style={{
+                width: 40,
+                height: 40,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: "80%",
+            }}
+          >
+            <Text style={{ fontSize: 35, paddingTop: 20, paddingBottom: 20 }}>
+              USER PROFILE
+            </Text>
+          </View>
         </View>
       </View>
       <View
@@ -183,23 +222,6 @@ function ViewUser({ navigation, message }) {
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Email: {user.email}</Text>
           </Text>
-          {/*
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Location: </Text>
-            {player.location}
-          </Text>
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Travel Range: </Text>
-            {player.travelRange} km
-          </Text>
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Bio: </Text>
-            {player.bio.length > 0 ? player.bio : "N/A"}
-          </Text>
-          <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Position: </Text>
-            {player.position}
-          </Text> */}
         </View>
         <TouchableOpacity
         //   onPress={() =>
@@ -223,7 +245,7 @@ function ViewUser({ navigation, message }) {
               }),
             ]}
           >
-            Edit User
+            Edit User (*INACTIVE*)
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={openModal}>
@@ -241,12 +263,12 @@ function ViewUser({ navigation, message }) {
               }),
             ]}
           >
-            Delete User
+            Delete User (*INACTIVE*)
           </Text>
         </TouchableOpacity>
         <DeletePlayerPopup
           isModalVisible={isModalVisible}
-          handleButtonPress={handleDeletePlayerButtonPress}
+          // handleButtonPress={handleDeletePlayerButtonPress} **INACTIVE, NEEDS TO BE HOOKED UP TO A DELETE USER FUNCTION
           onClose={closeModal}
         />
       </View>

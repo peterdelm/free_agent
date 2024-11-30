@@ -4,7 +4,7 @@
     "slug": "free_agent",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/fa-icon.png",
     "userInterfaceStyle": "light",
     "scheme": "free_agent",
     "splash": {
@@ -14,6 +14,9 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "statusBar": {
+        "barStyle": "dark-content"
+      },
       "supportsTablet": true,
       "bundleIdentifier": "freeAgentiosBundle"
     },
@@ -21,6 +24,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "androidStatusBar": {
+        "barStyle": "light-content",
+        "backgroundColor": "#000000 ",
+        "translucent": false
       },
       "config": {
         "googleMaps": {

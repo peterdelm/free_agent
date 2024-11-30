@@ -1,61 +1,60 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-navigator.geolocation = require("react-native-geolocation-service");
 import Styles from "./Styles";
 
-const AddressInput = ({
-  handleLocationSelected,
-  resetTrigger,
-  defaultLocation,
-}) => {
-  // onPress = { handleLocationSelected };
+const AddressInput = memo(
+  ({ handleLocationSelected, resetTrigger, defaultLocation }) => {
+    const [playerAddress, setPlayerAddress] = useState(defaultLocation || "");
 
-  const googlePlacesRef = useRef(null);
+    // Clear input when resetTrigger changes
+    useEffect(() => {
+      if (resetTrigger) {
+        setPlayerAddress(""); // Reset address text
+      }
+    }, [resetTrigger]);
 
-  // Clear the input field when resetTrigger changes
-  React.useEffect(() => {
-    if (resetTrigger && googlePlacesRef.current) {
-      googlePlacesRef.current.setAddressText(""); // Clear the input text
-    }
-  }, [resetTrigger]);
-
-  return (
-    <GooglePlacesAutocomplete
-      ref={googlePlacesRef} // Attach ref to the component
-      placeholder={defaultLocation ? defaultLocation : "Enter Location"}
-      onPress={(data, details = null) => {
-        // 'details' is provided when fetchDetails = true
-        handleLocationSelected(data, details);
-        console.log(data, details);
-      }}
-      query={{
-        key: "AIzaSyDof22OsH_HsjBC9sS9NnsAC3o9IfVfqmA",
-        language: "en",
-        components: "country:ca",
-      }}
-      fetchDetails={true}
-      enablePoweredByContainer={false}
-      styles={{
-        container: {
-          flex: 0,
-        },
-        listView: {
-          position: "absolute",
-          top: 50,
-          zIndex: 1000,
-        },
-
-        textInputContainer: [
-          Styles.sportsPickerDropdown,
-          { borderWidth: 0, paddingTop: 2, marginBottom: 0 },
-        ],
-        textInput: Styles.input,
-        predefinedPlacesDescription: {
-          color: "#1faadb",
-        },
-      }}
-    />
-  );
-};
+    return (
+      <GooglePlacesAutocomplete
+        placeholder={playerAddress || "Enter Location"}
+        onPress={(data, details = null) => {
+          console.log("onPress in AddressInput. Data is", data);
+          setPlayerAddress(data.description); // Update local address text
+          handleLocationSelected(data.description);
+        }}
+        query={{
+          key: "AIzaSyDof22OsH_HsjBC9sS9NnsAC3o9IfVfqmA",
+          language: "en",
+          components: "country:ca",
+        }}
+        fetchDetails={true} // Fetch additional details for the selected location
+        enablePoweredByContainer={false} // Hide the Google logo if desired
+        styles={{
+          container: {
+            flex: 0,
+            width: "100%",
+          },
+          listView: {
+            position: "absolute",
+            top: 50, // Adjust based on your layout
+            zIndex: 1000, // Ensure it's on top of other elements
+            width: "100%",
+          },
+          textInputContainer: [
+            Styles.sportsPickerDropdown,
+            { borderWidth: 0, paddingTop: 2, marginBottom: 0 },
+          ],
+          textInput: Styles.input, // Apply your input styles here
+          predefinedPlacesDescription: {
+            color: "#1faadb",
+          },
+        }}
+        textInputProps={{
+          value: playerAddress, // Bind input field value to state
+          onChangeText: setPlayerAddress, // Update state when text changes
+        }}
+      />
+    );
+  }
+);
 
 export default AddressInput;

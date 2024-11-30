@@ -5,29 +5,25 @@ import {
   TouchableOpacity,
   Image,
   Text,
+  Keyboard,
+  Platform,
+  Dimensions,
 } from "react-native";
-import React, { useEffect, useState, useRef, Component } from "react";
-import {
-  useNavigation,
-  useRoute,
-  useFocusEffect,
-} from "@react-navigation/native";
+import React, { useEffect, useState, useRef } from "react";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import AutoCompletePicker from "./AutocompletePicker.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
+import Slider from "@react-native-community/slider";
 
 const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
-
   const [calibre, setCalibre] = useState("");
   const [location, setPlayerAddress] = useState("");
   const [bio, setBio] = useState("");
-  const [errors, setErrors] = useState("");
-  const [sportSpecificValues, setSportSpecificValues] = useState("");
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
@@ -35,6 +31,12 @@ const EditPlayer = ({ navigation }) => {
   const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
   const [player, setPlayer] = useState({});
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isInputFocused, setInputFocused] = useState(false);
+  const [sliderValue, setSliderValue] = useState(0);
+
+  const { height } = Dimensions.get("window");
+  const inputHeight = height * 0.07;
 
   const route = useRoute();
   const { playerId, playerSport } = route.params;
@@ -43,6 +45,27 @@ const EditPlayer = ({ navigation }) => {
   const [game, setGame] = useState([]);
   console.log("PlayerId is " + playerId);
   console.log("PlayerSport is " + playerSport);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+        setInputFocused(false); // Reset focus state when keyboard hides
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const handleCalibreChange = (input) => {
     console.log("New Calibre is: ", input);
@@ -70,6 +93,11 @@ const EditPlayer = ({ navigation }) => {
     onSubmit();
   };
 
+  const formatSliderValue = (sliderValue) => {
+    const formattedSliderValue = Math.round(sliderValue * 4) / 4;
+    return formattedSliderValue;
+  };
+
   ///////////////////////////////////////////////////////
   //retrieve the player values
   const fetchPlayerData = async () => {
@@ -95,6 +123,7 @@ const EditPlayer = ({ navigation }) => {
       }
 
       setPlayer(res.body);
+      setSliderValue(res.body.travelRange);
       console.log("Player location is " + player.location);
     } catch (error) {
       console.log("Error fetching player data:", error);
@@ -199,7 +228,7 @@ const EditPlayer = ({ navigation }) => {
       calibre,
       location,
       bio,
-      travelRange,
+      travelRange: formatSliderValue(sliderValue),
       sport: sport,
       position,
     };
@@ -272,64 +301,130 @@ const EditPlayer = ({ navigation }) => {
           padding: 10,
         }}
       >
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={player.calibre}
-          placeholderTextColor="grey"
-          language={calibreList}
-          onValueChange={handleCalibreChange}
-          label={player.calibre}
-        />
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={player.gender}
-          placeholderText
-          Color="#005F66"
-          onValueChange={handleGenderChange}
-          language={genders}
-          label={player.gender}
-        />
-        <Picker
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          defaultValue={player.position}
-          placeholderText
-          Color="#005F66"
-          onValueChange={handlePositionChange}
-          language={positions}
-          label={player.position}
-        />
-        <AutoCompletePicker
-          onInputSelected={captureSelectedLocation}
-          style={[Styles.sportsPickerDropdown, Styles.input]}
-          ref={autoCompletePickerRef}
-          value={player.location}
-          placeholder={player.location}
-          placeholderTextColor="#005F66"
-        />
-        {/* Make this a sliding scale and move it to a subsequent window */}
-        <TextInput
+        {!isKeyboardVisible && (
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            defaultValue={player.calibre}
+            placeholderTextColor="grey"
+            language={calibreList}
+            onValueChange={handleCalibreChange}
+            label={player.calibre}
+          />
+        )}
+        {!isKeyboardVisible && (
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            defaultValue={player.gender}
+            placeholderText
+            Color="#005F66"
+            onValueChange={handleGenderChange}
+            language={genders}
+            label={player.gender}
+          />
+        )}
+        {!isKeyboardVisible && (
+          <Picker
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            defaultValue={player.position}
+            placeholderText
+            Color="#005F66"
+            onValueChange={handlePositionChange}
+            language={positions}
+            label={player.position}
+          />
+        )}
+        {!isKeyboardVisible && (
+          <AutoCompletePicker
+            onInputSelected={captureSelectedLocation}
+            style={[Styles.sportsPickerDropdown, Styles.input]}
+            ref={autoCompletePickerRef}
+            value={player.location}
+            placeholder={player.location}
+            placeholderTextColor="#005F66"
+          />
+        )}
+        {!isKeyboardVisible && (
+          <View
+            style={{
+              width: "100%",
+              height: 100,
+              borderWidth: 1,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 10,
+              backgroundColor: "white",
+            }}
+          >
+            <View>
+              <Text>Travel Range</Text>
+            </View>
+            <View>
+              <Text>{formatSliderValue(sliderValue)} km</Text>
+            </View>
+            <Slider
+              style={{ width: "100%", border: 2, paddingTop: 10 }}
+              minimumValue={0.25}
+              maximumValue={35}
+              minimumTrackTintColor="#000000"
+              maximumTrackTintColor="#000000"
+              value={sliderValue}
+              onValueChange={setSliderValue}
+            />
+          </View>
+        )}
+        <View
           style={[
-            Styles.sportsPickerDropdown,
-            Styles.input,
-            (style = { textAlign: "center" }),
+            {
+              flex: isKeyboardVisible ? 2 : 0,
+              height: isKeyboardVisible ? "100%" : 100,
+              paddingBottom: isKeyboardVisible ? 100 : 0,
+            },
           ]}
-          placeholder={`Travel Range: ${player.travelRange} km`}
-          defaultValue={`${player.travelRange}`}
-          placeholderTextColor="#005F66"
-          onChangeText={(travelRange) => handleTravelRangeChange(travelRange)}
-          placeholderText={player.travelRange}
-        />
-        <TextInput
-          style={[
-            Styles.sportsPickerDropdown,
-            Styles.input,
-            (style = { textAlign: "center" }),
-          ]}
-          defaultValue={`${player.bio}`}
-          placeholder={`${player.bio}`}
-          placeholderTextColor="#005F66"
-          onChangeText={(bio) => handleBioChange(bio)}
-        />
+        >
+          <View
+            style={[
+              isKeyboardVisible
+                ? {
+                    borderWidth: 2,
+                    borderColor: "red",
+                    flex: isKeyboardVisible ? 2 : 0,
+                    borderWidth: 2,
+                    borderColor: "#154734",
+                    flex: 2,
+                    backgroundColor: "#FFFFFF",
+                  }
+                : {
+                    height: Platform.select({
+                      ios: inputHeight,
+                      android: inputHeight,
+                    }),
+                    borderColor: "#154734",
+                    borderRadius: 5,
+                    borderWidth: 1,
+                    overflow: "hidden",
+                    justifyContent: "center",
+                    flex: 0,
+                    backgroundColor: "#FFFFFF",
+                  },
+            ]}
+          >
+            <TextInput
+              style={[
+                isKeyboardVisible
+                  ? { padding: 10 }
+                  : {
+                      textAlign: "center",
+                    },
+              ]}
+              placeholder="Player Biography"
+              onChangeText={setBio}
+              value={bio || player.bio}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+            />
+          </View>
+        </View>
         <TouchableOpacity>
           <Button title="SAVE PLAYER" onPress={() => handleFormSubmit()} />
         </TouchableOpacity>

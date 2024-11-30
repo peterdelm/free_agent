@@ -9,11 +9,12 @@ import {
   Platform,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-
-import React, { useEffect, useState, useRef } from "react";
+import Slider from "@react-native-community/slider";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
 import AutoCompletePicker from "./AutocompletePicker.js";
+import NavigationFooter from "./NavigationFooter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
@@ -23,18 +24,11 @@ import authFetch from "../../api/authCalls.js";
 const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
-
   const [calibre, setCalibre] = useState("");
-  const [gameType, setGameType] = useState("");
   const [location, setPlayerAddress] = useState("");
-  const [date, setGameDate] = useState("");
-  const [time, setGameTime] = useState("");
-  const [game_length, setGameLength] = useState("");
-  const [teamName, setTeamName] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
@@ -49,6 +43,7 @@ const CreatePlayer = ({ navigation }) => {
   const [usersPlayerRoster, setUsersPlayerRoster] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [sliderValue, setSliderValue] = useState(0);
 
   const autoCompletePickerRef = useRef(null);
 
@@ -74,16 +69,12 @@ const CreatePlayer = ({ navigation }) => {
   const handlePositionChange = (input) => {
     setPosition(input);
   };
-  const handleTravelRangeChange = (input) => {
-    setTravelRange(input);
-  };
 
-  const handleLocationSelected = (data, details) => {
+  const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
-    console.log("Description is:", data.description);
-    setPlayerAddress(data.description);
-  };
-
+    console.log("Description is:", data);
+    setPlayerAddress(data);
+  }, []);
   const handleFormSubmit = () => {
     onSubmit();
   };
@@ -206,12 +197,12 @@ const CreatePlayer = ({ navigation }) => {
         additionalInfo,
         position,
         location,
-        travelRange,
+        travelRange: formatSliderValue(sliderValue),
         sport: sport,
         sportId: sportId,
       };
 
-      console.log("CreatePlayer OnSubmit body is " + body.calibre);
+      console.log("CreatePlayer travelRange body is " + body.travelRange);
       const url = `${EXPO_PUBLIC_BASE_URL}api/players`;
 
       const postPlayer = async () => {
@@ -255,10 +246,14 @@ const CreatePlayer = ({ navigation }) => {
     }
   };
 
+  const formatSliderValue = (sliderValue) => {
+    const formattedSliderValue = Math.round(sliderValue * 4) / 4;
+    return formattedSliderValue;
+  };
+
   if (isSportSelected === true) {
-    console.log("sportSelected is " + isSportSelected);
-    console.log("selectedSport is " + selectedSport);
     var calibres = calibreList;
+    const filteredCalibreList = calibreList.filter((value) => value != "Any");
     var gameTypes = gameTypeList;
     var genders = genderList;
     var sport = selectedSport;
@@ -293,7 +288,7 @@ const CreatePlayer = ({ navigation }) => {
             style={[Styles.sportsPickerDropdown, Styles.input]}
             defaultValue=""
             placeholderTextColor="grey"
-            language={calibreList}
+            language={filteredCalibreList}
             onValueChange={handleCalibreChange}
             label="Calibre"
           />
@@ -318,18 +313,35 @@ const CreatePlayer = ({ navigation }) => {
           {/* This will be a LOCATION SELECTOR */}
           <AddressInput handleLocationSelected={handleLocationSelected} />
 
-          {/* Make this a sliding scale and move it to a subsequent window */}
-          <TextInput
-            style={[
-              Styles.sportsPickerDropdown,
-              Styles.input,
-              (styles = { textAlign: "center" }),
-            ]}
-            placeholder="Travel Range (km)"
-            defaultValue=""
-            placeholderTextColor="#005F66"
-            onChangeText={handleTravelRangeChange}
-          />
+          {/* Sliding Scale */}
+          <View
+            style={{
+              width: "100%",
+              height: 100,
+              borderWidth: 1,
+              padding: 10,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 10,
+              backgroundColor: "white",
+            }}
+          >
+            <View>
+              <Text>Travel Range</Text>
+            </View>
+            <View>
+              <Text>{formatSliderValue(sliderValue)} km</Text>
+            </View>
+            <Slider
+              style={{ width: "100%", border: 2, paddingTop: 10 }}
+              minimumValue={0.25}
+              maximumValue={35}
+              minimumTrackTintColor="#000000"
+              maximumTrackTintColor="#000000"
+              value={sliderValue}
+              onValueChange={setSliderValue} // Update state as the value changes
+            />
+          </View>
           <TextInput
             style={[
               Styles.sportsPickerDropdown,
@@ -441,6 +453,7 @@ const CreatePlayer = ({ navigation }) => {
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
+        <NavigationFooter />
       </View>
     );
   }

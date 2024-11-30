@@ -15,11 +15,20 @@ import getCurrentUser from "./getCurrentUser.helper";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
+import UserQuestionnairePopup from "./UserQuestionnaireModal.js";
 
-const ManagerBrowseGames = ({ navigation }) => {
+const ManagerBrowseGames = ({ navigation, route }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isFeedBackPopupVisible, setIsFeedBackPopupVisible] = useState(false);
+
+  const { feedbackPopup } = route.params || {};
+
+  // Function to close the modal
+  const closeModal = () => {
+    setIsFeedBackPopupVisible(false);
+  };
 
   const fetchData = async () => {
     try {
@@ -33,7 +42,6 @@ const ManagerBrowseGames = ({ navigation }) => {
         headers,
       };
 
-      // Use async/await instead of chaining .then() for readability
       const res = await authFetch(url, requestOptions);
       if (res.status === 200) {
         const data = res.body;
@@ -61,12 +69,31 @@ const ManagerBrowseGames = ({ navigation }) => {
       };
       fetchCurrentUser();
       fetchData();
-    }, [])
+      console.log("Route Params are", route.params);
+      if (feedbackPopup === true) {
+        setIsFeedBackPopupVisible(true);
+        console.log("Feedback popup in useFocusEffect is ", feedbackPopup);
+      }
+      if (feedbackPopup === false) {
+        setIsFeedBackPopupVisible(false);
+        console.log("Feedback popup in useFocusEffect is ", feedbackPopup);
+      }
+    }, [route.params])
   );
 
   useEffect(() => {
     fetchData();
-  }, []);
+    if (feedbackPopup === true) {
+      setIsFeedBackPopupVisible(true);
+      console.log("Route Params are", route.params);
+
+      console.log("Feedback popup in useEffect is ", feedbackPopup);
+    }
+    if (feedbackPopup === false) {
+      setIsFeedBackPopupVisible(false);
+      console.log("Feedback popup in useFocusEffect is ", feedbackPopup);
+    }
+  }, [route.params]);
 
   let allActiveGames = []; // Initialize as empty array initially
   const currentDate = new Date();
@@ -83,7 +110,10 @@ const ManagerBrowseGames = ({ navigation }) => {
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
-          onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+          onPress={() => {
+            navigation.setParams({ feedbackPopup: false }),
+              navigation.navigate("ViewGame", { gameId: game.id });
+          }}
         >
           <View style={Styles.upcomingGameContainer}>
             <View style={Styles.upcomingGameDateContainer}>
@@ -102,7 +132,11 @@ const ManagerBrowseGames = ({ navigation }) => {
       .map(({ game }) => (
         <TouchableOpacity
           key={game.id}
-          onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
+          onPress={() => {
+            navigation.navigate("ViewGame", {
+              gameId: game.id,
+            });
+          }}
         >
           <View style={Styles.upcomingGameContainer}>
             <View style={Styles.upcomingGameDateContainer}>
@@ -195,6 +229,10 @@ const ManagerBrowseGames = ({ navigation }) => {
           )}
         </View>
       </View>
+      <UserQuestionnairePopup
+        isModalVisible={isFeedBackPopupVisible}
+        onClose={closeModal}
+      />
 
       <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>

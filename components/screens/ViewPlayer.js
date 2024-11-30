@@ -8,12 +8,13 @@ import {
   Platform,
   Modal,
   Image,
+  StyleSheet,
 } from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import NavigationFooter from "./NavigationFooter";
-import { StyleSheet } from "react-native-web";
+import { useAuth } from "../../contexts/authContext.js";
 import DeletePlayerPopup from "./DeletePlayerPopup"; // Adjust import path as needed
 function ViewPlayer({ navigation, message }) {
   const route = useRoute();
@@ -25,13 +26,13 @@ function ViewPlayer({ navigation, message }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false); // State to track deletion status
 
+  const { user } = useAuth();
+
   useEffect(() => {
     if (refresh) {
       setRefreshPlayers(true);
     }
   }, [refresh]);
-
-  console.log("ViewPlayer has received the call!");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,6 +67,7 @@ function ViewPlayer({ navigation, message }) {
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log("User is", user);
       const fetchData = async () => {
         try {
           const url = `${EXPO_PUBLIC_BASE_URL}api/players/${playerId}`;
@@ -134,6 +136,11 @@ function ViewPlayer({ navigation, message }) {
       // Handle error
     }
   };
+
+  const playerName = player.firstName
+    ? `${player.firstName} ${player.lastName}`
+    : "";
+  const isPlayer = user.userId === player.userId;
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -206,6 +213,14 @@ function ViewPlayer({ navigation, message }) {
             justifyContent: "center",
           }}
         >
+          <View>
+            <Text style={viewPlayerStyles.name}>
+              <Text style={{ fontWeight: "bold" }}>
+                {playerName ? playerName : "Name: N/A"}
+              </Text>
+            </Text>
+          </View>
+
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Sport:</Text> {player.sport}
           </Text>
@@ -215,72 +230,91 @@ function ViewPlayer({ navigation, message }) {
             {player.calibre}
           </Text>
           <Text style={viewPlayerStyles.text}>
-            <Text style={{ fontWeight: "bold" }}>Location: </Text>
-            {player.location}
-          </Text>
-          <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Travel Range: </Text>
             {player.travelRange} km
           </Text>
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Bio: </Text>
-            {player.bio.length > 0 ? player.bio : "N/A"}
+            {player.bio ? player.bio : "N/A"}
           </Text>
           <Text style={viewPlayerStyles.text}>
             <Text style={{ fontWeight: "bold" }}>Position: </Text>
             {player.position}
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("EditPlayer", {
-              playerId: player.id,
-              playerSport: player.sport,
-            })
-          }
-        >
-          <Text
-            style={[
-              Styles.input,
-              (style = {
-                fontSize: 20,
-                textAlign: "center",
-                textAlignVertical: "center",
-                lineHeight: Platform.select({
-                  ios: 50,
-                }),
-                margin: 20,
-              }),
-            ]}
+        {isPlayer ? (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("EditPlayer", {
+                playerId: player.id,
+                playerSport: player.sport,
+              })
+            }
           >
-            Edit Player
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={openModal}>
-          <Text
-            style={[
-              Styles.input,
-              (style = {
-                fontSize: 20,
-                textAlign: "center",
-                textAlignVertical: "center",
-                lineHeight: Platform.select({
-                  ios: 50,
+            <Text
+              style={[
+                Styles.input,
+                (style = {
+                  fontSize: 20,
+                  textAlign: "center",
+                  textAlignVertical: "center",
+                  lineHeight: Platform.select({
+                    ios: 50,
+                  }),
+                  margin: 20,
                 }),
-                margin: 20,
-              }),
-            ]}
-          >
-            Delete Player
-          </Text>
-        </TouchableOpacity>
+              ]}
+            >
+              Edit Player
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {isPlayer ? (
+          <TouchableOpacity onPress={openModal}>
+            <Text
+              style={[
+                Styles.input,
+                (style = {
+                  fontSize: 20,
+                  textAlign: "center",
+                  textAlignVertical: "center",
+                  lineHeight: Platform.select({
+                    ios: 50,
+                  }),
+                  margin: 20,
+                }),
+              ]}
+            >
+              Delete Player
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity>
+            <Text
+              style={[
+                Styles.input,
+                (style = {
+                  fontSize: 20,
+                  textAlign: "center",
+                  textAlignVertical: "center",
+                  lineHeight: Platform.select({
+                    ios: 50,
+                  }),
+                  margin: 20,
+                }),
+              ]}
+            >
+              (*INACTIVE*) Message (*INACTIVE*)
+            </Text>
+          </TouchableOpacity>
+        )}
         <DeletePlayerPopup
           isModalVisible={isModalVisible}
           handleButtonPress={handleDeletePlayerButtonPress}
           onClose={closeModal}
         />
       </View>
+
       <NavigationFooter navigation={navigation}>
         <Text>FOOTER</Text>
       </NavigationFooter>
@@ -297,6 +331,7 @@ const viewPlayerStyles = StyleSheet.create({
     }),
     padding: 10,
   },
+  name: { textAlign: "center", fontSize: 25, marginBottom: 20 },
 });
 
 export default ViewPlayer;

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, Modal, TouchableOpacity } from "react-native";
-import Styles from "./Styles";
-import { Calendar, LocaleConfig } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 
 class DatePicker extends Component {
   constructor(props) {
@@ -17,21 +16,23 @@ class DatePicker extends Component {
   }
 
   formattedDate = () => {
-    if (this.state.inputValue == "Date") {
+    if (this.state.inputValue === "Date") {
       return "Date";
     } else {
-      const date = new Date(this.state.inputValue);
+      console.log("this.state.inputValue is", this.state.inputValue);
 
-      // Define options for the desired date format
+      const date = new Date(this.state.inputValue);
+      console.log("date is", date);
+
       const options = {
         year: "numeric",
         month: "long",
         day: "numeric",
       };
 
-      // Format the date using options
-      const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
-      console.log("Formatted date is:", formattedDate);
+      const formattedDate = date.toLocaleDateString(undefined, options);
+      console.log("Formatted datepicker date is:", formattedDate);
+
       return formattedDate;
     }
   };
@@ -80,8 +81,8 @@ class DatePicker extends Component {
             <Calendar
               onDayPress={(day) => {
                 this.setState({
-                  selected: day.dateString,
-                  inputValue: day.dateString,
+                  selected: `${day.dateString}T00:00:00`,
+                  inputValue: `${day.dateString}T00:00:00`,
                 });
                 this.onDateSelect(day);
                 this.toggleDropdown();

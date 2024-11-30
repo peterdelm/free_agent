@@ -16,17 +16,6 @@ const CustomToggleSwitch = ({ user }) => {
   }, [user]);
   console.log("User status is", user.isActive);
 
-  const getTokenFromStorage = async () => {
-    try {
-      const token = await AsyncStorage.getItem("@session_token");
-      console.log("Token is " + token);
-      return token;
-    } catch (error) {
-      console.log("Error retrieving token from AsyncStorage:", error);
-      return null;
-    }
-  };
-
   return (
     <TouchableOpacity
       style={[

@@ -1,30 +1,48 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
-import Styles from "./Styles";
 import {
   View,
   Text,
   Image,
-  ScrollView,
   TouchableOpacity,
   Dimensions,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import NavigationFooter from "./NavigationFooter";
+import ButtonFooter from "./ButtonFooter.js";
 import getCurrentUser from "./getCurrentUser.helper";
+import ConfirmQuitGame from "./ConfirmQuitGame.js";
+import { quitGameRequest, deleteGameRequest } from "../../api/apiCalls.js";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
+import DeleteGamePopup from "./DeleteGamePopup.js";
 
 function ViewGame({ navigation, message }) {
   const [currentUser, setCurrentUser] = useState({});
-
   const route = useRoute();
-  const { gameId } = route.params;
+  const { gameId, refresh } = route.params;
   const [game, setGame] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [userLoading, setUserLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [refreshGame, setRefreshGame] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isTrashModalVisible, setIsTrashModalVisible] = useState(false);
+
+  const openModal = () => setIsModalVisible(true);
+
+  const closeModal = () => setIsModalVisible(false);
+
+  const openTrashModal = () => setIsTrashModalVisible(true);
+
+  const closeTrashModal = () => setIsTrashModalVisible(false);
+
+  useEffect(() => {
+    if (refresh) {
+      setRefreshGame(true);
+    }
+  }, [refresh]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,135 +59,85 @@ function ViewGame({ navigation, message }) {
     }, [])
   );
 
-  useEffect(() => {
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        setLoading(true); // Start loading state
+        try {
+          const url = `${EXPO_PUBLIC_BASE_URL}api/games/${gameId}`;
+          const headers = { "Content-Type": "application/json" };
+          const requestOptions = { headers };
 
-    const fetchData = async () => {
-      try {
-        const headers = {
-          "Content-Type": "application/json",
-        };
+          const res = await authFetch(url, requestOptions);
 
-        const requestOptions = {
-          headers,
-        };
+          if (res.status === 200) {
+            const gameData = res.body.game;
+            console.log(gameData);
+            console.log(currentUser.id);
+            setGame(gameData);
+          } else {
+            throw new Error("Network response was not ok.");
+          }
+        } catch (error) {
+          console.error("Error fetching game data:", error);
+          setErrorMessage("Failed to load game data."); // Display error to user if needed
+        } finally {
+          setLoading(false);
+        }
+      };
 
-        const res = await authFetch(url, requestOptions);
-
-        authFetch(url, requestOptions);
-        if (res.status === 200) {
-          console.log("GameView fetch res is", res.body);
-          const gameData = res.body.game;
-          setGame(gameData);
-        } else console.log("Something in ViewGame fetch returned incorrectly");
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    fetchData();
-  }, []);
+      fetchData();
+    }, [gameId, refreshGame])
+  );
 
   const handleFormSubmit = () => {
     onSubmit();
   };
 
-  const handleQuitGameButtonPress = () => {
-    console.log("handleQuitGameButtonPress called");
-    sendQuitGameRequest();
-  };
+  const handleQuitGameButtonPress = async () => {
+    console.log("handleQuitGameButtonPress pressed");
 
-  const handleEditGameButtonPress = () => {
-    console.log("handleEditGameButtonPress called");
-    navigation.navigate("EditGame", {
-      gameId: game.id,
-      gameSport: game.sport,
-    });
-  };
+    try {
+      const response = await quitGameRequest(gameId);
+      console.log("response is", response);
 
-  const sendQuitGameRequest = async () => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
+      if (response.status === 200) {
+        console.log("Submit successful");
+        navigation.navigate("PlayerBrowseGames", {
+          successMessage: "Game quit successfully.",
+        });
       }
-    };
-
-    const body = {
-      gameId: gameId,
-    };
-
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/quitGame`;
-
-    const quitGame = async () => {
-      try {
-        const token = await getTokenFromStorage();
-
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        };
-
-        const requestOptions = {
-          method: "PUT",
-          headers,
-          body: JSON.stringify(body),
-        };
-
-        await fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              console.log("Submit successful");
-              navigation.navigate("PlayerBrowseGames", {
-                successMessage: "Game quit successfully.",
-              });
-            } else {
-              console.log("Submit Failed");
-            }
-          });
-      } catch (error) {
-        console.log("Error making authenticated request:", error);
-        // Handle error
-      }
-    };
-    quitGame();
+    } catch (error) {
+      console.error("Error deleting Game:", error);
+    }
   };
 
+  const handleDeleteGameButtonPress = async () => {
+    try {
+      const response = await deleteGameRequest(gameId);
+
+      if (response.status === 200) {
+        console.log("Game deleted successfully");
+        navigation.navigate("ManagerBrowseGames", {
+          successMessage: "Game deleted successfully.",
+          feedbackPopup: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting Game:", error);
+    }
+  };
   const onSubmit = async () => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("@session_token");
-        console.log("Token is " + token);
-        return token;
-      } catch (error) {
-        console.log("Error retrieving token from AsyncStorage:", error);
-        return null;
-      }
-    };
-
     const body = {
       gameId: gameId,
     };
 
-    const url = `${EXPO_PUBLIC_BASE_URL}api/games/joinGame`;
+    const url = `${EXPO_PUBLIC_BASE_URL}api/games/joinGame/${gameId}`;
 
     const joinGame = async () => {
       try {
-        const token = await getTokenFromStorage();
-
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         };
 
         const requestOptions = {
@@ -178,24 +146,15 @@ function ViewGame({ navigation, message }) {
           body: JSON.stringify(body),
         };
 
-        await fetch(url, requestOptions)
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((data) => {
-            if (data.success === true) {
-              console.log("Submit successful");
-              navigation.navigate("PlayerBrowseGames", {
-                successMessage:
-                  "Game created successfully. Free Agent pending.",
-              });
-            } else {
-              console.log("Submit Failed");
-            }
+        const response = await authFetch(url, requestOptions);
+        if (response.status === 200) {
+          console.log("Submit successful");
+          navigation.navigate("PlayerBrowseGames", {
+            successMessage: "Game created successfully. Free Agent pending.",
           });
+        } else {
+          console.log("Response was not ok");
+        }
       } catch (error) {
         console.log("Error making authenticated request:", error);
         // Handle error
@@ -203,9 +162,26 @@ function ViewGame({ navigation, message }) {
     };
     joinGame();
   };
+  const isGamePast = (isoDateString) => {
+    console.log("Is Game Past?");
+    const date = new Date(isoDateString);
+
+    if (isNaN(date)) {
+      console.error("Invalid date:", isoDateString);
+      return false;
+    }
+
+    const currentDate = new Date();
+
+    return date < currentDate;
+  };
 
   const formattedDate = (isoDateString) => {
     const date = new Date(isoDateString);
+
+    if (isNaN(date)) {
+      console.error("Invalid date:", isoDateString);
+    }
 
     // Define options for the desired date format
     const options = {
@@ -216,7 +192,6 @@ function ViewGame({ navigation, message }) {
 
     // Format the date using options
     const formattedDate = date.toLocaleDateString(undefined, options); // Example: "August 13, 2024"
-    console.log("Formatted date is:", formattedDate);
     return formattedDate;
   };
   const parse24HourTime = (timeString) => {
@@ -233,205 +208,182 @@ function ViewGame({ navigation, message }) {
 
   // Main function to format time string
   const formatTime = (timeString) => {
-    // Validate and parse the 24-hour time string
     if (!/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(timeString)) {
       return "Invalid time"; // Return a fallback message or value
     }
-
-    // Parse the 24-hour time
     const { hours, minutes } = parse24HourTime(timeString);
-
-    // Convert hours to 12-hour format
     const { hours12, amPm } = convertTo12HourFormat(hours);
-
-    // Format the time string
     return `${hours12}:${String(minutes).padStart(2, "0")} ${amPm}`;
   };
 
-  // Example usage
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
 
-  const displayJoinGameButton = () => {
-    if (userLoading) {
-      return null;
-    }
-    if (game.userId === currentUser?.id) {
-      console.log("You created this game", game.userId);
+  const isGameCreator = game.userId === currentUser?.id;
+  const hasPlayer = Boolean(game.matchedPlayerId);
+  const isMatchedPlayer = currentUser?.playerIds?.includes(
+    game.matchedPlayerId
+  );
+
+  const displayGameStatus = () => {
+    //Check if the game has a player
+    if (hasPlayer) {
       return (
         <TouchableOpacity
-          style={{ color: "#C30000" }}
-          onPress={() => handleEditGameButtonPress()}
+          onPress={() =>
+            navigation.navigate("ViewPlayer", {
+              playerId: game.matchedPlayerId,
+              userId: currentUser?.id,
+            })
+          }
         >
-          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
+          <View
+            style={{
+              backgroundColor: "green",
+              borderRadius: 5,
+              width: "98%",
+              height: 50,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
+              marginBottom: 10,
+            }}
+          >
             <Text
               style={[
-                Styles.gameInfo,
                 (style = {
                   fontWeight: "bold",
                   fontSize: 20,
                   color: "white",
-                  borderColor: "#C30000",
+                  borderWidth: 0,
+                  textAlign: "center",
+                  marginLeft: 20,
                 }),
               ]}
             >
-              Edit Game
+              Player Found
             </Text>
+            <Image
+              source={require("../../assets/user-solid.png")}
+              style={{
+                width: 25,
+                height: 25,
+                resizeMode: "contain",
+                marginRight: 20,
+                tintColor: "white",
+              }}
+            />
           </View>
         </TouchableOpacity>
       );
-    }
-    if (!game.matchedPlayerId)
-      return (
-        <TouchableOpacity
-          style={{ color: "#C30000" }}
-          onPress={() => handleFormSubmit()}
-        >
-          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }}>
-            <Text
-              style={[
-                Styles.gameInfo,
-                (style = {
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: "white",
-                  borderColor: "#C30000",
-                }),
-              ]}
-            >
-              Join Game
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    if (currentUser?.playerIds?.includes(game.matchedPlayerId)) {
-      console.log(currentUser.playerIds + " includes " + game.matchedPlayerId);
-      return (
-        <TouchableOpacity
-          style={{ color: "#C30000" }}
-          onPress={() => handleQuitGameButtonPress()}
-        >
-          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
-            <Text
-              style={[
-                Styles.gameInfo,
-                (style = {
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: "white",
-                  borderColor: "#C30000",
-                }),
-              ]}
-            >
-              Quit Game
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    } else {
-      return null;
     }
   };
 
-  const displayYourGameBar = () => {
-    if (userLoading) {
-      return null;
-    }
-    if (game.userId === currentUser?.id) {
+  const displayTrashBin = () => {
+    if (isGameCreator) {
       return (
-        <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
-          <Text
-            style={[
-              (style = {
-                fontWeight: "bold",
-                fontSize: 15,
-                color: "white",
-                borderColor: "#C30000",
-                textAlign: "center",
-                padding: 2,
-              }),
-            ]}
-          >
-            Cannot Accept Your Own Request
-          </Text>
+        <View style={{ paddingRight: 20 }}>
+          <TouchableOpacity onPress={() => openTrashModal()}>
+            <Image
+              source={require("../../assets/trash-can.png")}
+              style={{
+                width: 25,
+                height: 25,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
         </View>
       );
-    }
-    if (!game.matchedPlayerId) return null;
-    if (currentUser?.playerIds?.includes(game.matchedPlayerId)) {
-      console.log(currentUser.playerIds + " includes " + game.matchedPlayerId);
-      return (
-        <TouchableOpacity
-          style={{ color: "#C30000" }}
-          onPress={() => handleQuitGameButtonPress()}
-        >
-          <View style={{ backgroundColor: "#C30000", borderRadius: 5 }} on>
-            <Text
-              style={[
-                Styles.gameInfo,
-                // (style = {
-                //   fontWeight: "bold",
-                //   fontSize: 20,
-                //   color: "white",
-                //   borderColor: "#C30000",
-                // }),
-              ]}
-            >
-              Quit Game
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    } else {
-      return null;
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <View style={{ paddingRight: 40 }}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require("../../assets/arrow-left-solid.png")}
+              style={{
+                width: 40,
+                height: 40,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+        </View>
         <Image
           source={require("../../assets/prayingHands.png")}
           style={styles.headerImage}
         />
         <Text style={styles.headerText}>View Game</Text>
+        {displayTrashBin()}
       </View>
-
-      <View style={styles.content}>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.gameInfo}>{game.location}</Text>
+      <ScrollView>
+        <View style={[styles.content]}>
+          {displayGameStatus()}
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Address</Text>
+            <Text style={styles.gameInfo}>{game.location}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Date/Time</Text>
+            <Text style={styles.gameInfo}>
+              {formattedDate(game.date)} @ {formatTime(game.time)}
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Position</Text>
+            <Text style={styles.gameInfo}>{game.position}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Calibre</Text>
+            <Text style={styles.gameInfo}>
+              {game.calibre === "Any" ? "Open" : game.calibre}
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.gameInfo}>{game.gender}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Game Type</Text>
+            <Text style={styles.gameInfo}>{game.gameType}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Game Length</Text>
+            <Text style={styles.gameInfo}>
+              {game.gameLength ? `${game.gameLength} Minutes` : "N/A"}
+            </Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.label}>Additional Info</Text>
+            <Text style={styles.gameInfo}>{game.additionalInfo || "None"}</Text>
+          </View>
         </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Date/Time</Text>
-          <Text style={styles.gameInfo}>
-            {formattedDate(game.date)} @ {formatTime(game.time)}
-          </Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Position</Text>
-          <Text style={styles.gameInfo}>{game.position}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Calibre</Text>
-          <Text style={styles.gameInfo}>{game.calibre}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Gender</Text>
-          <Text style={styles.gameInfo}>{game.gender}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Game Type</Text>
-          <Text style={styles.gameInfo}>{game.gameType}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.label}>Game Length</Text>
-          <Text style={styles.gameInfo}>
-            {game.gameLength ? `${game.gameLength} Minutes` : "N/A"}
-          </Text>
-        </View>
-        {displayJoinGameButton()}
-      </View>
-
-      <NavigationFooter navigation={navigation} />
+      </ScrollView>
+      <ButtonFooter
+        navigation={navigation}
+        game={game}
+        isGameCreator={isGameCreator}
+        hasPlayer={hasPlayer}
+        isMatchedPlayer={isMatchedPlayer}
+        isGamePast={isGamePast(game.date)}
+        handleQuitGameButtonPress={openModal}
+        handleFormSubmit={handleFormSubmit}
+      />
+      <ConfirmQuitGame
+        isModalVisible={isModalVisible}
+        handleButtonPress={handleQuitGameButtonPress}
+        onClose={closeModal}
+      />
+      <DeleteGamePopup
+        isModalVisible={isTrashModalVisible}
+        handleButtonPress={handleDeleteGameButtonPress}
+        onClose={closeTrashModal}
+      />
     </View>
   );
 }
@@ -447,8 +399,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "black",
     borderBottomWidth: 2,
     borderBottomStyle: "solid",
-    paddingVertical: 10,
     alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     backgroundColor: "white",
   },
   headerImage: {
@@ -463,11 +416,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 10,
-    // Adjust this height if needed to fit content within the screen
-    maxHeight: height - 150, // Adjust based on footer height and margins
+    alignItems: "center",
   },
   infoSection: {
+    width: "100%",
     marginBottom: 15,
+    paddingLeft: 10,
   },
   label: {
     fontSize: 18,
@@ -476,6 +430,7 @@ const styles = StyleSheet.create({
   },
   gameInfo: {
     fontSize: 16,
+    textAlign: "left",
   },
 });
 

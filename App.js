@@ -27,6 +27,7 @@ import { AuthProvider, useAuth } from "./contexts/authContext";
 import { sendPushTokenToBackend } from "./services/pushNotificationService.js";
 import { loginRequest } from "./api/authCalls.js";
 import { usePushNotifications } from "./components/screens/usePushNotifications.tsx";
+import LoadingModal from "./components/screens/LoadingModal.js";
 const Stack = createNativeStackNavigator();
 
 const prefix = Linking.createURL("/");
@@ -216,7 +217,7 @@ function MainApp() {
   }, [notification]);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingModal isLoading={loading} loadingText="Loading..." />;
   }
 
   return (
@@ -239,7 +240,11 @@ function MainApp() {
       ) : (
         <AuthStack /> // If no user is logged in, render the AuthStack
       )}
-      {/* <StatusBar style="auto" /> */}
+      <StatusBar
+        hidden={false}
+        barStyle="light-content"
+        backgroundColor="#000000"
+      />
     </>
   );
 }
@@ -259,13 +264,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: StatusBar.currentHeight, // Adds padding equal to the status bar height
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

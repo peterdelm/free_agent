@@ -6,11 +6,11 @@ import {
   Image,
   Modal,
   StyleSheet,
-  Platform,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Styles from "./Styles";
-import { useRoute, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import NavigationFooter from "./NavigationFooter";
 import getCurrentUser from "./getCurrentUser.helper";
 import formatDate from "./formatDate";
@@ -18,15 +18,19 @@ import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import MapComponent from "./MapComponent.js";
 import ColorToggleButton from "./ColorToggleButton.js";
 import authFetch from "../../api/authCalls.js";
+import LoadingModal from "./LoadingModal.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [playerLocation, setPlayerLocation] = useState({});
+  const [loading, setLoading] = useState(false);
 
+  // Fetch current user and game invites
   useFocusEffect(
     React.useCallback(() => {
+      // Fetch current user data
       const fetchCurrentUser = async () => {
         try {
           const user = await getCurrentUser();
@@ -34,37 +38,24 @@ function PlayerHome({ navigation }) {
           console.log("User is", user);
           if (user && user.playerIds.length === 0) {
             setIsModalVisible(true);
-          } else {
-            console.log("No User found in playerHome fetch");
           }
         } catch (error) {
-          console.log(currentUser);
           console.error("Error during currentUser fetch:", error);
         }
       };
-      fetchCurrentUser();
-    }, [])
-  );
 
-  captureSelectedLocation = (selectedInput) => {
-    console.log("Selected Location input: " + selectedInput);
-    setGameAddress(selectedInput);
-  };
+      // Fetch active games and player location
+      const fetchGames = async () => {
+        setLoading(true);
 
-  const route = useRoute();
-  const successMessage = route.params || {};
+        const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites`;
+        console.log("Fetching active games");
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const url = `${EXPO_PUBLIC_BASE_URL}api/games/invites/`;
-      console.log("UsefocusEffect Fetch games called");
-
-      const fetchData = async () => {
         try {
-          console.log("URL is " + url);
-
           const headers = {
             "Content-Type": "application/json",
+            futureFlag: "true",
+            noCreations: "true",
           };
 
           const requestOptions = {
@@ -72,19 +63,18 @@ function PlayerHome({ navigation }) {
           };
 
           const response = await authFetch(url, requestOptions);
-          console.log(response);
           if (response.body.success) {
-            console.log("res was ok");
+            console.log("Games fetched successfully");
             setActiveGames(response.body.availableGames);
             setPlayerLocation(response.body.playerLocation);
-            return response;
+            setLoading(false);
           }
         } catch (error) {
-          console.log("Error making authenticated request:", error);
-          // Handle error
+          console.log("Error fetching active games:", error);
         }
       };
-      fetchData();
+      fetchCurrentUser();
+      fetchGames();
     }, [])
   );
 
@@ -95,25 +85,34 @@ function PlayerHome({ navigation }) {
     }
   };
 
-  let allActiveGames = []; // Initialize as empty array initially
+  let allActiveGames = [];
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
+  const currentDate = new Date();
 
   if (activeGames.length > 0) {
-    allActiveGames = activeGames.map(({ game }) => (
-      <TouchableOpacity
-        key={game.id}
-        onPress={() => navigation.navigate("ViewGame", { gameId: game.id })}
-      >
-        <View style={Styles.upcomingGameContainer}>
-          <View style={Styles.upcomingGameDateContainer}>
-            <Text>{formatDate(game.date)}</Text>
+    allActiveGames = activeGames
+      .filter(({ game }) => new Date(game.date) > currentDate)
+      .sort((a, b) => new Date(a.game.date) - new Date(b.game.date))
+      .map(({ game }) => (
+        <TouchableOpacity
+          key={game.id}
+          onPress={() =>
+            navigation.navigate("ViewGame", {
+              gameId: game.id,
+              previousScreen: "PlayerHome",
+            })
+          }
+        >
+          <View style={Styles.upcomingGameContainer}>
+            <View style={Styles.upcomingGameDateContainer}>
+              <Text>{formatDate(game.date)}</Text>
+            </View>
+            <View style={Styles.upcomingGameAddressContainer}>
+              <Text>{game.location}</Text>
+            </View>
           </View>
-          <View style={Styles.upcomingGameAddressContainer}>
-            <Text>{game.location}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    ));
+        </TouchableOpacity>
+      ));
   }
 
   return (
@@ -134,9 +133,12 @@ function PlayerHome({ navigation }) {
             playerLocation={playerLocation}
           />
         ) : (
-          <MapComponent activeGames={[]} />
+          <MapComponent
+            activeGames={[]}
+            navigation={navigation}
+            playerLocation={playerLocation}
+          />
         )}
-        {/* Modal for creating player profile */}
         <Modal
           visible={isModalVisible}
           animationType="fade"
@@ -169,9 +171,28 @@ function PlayerHome({ navigation }) {
               <Text style={{ fontSize: 20 }}>Available Games</Text>
             </View>
             <View style={Styles.availableGamesScroller}>
-              <ScrollView>
+              {loading ? (
+                <View style={{ flex: 1, justifyContent: "center" }}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+              ) : allActiveGames.length > 0 ? (
+                <ScrollView>
+                  {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
+                </ScrollView>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>No Games Coming Up</Text>
+                </View>
+              )}
+              {/* <ScrollView>
                 {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
-              </ScrollView>
+              </ScrollView> */}
             </View>
           </View>
           {/* 
@@ -196,16 +217,6 @@ function PlayerHome({ navigation }) {
     </View>
   );
 }
-
-const viewPlayerStyles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    textAlign: "left",
-    textAlignVertical: "center",
-    lineHeight: Platform.select({ ios: 50 }),
-    padding: 10,
-  },
-});
 
 const styles = StyleSheet.create({
   modalOverlay: {

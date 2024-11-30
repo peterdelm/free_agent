@@ -1,11 +1,9 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useRoute, useFocusEffect } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+
 import { useAuth } from "../../contexts/authContext";
 
-const Footer = ({ navigation, currentRole }) => {
+const Footer = ({ navigation }) => {
   const { user } = useAuth();
 
   const selectiveDisplay = () => {
@@ -16,12 +14,11 @@ const Footer = ({ navigation, currentRole }) => {
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
-            height: 60, // Adjust the height as needed
+            height: 60,
             width: "100%",
             bottom: 0,
             backgroundColor: "lightblue",
             borderWidth: 1,
-
             padding: 5,
             flex: 0,
           }}
@@ -74,12 +71,11 @@ const Footer = ({ navigation, currentRole }) => {
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
-            height: 60, // Adjust the height as needed
+            height: 60,
             width: "100%",
             bottom: 0,
             backgroundColor: "lightblue",
             borderWidth: 1,
-
             padding: 5,
             flex: 0,
           }}
@@ -133,7 +129,7 @@ const Footer = ({ navigation, currentRole }) => {
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        height: 60, // Adjust the height as needed
+        height: 60,
         width: "100%",
         bottom: 0,
         backgroundColor: "lightblue",

@@ -4,7 +4,7 @@ export default {
     slug: "free_agent",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/fa-icon.png",
     userInterfaceStyle: "light",
     scheme: "free_agent",
     splash: {
@@ -19,7 +19,7 @@ export default {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/fa-icon.png",
         backgroundColor: "#ffffff",
       },
       config: {

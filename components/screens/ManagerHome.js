@@ -7,7 +7,7 @@ import {
   TextInput,
   Platform,
 } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Styles from "./Styles.js";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import SportsPicker from "./SportsPicker.js";
@@ -21,6 +21,7 @@ import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import AddressInput from "./AddressInput.js";
 import authFetch from "../../api/authCalls.js";
 navigator.geolocation = require("react-native-geolocation-service");
+import LoadingModal from "./LoadingModal.js";
 
 function HomeScreen({ navigation, message }) {
   const [sportSpecificValues, setSportSpecificValues] = useState();
@@ -45,6 +46,11 @@ function HomeScreen({ navigation, message }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [defaultValue, setDefaultValue] = useState("");
   const [resetTrigger, setResetTrigger] = useState(false); // State to trigger reset
+  const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
+
+  const openLoadingScreen = () => setLoadingScreenVisible(true);
+
+  const closeLoadingScreen = () => setLoadingScreenVisible(false);
 
   const autoCompletePickerRef = useRef(null);
   const timePickerRef = useRef(null);
@@ -199,9 +205,6 @@ function HomeScreen({ navigation, message }) {
   const onSubmit = async () => {
     const dateString = date.dateString;
 
-    const timeLog = time;
-    console.log("Submit clicked, time is ", timeLog);
-
     const validation = validateInputs();
     if (validation) {
       const body = {
@@ -221,10 +224,12 @@ function HomeScreen({ navigation, message }) {
       };
       const url = `${EXPO_PUBLIC_BASE_URL}api/games`;
 
+      console.log("Game Request Body is", body);
+      openLoadingScreen();
+
       const postGame = async () => {
         try {
           console.log("URL is " + url);
-          console.log("postgGame async request called at line 138");
 
           const headers = {
             "Content-Type": "application/json",
@@ -276,7 +281,7 @@ function HomeScreen({ navigation, message }) {
                   // Reset the trigger state immediately to allow further resets
                   setTimeout(() => setResetTrigger(false), 0);
 
-                  console.log("Submit successful");
+                  closeLoadingScreen();
                   navigation.navigate("ManagerBrowseGames", {
                     successMessage:
                       "Game created successfully. Free Agent pending.",
@@ -299,11 +304,11 @@ function HomeScreen({ navigation, message }) {
     onSubmit();
   };
 
-  const handleLocationSelected = (data, details) => {
+  const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
-    console.log("Description is:", data.description);
-    setGameAddress(data.description);
-  };
+    console.log("Description is:", data);
+    setGameAddress(data);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -443,6 +448,7 @@ function HomeScreen({ navigation, message }) {
               onInputSelected={captureSelectedTime}
               style={[Styles.datePickerButton, Styles.input]}
               ref={timePickerRef}
+              resetTrigger={resetTrigger}
             />
             {/* GAME LENGTH */}
             <Picker
@@ -487,6 +493,12 @@ function HomeScreen({ navigation, message }) {
                 </TouchableOpacity>
               </View>
             </View>
+
+            <LoadingModal
+              onClose={closeLoadingScreen}
+              isLoading={isLoadingScreenVisible}
+              loadingText="Posting Game..."
+            />
           </View>
         </ScrollView>
       </View>
