@@ -364,7 +364,7 @@ const EditPlayer = ({ navigation }) => {
             </View>
             <Slider
               style={{ width: "100%", border: 2, paddingTop: 10 }}
-              minimumValue={0.25}
+              minimumValue={1}
               maximumValue={35}
               minimumTrackTintColor="#000000"
               maximumTrackTintColor="#000000"

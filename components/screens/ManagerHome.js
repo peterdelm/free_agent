@@ -31,6 +31,7 @@ function HomeScreen({ navigation, message }) {
   const [gender, setGender] = useState("");
   const [gameType, setGameType] = useState("");
   const [location, setGameAddress] = useState("");
+  const [locationName, setGameAddressName] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
   const [gameLength, setGameLength] = useState("");
@@ -214,6 +215,7 @@ function HomeScreen({ navigation, message }) {
         gameType,
         date: dateString,
         location: location,
+        locationName: locationName,
         time,
         gameLength,
         teamName,
@@ -306,8 +308,9 @@ function HomeScreen({ navigation, message }) {
 
   const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
-    console.log("Description is:", data);
-    setGameAddress(data);
+    console.log("Description is:", data.formattedAddress);
+    setGameAddress(data.formattedAddress);
+    setGameAddressName(data.locationName);
   }, []);
 
   return (

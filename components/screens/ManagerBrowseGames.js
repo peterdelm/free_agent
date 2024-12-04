@@ -95,13 +95,48 @@ const ManagerBrowseGames = ({ navigation, route }) => {
     }
   }, [route.params]);
 
-  let allActiveGames = []; // Initialize as empty array initially
   const currentDate = new Date();
 
   let allUpcomingGames = [];
   let allPreviousGames = [];
 
   const noActiveGames = <Text>No Games yet. Why not?</Text>;
+  const formattedLocation = (location) => {
+    console.log("Unformatted Location", location);
+
+    // Split the location by commas
+    const parts = location.split(",");
+
+    // Keep the first parts until the second-to-last one (city + province)
+    const addressWithoutCountryAndPostal = parts
+      .slice(0, parts.length - 2)
+      .join(",")
+      .trim();
+
+    console.log("Formatted Location", addressWithoutCountryAndPostal);
+    return addressWithoutCountryAndPostal;
+  };
+
+  const parse24HourTime = (timeString) => {
+    const [hours, minutes, seconds] = timeString.split(":").map(Number);
+    return { hours, minutes, seconds };
+  };
+  // Function to convert 24-hour time to 12-hour format
+  const convertTo12HourFormat = (hours) => {
+    const amPm = hours >= 12 ? "PM" : "AM";
+    const hours12 = hours % 12 || 12; // Convert 0 hours to 12 for AM
+    return { hours12, amPm };
+  };
+
+  // Main function to format time string
+  const formatTime = (timeString) => {
+    if (!/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(timeString)) {
+      return "Invalid time"; // Return a fallback message or value
+    }
+    const { hours, minutes } = parse24HourTime(timeString);
+    const { hours12, amPm } = convertTo12HourFormat(hours);
+    return `${hours12}:${String(minutes).padStart(2, "0")} ${amPm}`;
+  };
 
   if (activeGames) {
     allUpcomingGames = activeGames
@@ -115,12 +150,15 @@ const ManagerBrowseGames = ({ navigation, route }) => {
               navigation.navigate("ViewGame", { gameId: game.id });
           }}
         >
-          <View style={Styles.upcomingGameContainer}>
-            <View style={Styles.upcomingGameDateContainer}>
+          <View style={[Styles.upcomingGameContainer]}>
+            <View style={[Styles.upcomingGameDateContainer, { width: "22%" }]}>
               <Text>{formatDate(game.date)}</Text>
+              <Text>{formatTime(game.time)}</Text>
             </View>
             <View style={Styles.upcomingGameAddressContainer}>
-              <Text>{game.location}</Text>
+              {game.locationName ? <Text>{game.locationName} </Text> : null}
+
+              <Text>{formattedLocation(game.location)}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -138,12 +176,14 @@ const ManagerBrowseGames = ({ navigation, route }) => {
             });
           }}
         >
-          <View style={Styles.upcomingGameContainer}>
-            <View style={Styles.upcomingGameDateContainer}>
+          <View style={[Styles.upcomingGameContainer]}>
+            <View style={[Styles.upcomingGameDateContainer, { width: "22%" }]}>
               <Text>{formatDate(game.date)}</Text>
+              <Text>{formatTime(game.time)}</Text>
             </View>
             <View style={Styles.upcomingGameAddressContainer}>
-              <Text>{game.location}</Text>
+              {game.locationName ? <Text>{game.locationName} </Text> : null}
+              <Text>{formattedLocation(game.location)}</Text>
             </View>
           </View>
         </TouchableOpacity>

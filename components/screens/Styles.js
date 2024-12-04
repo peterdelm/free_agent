@@ -318,7 +318,7 @@ const Styles = StyleSheet.create({
   },
 
   upcomingGameDateContainer: {
-    justifyContent: "flex-start", // Left-align children
+    justifyContent: "center",
     borderColor: "red", // Border color
     borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)

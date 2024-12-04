@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Styles from "./Styles";
-
 const AddressInput = memo(
   ({ handleLocationSelected, resetTrigger, defaultLocation }) => {
     const [playerAddress, setPlayerAddress] = useState(defaultLocation || "");
@@ -17,9 +16,14 @@ const AddressInput = memo(
       <GooglePlacesAutocomplete
         placeholder={playerAddress || "Enter Location"}
         onPress={(data, details = null) => {
-          console.log("onPress in AddressInput. Data is", data);
-          setPlayerAddress(data.description); // Update local address text
-          handleLocationSelected(data.description);
+          const locationName = details.name;
+          const formattedAddress = details.formatted_address;
+          setPlayerAddress(formattedAddress);
+          handleLocationSelected({
+            address: data.description,
+            locationName: locationName,
+            formattedAddress: formattedAddress,
+          });
         }}
         query={{
           key: "AIzaSyDof22OsH_HsjBC9sS9NnsAC3o9IfVfqmA",

@@ -28,6 +28,7 @@ import { sendPushTokenToBackend } from "./services/pushNotificationService.js";
 import { loginRequest } from "./api/authCalls.js";
 import { usePushNotifications } from "./components/screens/usePushNotifications.tsx";
 import LoadingModal from "./components/screens/LoadingModal.js";
+import "react-native-get-random-values";
 const Stack = createNativeStackNavigator();
 
 const prefix = Linking.createURL("/");

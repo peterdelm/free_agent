@@ -110,8 +110,11 @@ class TimePicker extends Component {
       });
     } else {
       const minute = Math.round(snappedAngle / (360 / TOTAL_MINUTES));
+      let stringMinute = minute.toString().padStart(2, "0");
+
+      if (stringMinute === "60") stringMinute = "00";
       this.setState({
-        pendingMinute: minute.toString().padStart(2, "0"),
+        pendingMinute: stringMinute,
         pendingRotations: {
           ...this.state.pendingRotations,
           minute: snappedAngle,

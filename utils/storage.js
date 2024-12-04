@@ -28,5 +28,7 @@ export const getRefreshToken = async () => {
 
 // Function to save the refresh token
 export const saveRefreshToken = async (refreshToken) => {
+  console.log("Saving accessToken: ", refreshToken);
+
   await SecureStore.setItemAsync("refreshToken", refreshToken);
 };

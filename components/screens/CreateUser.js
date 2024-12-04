@@ -30,6 +30,16 @@ function CreateUser({ navigation }) {
   };
 
   const validateInputs = () => {
+    if (!firstName) {
+      setErrorMessage("Please enter a first name.");
+      return false;
+    }
+
+    if (!lastName) {
+      setErrorMessage("Please enter a last name.");
+      return false;
+    }
+
     if (!emailAddress || !validateEmail(emailAddress)) {
       setErrorMessage("Please enter a valid email address.");
       return false;
@@ -67,6 +77,9 @@ function CreateUser({ navigation }) {
 
       setLoading(true);
 
+      if (firstName === null) {
+      }
+
       const body = {
         firstName,
         lastName,
@@ -97,18 +110,14 @@ function CreateUser({ navigation }) {
         console.log("Submit successful");
         console.log("User created with token: " + data.token);
 
-        const successfulStorage = await storeSessionToken(data.token);
+        const user = await login(emailAddress, password);
+        console.log("User is, ", user);
+        console.log("Storage was successful");
 
-        if (successfulStorage) {
-          const user = await login(emailAddress, password);
-          console.log("User is, ", user);
-          console.log("Storage was successful");
-
-          if (user) {
-            navigation.navigate("ManagerHome", {
-              successMessage: "User created successfully.",
-            });
-          }
+        if (user) {
+          navigation.navigate("ManagerHome", {
+            successMessage: "User created successfully.",
+          });
         }
       }
     } catch (error) {
@@ -123,41 +132,57 @@ function CreateUser({ navigation }) {
     <View style={Styles.container}>
       <View style={Styles.inputView}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            (styles = { borderWidth: 1, borderRadius: 5, width: "80%" }),
+          ]}
           placeholder="First Name"
           onChangeText={(firstName) => setFirstName(firstName)}
         />
       </View>
       <View style={Styles.inputView}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            (styles = { borderWidth: 1, borderRadius: 5, width: "80%" }),
+          ]}
           placeholder="Last Name"
           onChangeText={(lastName) => setLastName(lastName)}
         />
       </View>
       <View style={Styles.inputView}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            (styles = { borderWidth: 1, borderRadius: 5, width: "80%" }),
+          ]}
           placeholder="Email..."
           onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
         />
       </View>
       <View style={Styles.inputView}>
         <TextInput
-          style={Styles.TextInput}
+          style={[
+            Styles.TextInput,
+            (styles = { borderWidth: 1, borderRadius: 5, width: "80%" }),
+          ]}
           placeholder="Password"
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
         />
       </View>
       <View>
-        {errorMessage ? <Text>{errorMessage}</Text> : null}
         <TouchableOpacity disabled={loading}>
           <Button
             title={loading ? "Loading..." : "REGISTER ACCOUNT"}
             onPress={() => onSubmit()}
           />
         </TouchableOpacity>
+        {errorMessage ? (
+          <Text style={[Styles.errorText, { marginTop: 0 }]}>
+            {errorMessage}
+          </Text>
+        ) : null}
       </View>
     </View>
   );

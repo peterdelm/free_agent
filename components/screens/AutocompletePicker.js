@@ -133,7 +133,7 @@ class AutoCompletePicker extends Component {
     this.setState({
       query: "",
       suggestionList: [],
-      inputValue: "", // Reset the input value
+      inputValue: "",
       addressInputSelected: false,
     });
   };
