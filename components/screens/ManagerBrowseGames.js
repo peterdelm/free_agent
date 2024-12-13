@@ -16,6 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import UserQuestionnairePopup from "./UserQuestionnaireModal.js";
+import { sportIconPath } from "../../utils/sportIcons.js";
 
 const ManagerBrowseGames = ({ navigation, route }) => {
   const [activeGames, setActiveGames] = useState([]);
@@ -156,9 +157,39 @@ const ManagerBrowseGames = ({ navigation, route }) => {
               <Text>{formatTime(game.time)}</Text>
             </View>
             <View style={Styles.upcomingGameAddressContainer}>
-              {game.locationName ? <Text>{game.locationName} </Text> : null}
+              <View style={{ flexDirection: "column", flex: 1, flexShrink: 1 }}>
+                {game.locationName ? (
+                  <Text
+                    style={{
+                      flex: 1,
+                      flexShrink: 1,
+                    }}
+                  >
+                    {game.locationName}
+                  </Text>
+                ) : null}
 
-              <Text>{formattedLocation(game.location)}</Text>
+                <Text
+                  style={{
+                    flex: 1,
+                    flexShrink: 1,
+                  }}
+                >
+                  {formattedLocation(game.location)}
+                </Text>
+              </View>
+              <View style={Styles.upcomingGameIconContainer}>
+                {game.sport ? (
+                  <Image
+                    source={sportIconPath(game.sport)}
+                    style={{
+                      height: 25,
+                      width: 25,
+                      resizeMode: "contain",
+                    }}
+                  />
+                ) : null}
+              </View>
             </View>
           </View>
         </TouchableOpacity>
@@ -182,8 +213,39 @@ const ManagerBrowseGames = ({ navigation, route }) => {
               <Text>{formatTime(game.time)}</Text>
             </View>
             <View style={Styles.upcomingGameAddressContainer}>
-              {game.locationName ? <Text>{game.locationName} </Text> : null}
-              <Text>{formattedLocation(game.location)}</Text>
+              <View style={{ flexDirection: "column", flex: 1, flexShrink: 1 }}>
+                {game.locationName ? (
+                  <Text
+                    style={{
+                      flex: 1,
+                      flexShrink: 1,
+                    }}
+                  >
+                    {game.locationName}
+                  </Text>
+                ) : null}
+
+                <Text
+                  style={{
+                    flex: 1,
+                    flexShrink: 1,
+                  }}
+                >
+                  {formattedLocation(game.location)}
+                </Text>
+              </View>
+              <View style={Styles.upcomingGameIconContainer}>
+                {game.sport ? (
+                  <Image
+                    source={sportIconPath(game.sport)}
+                    style={{
+                      height: 25,
+                      width: 25,
+                      resizeMode: "contain",
+                    }}
+                  />
+                ) : null}
+              </View>
             </View>
           </View>
         </TouchableOpacity>
