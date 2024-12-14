@@ -326,10 +326,19 @@ const Styles = StyleSheet.create({
   },
   upcomingGameAddressContainer: {
     flex: 1,
-    justifyContent: "flex-start", // Left-align children
+    justifyContent: "space-between", // Left-align children
     borderColor: "red", // Border color
     borderWidth: 1, // Border width
     borderRadius: 5, // Border radius (optional)
+    padding: 5, // Optional padding
+    flexDirection: "row",
+    marginLeft: 5,
+  },
+  upcomingGameIconContainer: {
+    flex: 0,
+    // borderColor: "red", // Border color
+    // borderWidth: 1, // Border width
+    // borderRadius: 5, // Border radius (optional)
     padding: 5, // Optional padding
   },
   welcomeScreenContainer: {

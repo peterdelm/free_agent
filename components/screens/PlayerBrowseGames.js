@@ -7,7 +7,11 @@ import getCurrentUser from "./getCurrentUser.helper.js";
 import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
-
+import { sportIconPath } from "../../utils/sportIcons.js";
+import {
+  timeFormatFromString,
+  formattedLocation,
+} from "../../utils/timeFormatFromString.js";
 const PlayerBrowseGames = ({ navigation }) => {
   const [activeGames, setActiveGames] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
@@ -100,12 +104,45 @@ const PlayerBrowseGames = ({ navigation }) => {
           })
         }
       >
-        <View style={Styles.upcomingGameContainer}>
-          <View style={Styles.upcomingGameDateContainer}>
+        <View style={[Styles.upcomingGameContainer]}>
+          <View style={[Styles.upcomingGameDateContainer, { width: "22%" }]}>
             <Text>{formatDate(game.date)}</Text>
+            <Text>{timeFormatFromString(game.time)}</Text>
           </View>
           <View style={Styles.upcomingGameAddressContainer}>
-            <Text>{game.location}</Text>
+            <View style={{ flexDirection: "column", flex: 1, flexShrink: 1 }}>
+              {game.locationName ? (
+                <Text
+                  style={{
+                    flex: 1,
+                    flexShrink: 1,
+                  }}
+                >
+                  {game.locationName}
+                </Text>
+              ) : null}
+
+              <Text
+                style={{
+                  flex: 1,
+                  flexShrink: 1,
+                }}
+              >
+                {formattedLocation(game.location)}
+              </Text>
+            </View>
+            <View style={Styles.upcomingGameIconContainer}>
+              {game.sport ? (
+                <Image
+                  source={sportIconPath(game.sport)}
+                  style={{
+                    height: 25,
+                    width: 25,
+                    resizeMode: "contain",
+                  }}
+                />
+              ) : null}
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -133,7 +170,7 @@ const PlayerBrowseGames = ({ navigation }) => {
       </View>
       <View style={Styles.managerBrowseGamesContentContainer}>
         <View style={Styles.managerBrowseGamesContainerHeader}>
-          <Text style={{ fontSize: 30 }}>Games</Text>
+          <Text style={{ fontSize: 30 }}>Games Joined</Text>
         </View>
         <View
           style={[Styles.pendingGamesContainer, (style = { marginBottom: 20 })]}

@@ -19,6 +19,11 @@ import MapComponent from "./MapComponent.js";
 import ColorToggleButton from "./ColorToggleButton.js";
 import authFetch from "../../api/authCalls.js";
 import LoadingModal from "./LoadingModal.js";
+import { sportIconPath } from "../../utils/sportIcons.js";
+import {
+  timeFormatFromString,
+  formattedLocation,
+} from "../../utils/timeFormatFromString.js";
 
 function PlayerHome({ navigation }) {
   const [activeGames, setActiveGames] = useState([]);
@@ -103,12 +108,45 @@ function PlayerHome({ navigation }) {
             })
           }
         >
-          <View style={Styles.upcomingGameContainer}>
-            <View style={Styles.upcomingGameDateContainer}>
+          <View style={[Styles.upcomingGameContainer]}>
+            <View style={[Styles.upcomingGameDateContainer, { width: "22%" }]}>
               <Text>{formatDate(game.date)}</Text>
+              <Text>{timeFormatFromString(game.time)}</Text>
             </View>
             <View style={Styles.upcomingGameAddressContainer}>
-              <Text>{game.location}</Text>
+              <View style={{ flexDirection: "column", flex: 1, flexShrink: 1 }}>
+                {game.locationName ? (
+                  <Text
+                    style={{
+                      flex: 1,
+                      flexShrink: 1,
+                    }}
+                  >
+                    {game.locationName}
+                  </Text>
+                ) : null}
+
+                <Text
+                  style={{
+                    flex: 1,
+                    flexShrink: 1,
+                  }}
+                >
+                  {formattedLocation(game.location)}
+                </Text>
+              </View>
+              <View style={Styles.upcomingGameIconContainer}>
+                {game.sport ? (
+                  <Image
+                    source={sportIconPath(game.sport)}
+                    style={{
+                      height: 25,
+                      width: 25,
+                      resizeMode: "contain",
+                    }}
+                  />
+                ) : null}
+              </View>
             </View>
           </View>
         </TouchableOpacity>
