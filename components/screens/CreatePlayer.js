@@ -453,7 +453,7 @@ const CreatePlayer = ({ navigation }) => {
             {allActiveGames.length > 0 ? allActiveGames : noActiveGames}
           </ScrollView>
         </View>
-        <NavigationFooter />
+        <NavigationFooter navigation={navigation} />
       </View>
     );
   }

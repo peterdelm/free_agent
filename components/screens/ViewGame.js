@@ -17,6 +17,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import DeleteGamePopup from "./DeleteGamePopup.js";
+import { sportIconPath } from "../../utils/sportIcons.js";
 
 function ViewGame({ navigation, message }) {
   const [currentUser, setCurrentUser] = useState({});
@@ -314,10 +315,7 @@ function ViewGame({ navigation, message }) {
             />
           </TouchableOpacity>
         </View>
-        <Image
-          source={require("../../assets/prayingHands.png")}
-          style={styles.headerImage}
-        />
+        <Image source={sportIconPath(game.sport)} style={styles.headerImage} />
         <Text style={styles.headerText}>View Game</Text>
         {displayTrashBin()}
       </View>
