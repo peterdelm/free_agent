@@ -324,6 +324,7 @@ function ViewGame({ navigation, message }) {
           {displayGameStatus()}
           <View style={styles.infoSection}>
             <Text style={styles.label}>Address</Text>
+            {game.locationName ? (<Text style={styles.gameInfo}>{game.locationName}</Text>) : null}
             <Text style={styles.gameInfo}>{game.location}</Text>
           </View>
           <View style={styles.infoSection}>

@@ -22,7 +22,7 @@ const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
   const [calibre, setCalibre] = useState("");
-  const [location, setPlayerAddress] = useState("");
+  const [location, setAddress] = useState("");
   const [bio, setBio] = useState("");
   const [calibreList, setCalibreList] = useState([]);
   const [gameTypeList, setGameTypeList] = useState([]);
@@ -79,7 +79,7 @@ const EditPlayer = ({ navigation }) => {
   };
   const captureSelectedLocation = (input) => {
     console.log(input);
-    setPlayerAddress(input);
+    setAddress(input);
   };
   const handleBioChange = (input) => {
     console.log("New Calibre is: ", input);
