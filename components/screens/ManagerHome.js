@@ -30,8 +30,8 @@ function HomeScreen({ navigation, message }) {
   const [calibre, setCalibre] = useState("");
   const [gender, setGender] = useState("");
   const [gameType, setGameType] = useState("");
-  const [location, setGameAddress] = useState("");
-  const [locationName, setGameAddressName] = useState("");
+  const [address, setAddress] = useState("");
+  const [addressName, setAddressName] = useState("");
   const [date, setGameDate] = useState("");
   const [time, setGameTime] = useState("");
   const [gameLength, setGameLength] = useState("");
@@ -48,8 +48,7 @@ function HomeScreen({ navigation, message }) {
   const [defaultValue, setDefaultValue] = useState("");
   const [resetTrigger, setResetTrigger] = useState(false); // State to trigger reset
   const [isLoadingScreenVisible, setLoadingScreenVisible] = useState(false);
-
-  const openLoadingScreen = () => setLoadingScreenVisible(true);
+    const openLoadingScreen = () => setLoadingScreenVisible(true);
 
   const closeLoadingScreen = () => setLoadingScreenVisible(false);
 
@@ -69,9 +68,6 @@ function HomeScreen({ navigation, message }) {
       setPositionList([]);
       setSelectedSportId(null);
     } else {
-      console.log("selectedSport.calibre is", selectedSport.calibre);
-      console.log("Calibre is", calibre);
-
       setSelectedSport(selectedSport);
       setCalibreList(selectedSport.calibre);
       setGameTypeList(selectedSport.gameType);
@@ -112,7 +108,7 @@ function HomeScreen({ navigation, message }) {
 
   captureSelectedLocation = (selectedInput) => {
     console.log("Selected Location input: " + selectedInput);
-    setGameAddress(selectedInput);
+    setAddress(selectedInput);
   };
 
   const route = useRoute();
@@ -167,7 +163,7 @@ function HomeScreen({ navigation, message }) {
   }, []);
 
   const validateInputs = () => {
-    if (!location) {
+    if (!address) {
       setErrorMessage("Location is Missing");
       return false;
     }
@@ -214,8 +210,8 @@ function HomeScreen({ navigation, message }) {
         position,
         gameType,
         date: dateString,
-        location: location,
-        locationName: locationName,
+        location: address,
+        locationName: addressName,
         time,
         gameLength,
         teamName,
@@ -256,7 +252,7 @@ function HomeScreen({ navigation, message }) {
                 if (data.body.success) {
                   setGender("");
                   setGameType("");
-                  setGameAddress("");
+                  setAddress("");
                   setGameDate("");
                   setGameTime("");
                   setGameLength("");
@@ -270,17 +266,16 @@ function HomeScreen({ navigation, message }) {
                   setPosition("");
                   setPositionList([]);
                   setErrorMessage("");
+                  setAddressName("")
                   if (autoCompletePickerRef.current) {
                     autoCompletePickerRef.current.resetPickerValues();
                   }
-
                   if (datePickerRef.current) {
                     datePickerRef.current.resetDatePickerValues();
                   }
-                  // Trigger reset in Pickering component
+
                   setResetTrigger(true);
 
-                  // Reset the trigger state immediately to allow further resets
                   setTimeout(() => setResetTrigger(false), 0);
 
                   closeLoadingScreen();
@@ -309,8 +304,8 @@ function HomeScreen({ navigation, message }) {
   const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
     console.log("Description is:", data.formattedAddress);
-    setGameAddress(data.formattedAddress);
-    setGameAddressName(data.locationName);
+    setAddress(data.formattedAddress);
+    setAddressName(data.locationName);
   }, []);
 
   return (
@@ -343,6 +338,7 @@ function HomeScreen({ navigation, message }) {
         <AddressInput
           handleLocationSelected={handleLocationSelected}
           resetTrigger={resetTrigger}
+          defaultLocation={""}
         />
 
         <ScrollView

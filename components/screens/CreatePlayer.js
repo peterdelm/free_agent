@@ -13,7 +13,6 @@ import Slider from "@react-native-community/slider";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Styles from "./Styles";
 import Picker from "./Picker";
-import AutoCompletePicker from "./AutocompletePicker.js";
 import NavigationFooter from "./NavigationFooter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
@@ -25,7 +24,7 @@ const CreatePlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
   const [position, setPosition] = useState("");
   const [calibre, setCalibre] = useState("");
-  const [location, setPlayerAddress] = useState("");
+  const [location, setAddress] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [errors, setErrors] = useState("");
   const [sportSpecificValues, setSportSpecificValues] = useState("");
@@ -73,7 +72,7 @@ const CreatePlayer = ({ navigation }) => {
   const handleLocationSelected = useCallback((data) => {
     console.log("Handle Location Selected has been Pressed!");
     console.log("Description is:", data);
-    setPlayerAddress(data);
+    setAddress(data);
   }, []);
   const handleFormSubmit = () => {
     onSubmit();

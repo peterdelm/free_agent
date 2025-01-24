@@ -5,12 +5,13 @@ import {
   TouchableOpacity,
   Image,
   Text,
-  KeyboardAvoidingView,
   Platform,
   Keyboard,
+  ScrollView,
   Dimensions,
+  LogBox,
 } from "react-native";
-import React, { useEffect, useState, useRef, Component } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   useNavigation,
   useRoute,
@@ -34,8 +35,6 @@ const EditGame = ({ navigation }) => {
   const [selectedSport, setSelectedSport] = useState();
   const [positionList, setPositionList] = useState([]);
   const [gameLengthsList, setGameLengthsList] = useState([]);
-
-  const [player, setPlayer] = useState({});
   const [game, setGame] = useState({});
   const [time, setTime] = useState("");
   const [date, setGameDate] = useState("");
@@ -48,6 +47,7 @@ const EditGame = ({ navigation }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isInputFocused, setInputFocused] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [locationName, setGameAddressName] = useState("");
 
   const datePickerRef = useRef(null);
   const timePickerRef = useRef(null);
@@ -56,7 +56,6 @@ const EditGame = ({ navigation }) => {
 
   const route = useRoute();
   const { playerId, gameSport, gameId } = route.params;
-  const autoCompletePickerRef = useRef(null);
 
   const handleCalibreChange = (input) => {
     setCalibre(input);
@@ -78,6 +77,10 @@ const EditGame = ({ navigation }) => {
   const handleFormSubmit = () => {
     onSubmit();
   };
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
 
   ///////////////////////////////////////////////////////
   //retrieve the player values
@@ -163,7 +166,9 @@ const EditGame = ({ navigation }) => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => {
-        setKeyboardVisible(true);
+        if (isInputFocused) {
+          setKeyboardVisible(true);
+        }
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
@@ -178,7 +183,7 @@ const EditGame = ({ navigation }) => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
-  }, []);
+  }, [isInputFocused]);
 
   const fetchSportsandGames = async () => {
     console.log("Fetching Sports and Players");
@@ -234,6 +239,7 @@ const EditGame = ({ navigation }) => {
     validateInputs();
     const body = {
       location,
+      locationName,
       date,
       time,
       calibre,
@@ -281,11 +287,10 @@ const EditGame = ({ navigation }) => {
     };
     postGame();
   };
-  const handleLocationSelected = (data, details) => {
-    console.log("Handle Location Selected has been Pressed!");
-    console.log("Description is:", data.description);
-    setGameAddress(data.description);
-  };
+  const handleLocationSelected = useCallback((data) => {
+    setGameAddress(data.formattedAddress);
+    setGameAddressName(data.locationName);
+  }, []);
 
   const handleCancelButtonClick = () => {
     console.log("Handle Cancel Button Clicked!");
@@ -296,10 +301,8 @@ const EditGame = ({ navigation }) => {
 
     try {
       const response = await deleteGameRequest(gameId);
-      console.log("response is", response);
 
       if (response.status === 200) {
-        console.log("Game deleted successfully");
         navigation.navigate("ManagerBrowseGames");
       }
     } catch (error) {
@@ -326,58 +329,61 @@ const EditGame = ({ navigation }) => {
   var sport = selectedSport;
   var positions = positionList;
   var gameLengths = gameLengthsList;
-
+  const defaultLocation = game.locationName
+    ? `${game.locationName}, ${game.location}`
+    : game.location;
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={{ flex: 1 }}>
-        <View
-          style={[
-            Styles.screenHeader,
-            (style = { justifyContent: "space-between" }),
-          ]}
-        >
-          <Image
-            source={require("../../assets/user-solid.png")}
-            style={{ width: 50, height: 50, resizeMode: "contain" }}
-          />
-          <Text
-            style={{
-              fontSize: 35,
-              padding: 20,
-            }}
-          >
-            Edit Game
-          </Text>
-          <View style={{ paddingRight: 20 }}>
-            <TouchableOpacity onPress={() => openModal()}>
-              <Image
-                source={require("../../assets/trash-can.png")}
-                style={{
-                  width: 25,
-                  height: 25,
-                  resizeMode: "contain",
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View
+    <View style={{ flex: 1 }}>
+      <View
+        style={[
+          Styles.screenHeader,
+          (style = { justifyContent: "space-between" }),
+        ]}
+      >
+        <Image
+          source={require("../../assets/user-solid.png")}
+          style={{ width: 50, height: 50, resizeMode: "contain" }}
+        />
+        <Text
           style={{
-            flex: 1,
-            height: "100%",
-            justifyContent: "space-around",
-            padding: 10,
+            fontSize: 35,
+            padding: 20,
           }}
+        >
+          Edit Game
+        </Text>
+        <View style={{ paddingRight: 20 }}>
+          <TouchableOpacity onPress={() => openModal()}>
+            <Image
+              source={require("../../assets/trash-can.png")}
+              style={{
+                width: 25,
+                height: 25,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View
+        style={{
+          flex: 1,
+          height: "100%",
+          justifyContent: "space-around",
+          padding: 10,
+        }}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          listViewDisplayed={false}
         >
           {/* LOCATION SELECTOR */}
           {!isKeyboardVisible && (
             <AddressInput
               handleLocationSelected={handleLocationSelected}
-              defaultLocation={game.location}
+              defaultLocation={defaultLocation}
             />
           )}
           {/* DATE SELECTOR */}
@@ -510,7 +516,7 @@ const EditGame = ({ navigation }) => {
             </View>
           </View>
           {!isKeyboardVisible && (
-            <TouchableOpacity>
+            <TouchableOpacity style={{ paddingBottom: 10 }}>
               <Button title="SAVE GAME" onPress={() => handleFormSubmit()} />
             </TouchableOpacity>
           )}
@@ -522,14 +528,15 @@ const EditGame = ({ navigation }) => {
               />
             </TouchableOpacity>
           )}
-        </View>
-        <DeleteGamePopup
-          isModalVisible={isModalVisible}
-          handleButtonPress={handleDeleteGameButtonPress}
-          onClose={closeModal}
-        />
+        </ScrollView>
       </View>
-    </KeyboardAvoidingView>
+
+      <DeleteGamePopup
+        isModalVisible={isModalVisible}
+        handleButtonPress={handleDeleteGameButtonPress}
+        onClose={closeModal}
+      />
+    </View>
   );
 };
 
