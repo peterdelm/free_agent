@@ -3,7 +3,7 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import Styles from "./Styles";
 
 const AddressInput = memo(
-  ({ handleLocationSelected, resetTrigger, defaultLocation }) => {
+  ({ handleLocationSelected, resetTrigger, defaultLocation, onInputFocus }) => {
     const [address, setAddress] = useState("");
 
     const autocompleteRef = useRef();
@@ -57,6 +57,12 @@ const AddressInput = memo(
         textInputProps={{
           value: address, // Bind input field value to state
           onChangeText: setAddress, // Update state when text changes
+          onFocus: () => {
+            // Trigger the onInputFocus callback when the input is focused (clicked)
+            if (onInputFocus) {
+              onInputFocus();
+            }
+          },
         }}
       />
     );

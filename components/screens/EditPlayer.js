@@ -8,15 +8,16 @@ import {
   Keyboard,
   Platform,
   Dimensions,
+  ScrollView,
 } from "react-native";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import Styles from "./Styles";
 import Picker from "./Picker";
-import AutoCompletePicker from "./AutocompletePicker.js";
 import { EXPO_PUBLIC_BASE_URL } from "../../.config.js";
 import authFetch from "../../api/authCalls.js";
 import Slider from "@react-native-community/slider";
+import AddressInput from "./AddressInput.js";
 
 const EditPlayer = ({ navigation }) => {
   const [gender, setGender] = useState("");
@@ -28,19 +29,18 @@ const EditPlayer = ({ navigation }) => {
   const [gameTypeList, setGameTypeList] = useState([]);
   const [genderList, setGenderList] = useState(["Any", "Male", "Female"]);
   const [selectedSport, setSelectedSport] = useState();
-  const [travelRange, setTravelRange] = useState("");
   const [positionList, setPositionList] = useState([]);
   const [player, setPlayer] = useState({});
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const [isInputFocused, setInputFocused] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
+  const [isBioInputFocused, setIsBioInputFocused] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const { height } = Dimensions.get("window");
   const inputHeight = height * 0.07;
 
   const route = useRoute();
   const { playerId, playerSport } = route.params;
-  const autoCompletePickerRef = useRef(null);
 
   const [game, setGame] = useState([]);
   console.log("PlayerId is " + playerId);
@@ -57,7 +57,8 @@ const EditPlayer = ({ navigation }) => {
       "keyboardDidHide",
       () => {
         setKeyboardVisible(false);
-        setInputFocused(false); // Reset focus state when keyboard hides
+        if (isBioInputFocused) {
+        }
       }
     );
 
@@ -66,6 +67,22 @@ const EditPlayer = ({ navigation }) => {
       keyboardDidShowListener.remove();
     };
   }, []);
+
+  const handleAddressInputFocus = () => {
+    setIsAddressInputClicked((prev) => !prev);
+    console.log("Address input clicked! Toggled state.");
+  };
+
+  const handleBioInputFocus = () => {
+    setIsBioInputFocused((prev) => !prev);
+    console.log("Address input clicked! Toggled state.");
+    setIsInputFocused((prev) => !prev);
+  };
+
+  const handleCancelButtonClick = () => {
+    console.log("Handle Cancel Button Clicked!");
+    navigation.goBack();
+  };
 
   const handleCalibreChange = (input) => {
     console.log("New Calibre is: ", input);
@@ -82,11 +99,12 @@ const EditPlayer = ({ navigation }) => {
     setAddress(input);
   };
   const handleBioChange = (input) => {
-    console.log("New Calibre is: ", input);
-    setBio(input);
-  };
-  const handleTravelRangeChange = (input) => {
-    setTravelRange(input);
+    console.log(input);
+    if (input.length === 0) {
+      setBio("");
+    } else {
+      setBio(input);
+    }
   };
 
   const handleFormSubmit = () => {
@@ -123,6 +141,7 @@ const EditPlayer = ({ navigation }) => {
       }
 
       setPlayer(res.body);
+      setBio(res.body.bio);
       setSliderValue(res.body.travelRange);
       console.log("Player location is " + player.location);
     } catch (error) {
@@ -301,133 +320,165 @@ const EditPlayer = ({ navigation }) => {
           padding: 10,
         }}
       >
-        {!isKeyboardVisible && (
-          <Picker
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            defaultValue={player.calibre}
-            placeholderTextColor="grey"
-            language={calibreList}
-            onValueChange={handleCalibreChange}
-            label={player.calibre}
-          />
-        )}
-        {!isKeyboardVisible && (
-          <Picker
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            defaultValue={player.gender}
-            placeholderText
-            Color="#005F66"
-            onValueChange={handleGenderChange}
-            language={genders}
-            label={player.gender}
-          />
-        )}
-        {!isKeyboardVisible && (
-          <Picker
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            defaultValue={player.position}
-            placeholderText
-            Color="#005F66"
-            onValueChange={handlePositionChange}
-            language={positions}
-            label={player.position}
-          />
-        )}
-        {!isKeyboardVisible && (
-          <AutoCompletePicker
-            onInputSelected={captureSelectedLocation}
-            style={[Styles.sportsPickerDropdown, Styles.input]}
-            ref={autoCompletePickerRef}
-            value={player.location}
-            placeholder={player.location}
-            placeholderTextColor="#005F66"
-          />
-        )}
-        {!isKeyboardVisible && (
-          <View
-            style={{
-              width: "100%",
-              height: 100,
-              borderWidth: 1,
-              padding: 10,
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 10,
-              backgroundColor: "white",
-            }}
-          >
-            <View>
-              <Text>Travel Range</Text>
-            </View>
-            <View>
-              <Text>{formatSliderValue(sliderValue)} km</Text>
-            </View>
-            <Slider
-              style={{ width: "100%", border: 2, paddingTop: 10 }}
-              minimumValue={1}
-              maximumValue={35}
-              minimumTrackTintColor="#000000"
-              maximumTrackTintColor="#000000"
-              value={sliderValue}
-              onValueChange={setSliderValue}
-            />
-          </View>
-        )}
-        <View
-          style={[
-            {
-              flex: isKeyboardVisible ? 2 : 0,
-              height: isKeyboardVisible ? "100%" : 100,
-              paddingBottom: isKeyboardVisible ? 100 : 0,
-            },
-          ]}
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          listViewDisplayed={false}
         >
+          {!isInputFocused && (
+            <Picker
+              style={[
+                Styles.sportsPickerDropdown,
+                Styles.input,
+                { marginBottom: 10 },
+              ]}
+              defaultValue={player.calibre}
+              placeholderTextColor="grey"
+              language={calibreList}
+              onValueChange={handleCalibreChange}
+              label={player.calibre}
+            />
+          )}
+          {!isInputFocused && (
+            <Picker
+              style={[
+                Styles.sportsPickerDropdown,
+                Styles.input,
+                { marginBottom: 10 },
+              ]}
+              defaultValue={player.gender}
+              placeholderText
+              Color="#005F66"
+              onValueChange={handleGenderChange}
+              language={genders}
+              label={player.gender}
+            />
+          )}
+          {!isInputFocused && (
+            <Picker
+              style={[
+                Styles.sportsPickerDropdown,
+                Styles.input,
+                { marginBottom: 10 },
+              ]}
+              defaultValue={player.position}
+              placeholderText
+              Color="#005F66"
+              onValueChange={handlePositionChange}
+              language={positions}
+              label={player.position}
+            />
+          )}
+          {/* LOCATION SELECTOR */}
+          {!isInputFocused && (
+            <AddressInput
+              handleLocationSelected={captureSelectedLocation}
+              defaultLocation={player.location}
+              onInputFocus={handleAddressInputFocus}
+            />
+          )}
+
+          {!isInputFocused && (
+            <View
+              style={{
+                width: "100%",
+                height: 100,
+                borderWidth: 1,
+                padding: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 10,
+                backgroundColor: "white",
+                marginBottom: 10,
+                marginTop: 10,
+              }}
+            >
+              <View>
+                <Text>Travel Range</Text>
+              </View>
+              <View>
+                <Text>{formatSliderValue(sliderValue)} km</Text>
+              </View>
+              <Slider
+                style={{ width: "100%", border: 2, paddingTop: 10 }}
+                minimumValue={1}
+                maximumValue={35}
+                minimumTrackTintColor="#000000"
+                maximumTrackTintColor="#000000"
+                value={sliderValue}
+                onValueChange={setSliderValue}
+              />
+            </View>
+          )}
           <View
             style={[
-              isKeyboardVisible
-                ? {
-                    borderWidth: 2,
-                    borderColor: "red",
-                    flex: isKeyboardVisible ? 2 : 0,
-                    borderWidth: 2,
-                    borderColor: "#154734",
-                    flex: 2,
-                    backgroundColor: "#FFFFFF",
-                  }
-                : {
-                    height: Platform.select({
-                      ios: inputHeight,
-                      android: inputHeight,
-                    }),
-                    borderColor: "#154734",
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    overflow: "hidden",
-                    justifyContent: "center",
-                    flex: 0,
-                    backgroundColor: "#FFFFFF",
-                  },
+              {
+                flex: isBioInputFocused ? 2 : 0,
+                height: isBioInputFocused ? "100%" : 100,
+                paddingBottom: isBioInputFocused ? 100 : 0,
+              },
             ]}
           >
-            <TextInput
+            <View
               style={[
-                isKeyboardVisible
-                  ? { padding: 10 }
+                isBioInputFocused
+                  ? {
+                      borderWidth: 2,
+                      borderColor: "red",
+                      flex: isBioInputFocused ? 2 : 0,
+                      borderWidth: 2,
+                      borderColor: "#154734",
+                      flex: 2,
+                      backgroundColor: "#FFFFFF",
+                    }
                   : {
-                      textAlign: "center",
+                      height: Platform.select({
+                        ios: inputHeight,
+                        android: inputHeight,
+                      }),
+                      borderColor: "#154734",
+                      borderRadius: 5,
+                      borderWidth: 1,
+                      overflow: "hidden",
+                      justifyContent: "center",
+                      flex: 0,
+                      backgroundColor: "#FFFFFF",
                     },
               ]}
-              placeholder="Player Biography"
-              onChangeText={setBio}
-              value={bio || player.bio}
-              onFocus={() => setInputFocused(true)}
-              onBlur={() => setInputFocused(false)}
-            />
+            >
+              <TextInput
+                style={[
+                  isBioInputFocused
+                    ? { padding: 10 }
+                    : {
+                        textAlign: "center",
+                      },
+                ]}
+                placeholder={
+                  bio.length === 0 && isBioInputFocused
+                    ? ""
+                    : "Player Biography"
+                }
+                onChangeText={handleBioChange}
+                value={bio}
+                onFocus={() => handleBioInputFocus()}
+                onBlur={() => handleBioInputFocus()}
+              />
+            </View>
           </View>
-        </View>
-        <TouchableOpacity>
-          <Button title="SAVE PLAYER" onPress={() => handleFormSubmit()} />
-        </TouchableOpacity>
+
+          <TouchableOpacity style={{ paddingBottom: 20, paddingTop: 20 }}>
+            <Button title="SAVE PLAYER" onPress={() => handleFormSubmit()} />
+          </TouchableOpacity>
+          {!isKeyboardVisible && (
+            <TouchableOpacity>
+              <Button
+                title="CANCEL"
+                onPress={() => handleCancelButtonClick()}
+              />
+            </TouchableOpacity>
+          )}
+        </ScrollView>
       </View>
     </View>
   );
