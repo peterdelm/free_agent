@@ -1,4 +1,6 @@
 // import { StatusBar } from "expo-status-bar";
+
+import 'react-native-get-random-values'
 import { StyleSheet, Text, View, StatusBar } from "react-native";
 import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
