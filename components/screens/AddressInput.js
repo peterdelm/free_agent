@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, memo } from "react";
+import 'react-native-get-random-values';
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Styles from "./Styles";
 

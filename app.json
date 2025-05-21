@@ -36,8 +36,7 @@
         }
       },
       "package": "com.cabbageconundrum.free_agent",
-      "googleServicesFile": "./android/app/google-services.json"
-    },
+      "googleServicesFile": "./android/app/google-services.json"    },
     "web": {
       "favicon": "./assets/favicon.png"
     },
