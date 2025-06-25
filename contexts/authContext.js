@@ -66,6 +66,8 @@ export function AuthProvider({ children }) {
   const login = async (emailAddress, password) => {
     try {
       const userData = await loginRequest(emailAddress, password);
+      console.log("userData:", userData);
+
       if (userData.status === 200) {
         await setUserContext(userData);
       } else if (userData.status === 401) {

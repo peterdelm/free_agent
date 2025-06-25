@@ -28,6 +28,7 @@ function WelcomeScreen({ navigation }) {
 
       if (user) {
         console.log("User is", user);
+        setErrorMessage("user is:", user)
 
         if (user.currentRole === "manager") {
           console.log("user.currentRole === manager");
@@ -42,8 +43,8 @@ function WelcomeScreen({ navigation }) {
           console.log("ERROR: Unknown user role");
         }
       } else {
-        setErrorMessage("Login credentials are incorrect or missing");
-        console.log("ERROR: Login credentials are incorrect or missing");
+        setErrorMessage("user is", user);
+        console.log("user is", user);
       }
     } catch (error) {
       setErrorMessage(error.message || "An unexpected error occurred");
