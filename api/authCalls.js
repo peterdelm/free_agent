@@ -8,6 +8,7 @@ import { EXPO_PUBLIC_BASE_URL } from "../.config.js";
 
 export const loginRequest = async (emailAddress, password) => {
   const url = `${EXPO_PUBLIC_BASE_URL}api/users/id`;
+  console.log("URL IS", url);
   try {
     const response = await fetch(url, {
       method: "POST",

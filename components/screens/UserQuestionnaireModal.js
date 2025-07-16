@@ -16,7 +16,6 @@ const UserQuestionnairePopup = ({ isModalVisible, onClose }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isThankful, setIsThankful] = useState(false);
-
   const { height } = Dimensions.get("window");
   const inputHeight = height * 0.07;
 
