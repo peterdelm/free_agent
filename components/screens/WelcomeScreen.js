@@ -4,8 +4,9 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  Button,
-  StyleSheet,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import Styles from "./Styles";
@@ -28,7 +29,7 @@ function WelcomeScreen({ navigation }) {
 
       if (user) {
         console.log("User is", user);
-        setErrorMessage("user is:", user)
+        setErrorMessage("Backend Response: " + user);
 
         if (user.currentRole === "manager") {
           console.log("user.currentRole === manager");
@@ -39,11 +40,11 @@ function WelcomeScreen({ navigation }) {
 
           navigation.navigate("PlayerHome");
         } else {
-          setErrorMessage("Unknown user role");
+          setErrorMessage("Backend Response: " + user);
           console.log("ERROR: Unknown user role");
         }
       } else {
-        setErrorMessage("user is", user);
+        setErrorMessage("Backend Response:", user);
         console.log("user is", user);
       }
     } catch (error) {
@@ -61,101 +62,106 @@ function WelcomeScreen({ navigation }) {
   };
 
   return (
-    <View style={Styles.welcomeScreenContainer}>
-      <View style={Styles.welcomeScreenLogoContainer}>
-        <Image
-          source={require("../../assets/free_agent_logo_trasparent_fulltext.png")}
-          style={{
-            width: "90%",
-            resizeMode: "contain",
-          }}
-        />
-      </View>
-      <View
-        style={[
-          Styles.welcomeScreenInputView,
-          { flexDirection: "row", justifyContent: "flex-start" },
-        ]}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <TextInput
-          style={[
-            Styles.TextInput,
-            {
-              height: 40,
-            },
-          ]}
-          placeholder="Email"
-          placeholderTextColor="#005F66"
-          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
-        />
-      </View>
-      <View style={[Styles.welcomeScreenInputView, { flexDirection: "row" }]}>
-        <TextInput
-          style={[
-            Styles.TextInput,
-            {
-              flex: 1,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              height: 40,
-            },
-          ]}
-          placeholder="Password"
-          placeholderTextColor="#005F66"
-          secureTextEntry={isSecure ? true : false}
-          onChangeText={(password) => setPassword(password)}
-        />
-        <TouchableOpacity onPress={togglePasswordVisibility}>
-          <Image
-            source={
-              isSecure
-                ? require("../../assets/eye-slash-regular.png")
-                : require("../../assets/eye-regular.png")
-            }
-            style={{
-              width: 20,
-              height: 20,
-              resizeMode: "contain",
-              marginRight: 5,
-            }}
-          />
-        </TouchableOpacity>
-      </View>
-      {errorMessage ? (
-        <Text style={[Styles.errorText, { marginTop: 0 }]}>{errorMessage}</Text>
-      ) : null}
-      <TouchableOpacity onPress={handleResetPasswordButtonPress}>
-        <Text style={Styles.forgotButton}>Forgot Password?</Text>
-      </TouchableOpacity>
+        <View style={Styles.welcomeScreenContainer}>
+          <View style={Styles.welcomeScreenLogoContainer}>
+            <Image
+              source={require("../../assets/free_agent_logo_trasparent_fulltext.png")}
+              style={{
+                width: "90%",
+                resizeMode: "contain",
+              }}
+            />
+          </View>
+          <View
+            style={[
+              Styles.welcomeScreenInputView,
+              { flexDirection: "row", justifyContent: "flex-start" },
+            ]}
+          >
+            <TextInput
+              style={[
+                Styles.TextInput,
+                {
+                  height: 40,
+                },
+              ]}
+              placeholder="Email"
+              placeholderTextColor="#005F66"
+              onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+            />
+          </View>
+          <View
+            style={[Styles.welcomeScreenInputView, { flexDirection: "row" }]}
+          >
+            <TextInput
+              style={[
+                Styles.TextInput,
+                {
+                  flex: 1,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  height: 40,
+                },
+              ]}
+              placeholder="Password"
+              placeholderTextColor="#005F66"
+              secureTextEntry={isSecure ? true : false}
+              onChangeText={(password) => setPassword(password)}
+            />
+            <TouchableOpacity onPress={togglePasswordVisibility}>
+              <Image
+                source={
+                  isSecure
+                    ? require("../../assets/eye-slash-regular.png")
+                    : require("../../assets/eye-regular.png")
+                }
+                style={{
+                  width: 20,
+                  height: 20,
+                  resizeMode: "contain",
+                  marginRight: 5,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+          {errorMessage ? (
+            <View style={{ marginTop: 10 }}>
+              <Text style={[Styles.errorText]}>{errorMessage}</Text>
+              <TouchableOpacity onPress={() => setErrorMessage("")}>
+                <Text style={{ color: "black", textAlign: "center" }}>
+                  Dismiss
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          <TouchableOpacity onPress={handleResetPasswordButtonPress}>
+            <Text style={Styles.forgotButton}>Forgot Password?</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => handleLoginButtonPress(emailAddress, password)}
-      >
-        <View style={Styles.welcomeButtonContainer}>
-          <Text style={Styles.welcomeButton}>Log in</Text>
+          <TouchableOpacity
+            onPress={() => handleLoginButtonPress(emailAddress, password)}
+          >
+            <View style={Styles.welcomeButtonContainer}>
+              <Text style={Styles.welcomeButton}>Log in</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleRegisterButtonPress}>
+            <View style={Styles.welcomeButtonContainer}>
+              <Text style={Styles.welcomeButton}>Register</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleRegisterButtonPress}>
-        <View style={Styles.welcomeButtonContainer}>
-          <Text style={Styles.welcomeButton}>Register</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  welcomeScreenInputView: {
-    // flexDirection: "row",
-    // alignItems: "center",
-    // borderColor: "#005F66", // Example border color
-    // borderRadius: 5, // Add a border radius if needed
-    // overflow: "hidden", // Ensure no overflow
-    // padding: 5, // Add padding to container for spacing
-  },
-  TextInput: {
-    // Add your styles here
-  },
-});
 
 export default WelcomeScreen;

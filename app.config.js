@@ -16,7 +16,11 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "freeAgentiosBundle",
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
     },
+
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/fa-icon.png",

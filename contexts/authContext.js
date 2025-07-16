@@ -70,11 +70,45 @@ export function AuthProvider({ children }) {
 
       if (userData.status === 200) {
         await setUserContext(userData);
-      } else if (userData.status === 401) {
-        console.log("Incorrect Login Info");
+      } else {
+        // Try to extract a message from the body
+        let errorBody = "";
+        try {
+          const data = await userData.json(); // try to parse response body
+          errorBody = JSON.stringify(data, null, 2);
+        } catch (err) {
+          errorBody = "Unable to parse response body.";
+        }
+
+        const detailedMessage = `
+Login failed:
+  • Status: ${userData.status} ${userData.statusText || ""}
+  • URL: ${userData.url}
+  • Headers: ${JSON.stringify(userData.headers?.map || {}, null, 2)}
+  • Body: ${errorBody}
+  • Possible causes:
+    - Incorrect email or password (401)
+    - Missing or invalid Authorization headers
+    - Device not on same local network as backend
+    - CORS or preflight failure
+    - HTTPS required by iOS App Transport Security
+`;
+        console.error(detailedMessage);
+
+        return detailedMessage;
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      // Handles total network failures (e.g. can't reach server at all)
+      const fallbackMessage = `
+Network error occurred:
+  • Message: ${error.message}
+  • Possible causes:
+    - Backend is unreachable (wrong IP, port, or down)
+    - iPhone not on same network
+    - App Transport Security blocked HTTP connection
+`;
+      console.error(fallbackMessage);
+      return fallbackMessage;
     }
   };
 
